@@ -28,23 +28,23 @@ INT : '0' | POSITIVE_DIGIT DIGIT*;//todo Une erreur de compilation est levée si
 
 
 fragment NUM : DIGIT+;
-fragment SIGN : '+' | '-' | '';
+fragment SIGN : [+-]?;
 fragment EXP : ('E' | 'e') SIGN NUM;
 fragment DEC : NUM '.' NUM;
-fragment FLOATDEC : (DEC | DEC EXP) ('F' | 'f' | '');
+fragment FLOATDEC : DEC EXP? [Ff]?;
 fragment DIGITHEX : '0'  ..  '9' | 'A'  ..  'F' | 'a'  ..  'f';
 fragment NUMHEX : DIGITHEX+;
-fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM ('F' | 'f' | '');
+fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM [Ff]?;
 FLOAT : FLOATDEC | FLOATHEX;
 
-fragment STRING_CAR : ~('"' | '\\' | EOL);
+fragment STRING_CAR : ~('"' | '\\' | '\n');
 STRING : '"' (STRING_CAR | '\\"' | '\\\\')* '"';
-MULTI_LINE_STRING : '"' (STRING_CAR | EOL | '\\"' | '\\\\')* '"';
+MULTI_LINE_STRING : '"' (STRING_CAR | '\n' | '\\"' | '\\\\')* '"';
 
 
 COMMENT : '/*' .*? '*/' { skip(); };
 UNCLOSED_COMMENT
-    : '/*' .* EOF
+    : '/*' .*? EOF
       { System.err.println(getSourceName() + ":" +
                            getLine() + ":" +
                            getCharPositionInLine() + 
