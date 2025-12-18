@@ -1,8 +1,8 @@
 // Description:
 //    Programme   bloc imbriqué
 //
-// Resultats:
-//     9
+// Resultats: 8    1
+//
 // Historique:
 //    cree le 18/12/2025
 
@@ -10,6 +10,8 @@
 {
    int i = 1;
    {
-      float i = 8.0; // Valide : "Masquage" de la variable (Shadowing)
+      float i = 8.0;
+      println (i);
    }
+   println(i);
 }

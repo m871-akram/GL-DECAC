@@ -2,6 +2,7 @@
 //    Programme   operation et type
 //
 // Resultats:
+//     int*int donne int, puis int+float donne float
 //     10.5
 // Historique:
 //    cree le 18/12/2025
@@ -11,6 +12,6 @@
 {
    int i = 3;
    float f = 1.5;
-   float result = (i * i) + f; // int*int donne int, puis int+float donne float
+   float result = (i * i) + f;
    println(result);
 }
