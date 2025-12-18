@@ -12,8 +12,6 @@ options {
 }
 
 // Deca lexer rules.
-                // A FAIRE : Règle bidon qui reconnait tous les caractères.
-                // A FAIRE : Il faut la supprimer et la remplacer par les vraies règles.
 
 fragment LETTER : 'a'  ..  'z' | 'A'  ..  'Z';
 fragment DIGIT : '0'  ..  '9';
@@ -85,25 +83,29 @@ MULTI_LINE_STRING : '"' (STRING_CAR | '\n' | '\\"' | '\\\\')* '"';
 
 
 COMMENT : '/*' .*? '*/' { skip(); };
-UNCLOSED_COMMENT
-    : '/*' .*? EOF
-      { System.err.println(getSourceName() + ":" +
-                           getLine() + ":" +
-                           getCharPositionInLine() + 
-                           ": commentaire non fermé"); } // todo: gestion corecte des erreur
-    ;
+
 COMMENT_MONO : '//' (~('\r' | '\n'))* { skip(); };
 
 WS  :   ( ' '
         | '\t'
         | '\r'
         | '\n'
-        ) {
-              skip(); 
-          }
-    ;
+        ) { skip(); };
 fragment FILENAME : (LETTER | DIGIT | '.' | '-' | '_')+;
 INCLUDE : '#include' (' ')* '"' FILENAME '"' {
    doInclude(getText());
    skip();}
    ;
+UNCLOSED_COMMENT
+    : '/*' .*? EOF
+      { System.err.println(getSourceName() + ":" +
+                           getLine() + ":" +
+                           getCharPositionInLine() + 
+                           ": commentaire non fermé"); 
+                           skip(); } // todo: gestion corecte des erreur
+    ;
+DEFAULT : . {System.err.println(getSourceName() + ":" +
+                           getLine() + ":" +
+                           getCharPositionInLine() + 
+                           ": il y un caratere non reconue " + getText() ); 
+                           skip();} ; 
