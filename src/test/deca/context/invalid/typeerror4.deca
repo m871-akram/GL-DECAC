@@ -2,11 +2,13 @@
 //    Programme   incompatibilité type.
 //
 // Resultats:
-//    ligne 11 :
+//    ligne 11 : erreur : println est de type void, pas int
 //
 // Historique:
 //    cree le 18/12/2025
 
+
 {
-        int i = "Hello";
-}
+   int x;
+   x = println("Hello");
+   }

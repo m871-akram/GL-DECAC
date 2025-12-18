@@ -1,0 +1,16 @@
+// Description:
+//    Condition if et type different de bool
+//
+// Resultats:
+//    Ligne 12 :  Erreur : f reconnait uniquement les booleans
+//    Résultat ; erreur
+// Historique:
+//    cree le 18/12/2025
+
+
+
+{
+   if (1+2) {
+      println("erreur");
+   }
+}

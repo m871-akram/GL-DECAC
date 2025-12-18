@@ -1,0 +1,16 @@
+// Description:
+//    Condition if et &&
+//
+// Resultats:
+//    Ligne 12 :  Erreur : 1 est un int, pas un boolean
+//    Résultat ; erreur
+// Historique:
+//    cree le 18/12/2025
+
+
+
+{
+   if (true && 1) {
+      println("erreur");
+   }
+}

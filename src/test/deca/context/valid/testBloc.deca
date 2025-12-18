@@ -1,0 +1,17 @@
+// Description:
+//    Programme   bloc imbriqué
+//
+// Resultats:
+//     9
+// Historique:
+//    cree le 18/12/2025
+
+
+{
+   int i = 5;
+   {
+      int i = 9;
+      println(x);
+   }
+   println(x);
+}

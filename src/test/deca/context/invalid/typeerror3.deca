@@ -2,11 +2,11 @@
 //    Programme   incompatibilité type.
 //
 // Resultats:
-//    ligne 11 :
+//    ligne 11 : erreur
 //
 // Historique:
 //    cree le 18/12/2025
 
 {
-        int i = "Hello";
+        int i = i + "Hello";
 }
