@@ -1,5 +1,5 @@
 // Description:
-//    sert de comtrepartie pour tester le #import
+//    sert de comtrepartie pour tester le #include
 //
 // Resultats:
 //    ligne 11 : Erreur, chaine non terminee (sur fin de fichier)
@@ -8,4 +8,4 @@
 //    cree le 01/01/2026
 
 {
-        println("Hello
+        println("Hello" +

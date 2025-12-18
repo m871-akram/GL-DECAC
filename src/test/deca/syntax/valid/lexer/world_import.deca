@@ -1,12 +1,12 @@
 // Description:
-//    Programme minimaliste utilisant println. pour tester le #import 
+//    Programme minimaliste utilisant println. pour tester le #include 
 //
 // Resultats:
 //    Hello world
 //
 // Historique:
 //    cree le 18/12/2025
-#import "hello_import.deca"
+#include "hello_import.deca"
 
-        world");
+        "world");
 }
