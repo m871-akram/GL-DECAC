@@ -1,0 +1,12 @@
+// Description:
+//    Programme   mots réservé;.
+//
+// Resultats:
+//    erreur synthaxique : ligne 12
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+         float class;
+}

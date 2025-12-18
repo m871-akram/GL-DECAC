@@ -1,0 +1,13 @@
+// Description:
+//    Programme   Conversion automatique du type.
+//
+// Resultats:
+//     1
+
+// Historique:
+//    cree le 18/12/2025
+
+{
+        float f = 1;
+        println(f);
+}

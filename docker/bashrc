@@ -10,3 +10,14 @@ export JAVA_HOME=/usr/local/jdk-23.0.2+7
 export PAH=$JAVA_HOME/bin:$PATH
 
 export PATH
+
+
+
+
+JAVA_HOME=/usr/lib/jvm/temurin-23-jdk-amd64
+PATH=$JAVA_HOME/bin:"$PATH"
+PATH=/matieres/4MMPGL/GL/global/bin:"$PATH"
+PATH=$HOME/ensimag/GL/Projet_GL/src/main/bin:"$PATH"
+PATH=$HOME/ensimag/GL/Projet_GL/src/test/script:"$PATH"
+PATH=$HOME/ensimag/GL/Projet_GL/src/test/script/launchers:"$PATH"
+export PATH

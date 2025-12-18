@@ -1,0 +1,12 @@
+// Description:
+//    Programme   identificateur incorrect ;.
+//
+// Resultats:
+//    erreur synthaxique : ligne 11 ident commence par chiffre
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        int 1x;
+}
