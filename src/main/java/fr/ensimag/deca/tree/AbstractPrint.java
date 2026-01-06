@@ -39,7 +39,17 @@ public abstract class AbstractPrint extends AbstractInst {
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        for (AbstractExpr arg : getArguments().getList()) {
+            
+            Type t = arg.verifyExpr(compiler, localEnv, currentClass);
+    
+            if (!t.isString()) {
+                throw new ContextualError(
+                    "Type non imprimable dans une instruction print : " + t,
+                    arg.getLocation()
+                );
+            }
+        }
     }
 
     @Override

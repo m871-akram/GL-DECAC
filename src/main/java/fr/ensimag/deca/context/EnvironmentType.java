@@ -40,6 +40,9 @@ public class EnvironmentType {
         // not added to envTypes, it's not visible for the user.
         
     }
+    public void declareClass(Symbol symb,TypeDefinition classDef){
+        envTypes.put(symb, classDef);
+    }
 
     private final Map<Symbol, TypeDefinition> envTypes;
 
