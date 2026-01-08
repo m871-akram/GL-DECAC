@@ -90,9 +90,10 @@ decl_var[AbstractIdentifier t] returns[AbstractDeclVar tree]
         }
     : i=ident {
             assert($i.tree != null);
+    
         }
       (EQUALS e=expr { 
-            temp = $e.tree;
+            temp = new Initialization($e.tree);
         }
       )? {
             $tree = new DeclVar(t, $i.tree, temp);
@@ -429,7 +430,7 @@ literal returns[AbstractExpr tree]
 
 ident returns[AbstractIdentifier tree]
     : IDENT {
-            $tree = new Identifier($IDENT.text);
+            $tree = new Identifier(compiler.symbolTable.create($IDENT.text));
             setLocation($tree, $IDENT);
         }
     ;

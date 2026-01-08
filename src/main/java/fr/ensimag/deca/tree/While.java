@@ -43,7 +43,14 @@ public class While extends AbstractInst {
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-    }
+            Type condType = condition.verifyExpr(compiler, localEnv, currentClass);           
+            if (!condType.isBoolean()) {
+                throw new ContextualError("Condition de while doit être booléenne", condition.getLocation());
+            }
+        
+            body.verifyListInst(compiler, localEnv, currentClass, returnType);    
+        }
+
 
     @Override
     public void decompile(IndentPrintStream s) {
