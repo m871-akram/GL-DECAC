@@ -43,7 +43,7 @@ public abstract class AbstractPrint extends AbstractInst {
             
             Type t = arg.verifyExpr(compiler, localEnv, currentClass);
     
-            if (!t.isString()) {
+            if (!(t.isString()||t.isInt()||t.isFloat())) {
                 throw new ContextualError(
                     "Type non imprimable dans une instruction print : " + t,
                     arg.getLocation()

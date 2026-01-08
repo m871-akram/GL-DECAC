@@ -1,11 +1,15 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.context.VariableDefinition;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.deca.tools.SymbolTable.Symbol;
+
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
@@ -31,8 +35,26 @@ public class DeclVar extends AbstractDeclVar {
 
     @Override
     protected void verifyDeclVar(DecacCompiler compiler,
-            EnvironmentExp localEnv, ClassDefinition currentClass)
-            throws ContextualError {
+            EnvironmentExp localEnv, ClassDefinition currentClass) 
+        throws ContextualError {
+        Symbol name = this.varName.getName();
+        
+        // pas de doublon
+        if (localEnv.get(name) != null) {
+            throw new ContextualError("Variable"+ name +  "déjà déclarée", getLocation());
+        }
+        
+        Type type = this.type.verifyType(compiler);
+        if (type == compiler.environmentType.VOID) {
+            throw new ContextualError("Type void interdit pour les variables", getLocation());
+        }
+        
+        // Declarer nouveau variable
+        try {
+            localEnv.declare(name, new VariableDefinition(type, getLocation()));
+        } catch (DoubleDefException e) {
+            throw new ContextualError("nouveau variable est un doublon", getLocation());
+        }
     }
 
     
