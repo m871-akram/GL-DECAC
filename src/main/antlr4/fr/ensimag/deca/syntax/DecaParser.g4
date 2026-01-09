@@ -47,6 +47,7 @@ prog returns[AbstractProgram tree]
 main returns[AbstractMain tree]
     : /* epsilon */ {
             $tree = new EmptyMain();
+            setLocation($tree, $ctx.start);
         }
     | block {
             assert($block.decls != null);
@@ -418,21 +419,28 @@ type returns[AbstractIdentifier tree]
 literal returns[AbstractExpr tree]
     : INT {
             $tree =new IntLiteral(Integer.parseInt($INT.text));
+            setLocation($tree, $INT);
         }
     | fd=FLOAT {
             $tree =new FloatLiteral(Float.parseFloat($fd.text));
+            setLocation($tree, $fd);
         }
     | s=STRING {
             $tree =new StringLiteral($s.text);
+            setLocation($tree, $s);
         }
     | TRUE {
-        }
+        $tree = new BooleanLiteral(true);
+        setLocation($tree, $TRUE);
+    }
     | FALSE {
-        }
+        $tree = new BooleanLiteral(false);
+        setLocation($tree, $FALSE);
+    }
     | THIS {
-        }
+    }
     | NULL {
-        }
+    }
     ;
 
 ident returns[AbstractIdentifier tree]

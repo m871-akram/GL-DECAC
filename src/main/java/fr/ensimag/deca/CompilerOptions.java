@@ -41,12 +41,12 @@ public class CompilerOptions {
     private boolean printBanner = false;
     private List<File> sourceFiles = new ArrayList<File>();
 
-    private int arretEnAvance = -1;
+    private int actionSpecial = -1;
     private boolean noCheck = false;
     private int maxRegisters = -1;
 
-    public int getArretEnAvance() {
-        return arretEnAvance;
+    public int getActionSpecial() {
+        return actionSpecial;
     }
     public boolean getNoCheck() {
         return noCheck;
@@ -77,11 +77,17 @@ public class CompilerOptions {
                 return;
     
             case "-p":
-                arretEnAvance = 0;
+                if(actionSpecial != -1){
+                    throw new CLIException("-v et -p ne sont pas compatible");
+                }
+                actionSpecial = 0;
                 break;
             
             case "-v":
-                arretEnAvance = 1;
+                if(actionSpecial != -1){
+                    throw new CLIException("-v et -p ne sont pas compatible");
+                }
+                actionSpecial = 1;
                 break;
             
             case "-n":

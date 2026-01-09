@@ -186,11 +186,7 @@ public class DecacCompiler {
             LOG.info("Parsing failed");
             return true;
         }
-        //gestion des drapeaux -p
-        if(compilerOptions.getArretEnAvance() == 0){
-            prog.prettyPrint(out);
-            return false;
-        }
+
 
         assert(prog.checkAllLocations());
 
@@ -198,7 +194,7 @@ public class DecacCompiler {
         prog.verifyProgram(this);
         assert(prog.checkAllDecorations());
         //gestion des drapeaux -v
-        if(compilerOptions.getArretEnAvance() == 1){
+        if(compilerOptions.getActionSpecial() == 1){
             return false;
         }
 
@@ -216,6 +212,12 @@ public class DecacCompiler {
         }
 
         LOG.info("Writing assembler file ...");
+        //gestion des drapeaux -p
+        if(compilerOptions.getActionSpecial() == 0){
+            program.display(out);
+            LOG.info("Compilation of " + sourceName + " successful.");
+            return false;
+        }
 
         program.display(new PrintStream(fstream));
         LOG.info("Compilation of " + sourceName + " successful.");
