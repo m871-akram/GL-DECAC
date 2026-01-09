@@ -1,6 +1,7 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.context.TypeDefinition;
 import fr.ensimag.deca.context.ClassType;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
@@ -167,7 +168,18 @@ public class Identifier extends AbstractIdentifier {
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        ExpDefinition def = localEnv.get(this.name);
+
+        if (def == null) {
+            throw new ContextualError(
+                "Expresion inconnu : " + this.name.getName(),
+                this.getLocation()
+            );
+        }
+
+        Type type = def.getType();
+        this.setType(type);
+        return type;
     }
 
     /**
@@ -176,7 +188,18 @@ public class Identifier extends AbstractIdentifier {
      */
     @Override
     public Type verifyType(DecacCompiler compiler) throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        TypeDefinition def = compiler.environmentType.defOfType(this.name);
+
+        if (def == null) {
+            throw new ContextualError(
+                "Type inconnu : " + this.name.getName(),
+                this.getLocation()
+            );
+        }
+
+        Type type = def.getType();
+        this.setType(type);
+        return type;
     }
     
     

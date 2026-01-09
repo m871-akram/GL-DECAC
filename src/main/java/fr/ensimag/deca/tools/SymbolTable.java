@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.refEq;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils.Null;
+
 /**
  * Manage unique symbols.
  * 
@@ -28,10 +30,12 @@ public class SymbolTable {
      */
     public Symbol create(String name) {
         //throw new UnsupportedOperationException("Symbol creation");
-        if (!map.containsKey(name)){
-            map.put(name, new Symbol(name));
+        Symbol syb = map.get(name);
+        if (syb == null){
+            syb =new Symbol(name);
+            map.put(name,syb );
         }
-        return map.get(name);
+        return syb;
     }
 
     public static class Symbol {
