@@ -137,9 +137,7 @@ public class DecacCompiler {
      */
     public boolean compile() {
         String sourceFile = source.getAbsolutePath();
-        String destFile = null;
-        // A FAIRE: calculer le nom du fichier .ass à partir du nom du
-        // A FAIRE: fichier .deca.
+        String destFile = sourceFile.substring(0, sourceFile.length() - 5) + ".ass";
         PrintStream err = System.err;
         PrintStream out = System.out;
         LOG.debug("Compiling file " + sourceFile + " to assembly file " + destFile);
@@ -183,16 +181,26 @@ public class DecacCompiler {
             PrintStream out, PrintStream err)
             throws DecacFatalError, LocationException {
         AbstractProgram prog = doLexingAndParsing(sourceName, err);
-
+        
         if (prog == null) {
             LOG.info("Parsing failed");
             return true;
         }
+        //gestion des drapeaux -p
+        if(compilerOptions.getArretEnAvance() == 0){
+            prog.prettyPrint(out);
+            return false;
+        }
+
         assert(prog.checkAllLocations());
 
 
         prog.verifyProgram(this);
         assert(prog.checkAllDecorations());
+        //gestion des drapeaux -v
+        if(compilerOptions.getArretEnAvance() == 1){
+            return false;
+        }
 
         addComment("start main program");
         prog.codeGenProgram(this);

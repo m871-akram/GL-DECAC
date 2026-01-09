@@ -21,22 +21,35 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
-            Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-            Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
+        Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
+        Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
-            // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
-            if (!((t1.isInt() || t1.isFloat()) && 
-                (t2.isInt() || t2.isFloat()))) {
-                throw new ContextualError(
-                    "Opérandes arithmétiques sont de types  invalides: " + t1 + " et " + t2,
-                    this.getLocation());
-            }
+        // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
+        if (!compiler.environmentType.castCompatible(t1,t2)) {
+            throw new ContextualError(
+                "Opérandes arithmétiques sont de types  invalides: " + t1 + " et " + t2,
+                this.getLocation());
+        }
 
-            if( t1.isFloat() || t2.isFloat() ){
-                setType(compiler.environmentType.FLOAT);
-                return compiler.environmentType.FLOAT;
-            }
-            setType(t1);
-            return t1;
+        if( t1.isFloat() && t2.isInt()){
+            setRightOperand(new ConvFloat(getRightOperand()));
+            this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
+            setType(compiler.environmentType.FLOAT);
+            return compiler.environmentType.FLOAT;
+        }
+        if( t2.isFloat() && t1.isInt()){
+            setLeftOperand(new ConvFloat(getLeftOperand()));
+            this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
+            setType(compiler.environmentType.FLOAT);
+            return compiler.environmentType.FLOAT;
+        }
+        
+        if (t1.isFloat() || t2.isFloat()) {
+            setType(compiler.environmentType.FLOAT);
+        }else{
+            setType(compiler.environmentType.INT);
+        }
+        
+        return getType();
     }
 }

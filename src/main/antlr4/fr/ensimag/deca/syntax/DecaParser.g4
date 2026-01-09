@@ -80,23 +80,27 @@ list_decl_var[ListDeclVar l, AbstractIdentifier t]
     : dv1=decl_var[$t] {
         $l.add($dv1.tree);
         } (COMMA dv2=decl_var[$t] {
+            $l.add($dv2.tree);
         }
       )*
     ;
 
 decl_var[AbstractIdentifier t] returns[AbstractDeclVar tree]
 @init   {
-            AbstractInitialization temp;
+            AbstractInitialization initialization = new NoInitialization();
         }
     : i=ident {
             assert($i.tree != null);
     
         }
       (EQUALS e=expr { 
-            temp = new Initialization($e.tree);
+            assert($e.tree != null);
+            initialization = new Initialization($e.tree);
+            setLocation(initialization, $e.start);
         }
       )? {
-            $tree = new DeclVar(t, $i.tree, temp);
+            assert(t != null);
+            $tree = new DeclVar(t, $i.tree, initialization);
             setLocation($tree, $i.start);
         }
     ;
@@ -199,7 +203,7 @@ assign_expr returns[AbstractExpr tree]
         EQUALS e2=assign_expr {
             assert($e.tree != null);
             assert($e2.tree != null);
-            //$tree = new Assign($e.tree, $e2.tree);
+            $tree = new Assign((AbstractLValue)$e.tree, $e2.tree);
             setLocation($tree, $EQUALS);
         }
       | /* epsilon */ {
@@ -407,13 +411,16 @@ primary_expr returns[AbstractExpr tree]
 type returns[AbstractIdentifier tree]
     : ident {
             assert($ident.tree != null);
+            $tree = $ident.tree;
         }
     ;
 
 literal returns[AbstractExpr tree]
     : INT {
+            $tree =new IntLiteral(Integer.parseInt($INT.text));
         }
     | fd=FLOAT {
+            $tree =new FloatLiteral(Float.parseFloat($fd.text));
         }
     | s=STRING {
             $tree =new StringLiteral($s.text);
@@ -430,7 +437,7 @@ literal returns[AbstractExpr tree]
 
 ident returns[AbstractIdentifier tree]
     : IDENT {
-            $tree = new Identifier(compiler.symbolTable.create($IDENT.text));
+            $tree = new Identifier(getDecacCompiler().symbolTable.create($IDENT.text));
             setLocation($tree, $IDENT);
         }
     ;
