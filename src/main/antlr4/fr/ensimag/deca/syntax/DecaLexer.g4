@@ -12,5 +12,100 @@ options {
 }
 
 // Deca lexer rules.
-DUMMY_TOKEN: .; // A FAIRE : Règle bidon qui reconnait tous les caractères.
-                // A FAIRE : Il faut la supprimer et la remplacer par les vraies règles.
+
+fragment LETTER : 'a'  ..  'z' | 'A'  ..  'Z';
+fragment DIGIT : '0'  ..  '9';
+ASM : 'asm';
+CLASS : 'class';
+EXTENDS : 'extends';
+ELSE : 'else';
+FALSE : 'false';
+IF : 'if';
+INSTANCEOF : 'instanceof';
+NEW : 'new';
+NULL : 'null';
+READINT : 'readInt';
+READFLOAT : 'readFload';
+PRINT : 'print';
+PRINTLN : 'println';
+PRINTLNX : 'printlnx';
+PRINTX : 'printx';
+PROTECTED : 'protected';
+RETURN : 'return';
+THIS : 'this';
+TRUE : 'true';
+WHILE : 'while';
+
+
+IDENT : (LETTER | '$' | '_')(LETTER | DIGIT | '$' | '_')*;
+
+LT : '<' ; 
+GT : '>' ; 
+EQUALS : '=' ;
+PLUS : '+' ; 
+MINUS : '-' ;
+TIMES : '*' ; 
+SLASH : '/' ;
+PERCENT : '%' ;
+DOT : '.' ;
+COMMA : ',' ;
+OPARENT : '(' ;
+CPARENT : ')' ;
+OBRACE : '{' ;
+CBRACE : '}' ;
+EXCLAM  : '!' ;
+SEMI : ';' ;
+EQEQ : '==' ; 
+NEQ : '!=' ; 
+GEQ : '>=' ; 
+LEQ : '<=' ; 
+AND : '&&' ; 
+OR : '||' ;
+
+
+fragment POSITIVE_DIGIT : '1'  ..  '9';
+INT : '0' | POSITIVE_DIGIT DIGIT*;//todo Une erreur de compilation est levée si un littéral entier n’est pas codable comme un entier signé positif sur 32 bits.
+
+
+fragment NUM : DIGIT+;
+fragment SIGN : [+-]?;
+fragment EXP : ('E' | 'e') SIGN NUM;
+fragment DEC : NUM '.' NUM;
+fragment FLOATDEC : DEC EXP? [Ff]?;
+fragment DIGITHEX : '0'  ..  '9' | 'A'  ..  'F' | 'a'  ..  'f';
+fragment NUMHEX : DIGITHEX+;
+fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM [Ff]?;
+FLOAT : FLOATDEC | FLOATHEX;
+
+fragment STRING_CAR : ~('"' | '\\' | '\n');
+STRING : '"' (STRING_CAR | '\\"' | '\\\\')* '"';
+MULTI_LINE_STRING : '"' (STRING_CAR | '\n' | '\\"' | '\\\\')* '"';
+
+
+COMMENT : '/*' .*? '*/' { skip(); };
+
+COMMENT_MONO : '//' (~('\r' | '\n'))* { skip(); };
+
+WS  :   ( ' '
+        | '\t'
+        | '\r'
+        | '\n'
+        ) { skip(); };
+fragment FILENAME : (LETTER | DIGIT | '.' | '-' | '_')+;
+INCLUDE : '#include' (' ')* '"' FILENAME '"' {
+   doInclude(getText());
+   skip();}
+   ;
+UNCLOSED_COMMENT
+    : '/*' .*? EOF
+      { System.err.println(getSourceName() + ":" +
+                           getLine() + ":" +
+                           getCharPositionInLine() + 
+                           ": commentaire non fermé"); 
+                           skip(); } // todo: gestion corecte des erreur
+    ;
+DEFAULT : . {System.err.println(getSourceName() + ":" +
+                           getLine() + ":" +
+                           getCharPositionInLine() + 
+                           ": il y un caratere non reconue " + getText() ); 
+                           skip();} ; 
