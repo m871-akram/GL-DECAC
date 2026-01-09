@@ -204,6 +204,12 @@ public class DecacCompiler {
         LOG.debug("Generated assembly code:" + nl + program.display());
         LOG.info("Output file assembly file is: " + destName);
 
+        //gestion des drapeaux -p
+        if(compilerOptions.getActionSpecial() == 0){
+            program.display(out);
+            LOG.info("Compilation of " + sourceName + " successful.");
+            return false;
+        }
         FileOutputStream fstream = null;
         try {
             fstream = new FileOutputStream(destName);
@@ -212,12 +218,7 @@ public class DecacCompiler {
         }
 
         LOG.info("Writing assembler file ...");
-        //gestion des drapeaux -p
-        if(compilerOptions.getActionSpecial() == 0){
-            program.display(out);
-            LOG.info("Compilation of " + sourceName + " successful.");
-            return false;
-        }
+        
 
         program.display(new PrintStream(fstream));
         LOG.info("Compilation of " + sourceName + " successful.");
