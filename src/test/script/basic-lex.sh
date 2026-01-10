@@ -13,6 +13,10 @@
 
 # On se place dans le répertoire du projet (quel que soit le
 # répertoire d'où est lancé le script) :
+
+
+#################################
+
 cd "$(dirname "$0")"/../../.. || exit 1
 
 PATH=./src/test/script/launchers:"$PATH"
@@ -21,22 +25,58 @@ PATH=./src/test/script/launchers:"$PATH"
 # test_lex peut au choix afficher les messages sur la sortie standard
 # (1) ou sortie d'erreur (2). On redirige la sortie d'erreur sur la
 # sortie standard pour accepter les deux (2>&1)
-if test_lex src/test/deca/syntax/invalid/provided/simple_lex.deca 2>&1 \
-    | head -n 1 | grep -q 'simple_lex.deca:[0-9]'
-then
-    echo "Echec inattendu de test_lex"
-    exit 1
-else
-    echo "OK"
-fi
 
-# Ligne 10 codée en dur. Il faudrait stocker ça quelque part ...
-if test_lex src/test/deca/syntax/invalid/provided/chaine_incomplete.deca 2>&1 \
-    | grep -q -e 'chaine_incomplete.deca:10:'
-then
-    echo "Echec attendu pour test_lex"
-else
-    echo "Erreur non detectee par test_lex pour chaine_incomplete.deca"
-    exit 1
-fi
+#################################
+# Fonctions utilitaires
+#################################
+
+# Test lexical valide : aucune erreur ne doit être signalée
+test_lex_valide () {
+    fichier="$1"
+
+    if test_lex "$fichier" 2>&1 | grep -q -e "$fichier:[0-9]"
+    then
+        echo "[ERREUR] Échec lexical inattendu pour $fichier"
+        exit 1
+    else
+        echo "[OK] Lexicalement valide : $fichier"
+    fi
+}
+
+# Test lexical invalide : une erreur doit être détectée
+test_lex_invalide () {
+    fichier="$1"
+
+    if test_lex "$fichier" 2>&1 | grep -q -e "$fichier:[0-9]"
+    then
+        echo "[OK] Échec lexical attendu pour $fichier"
+    else
+        echo "[ERREUR] Erreur lexicale non détectée pour $fichier"
+        exit 1
+    fi
+}
+
+#################################
+# Tests lexicaux valides
+#################################
+
+echo "=== Tests lexicaux valides ==="
+
+for cas_test in src/test/deca/lexical/valid/*.deca
+do
+    test_lex_valide "$cas_test"
+done
+
+#################################
+# Tests lexicaux invalides
+#################################
+
+echo "=== Tests lexicaux invalides ==="
+
+for cas_test in src/test/deca/lexical/invalid/*.deca
+do
+    test_lex_invalide "$cas_test"
+done
+
+echo "=== Tous les tests lexicaux sont réussi ==="
 
