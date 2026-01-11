@@ -21,6 +21,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.log4j.Logger;
 
+
+import fr.ensimag.deca.codegen.RegisterManager; // pour le rendre visible par le compile
+
 /**
  * Decac compiler instance.
  *
@@ -44,10 +47,13 @@ public class DecacCompiler {
      */
     private static final String nl = System.getProperty("line.separator", "\n");
 
+    private RegisterManager registerManager;
+
     public DecacCompiler(CompilerOptions compilerOptions, File source) {
         super();
         this.compilerOptions = compilerOptions;
         this.source = source;
+        this.registerManager = new RegisterManager(compilerOptions.getRegisters());
     }
 
     /**
@@ -97,6 +103,13 @@ public class DecacCompiler {
     }
 
     /**
+     * Ajoute une instruction au début du programme pour TSTO/ADDSP
+     */
+    public void addFirstInstruction(Instruction instruction) {
+        program.addFirst(instruction);
+    }
+
+    /**
      * @see
      * fr.ensimag.ima.pseudocode.IMAProgram#addInstruction(fr.ensimag.ima.pseudocode.Instruction,
      * java.lang.String)
@@ -119,6 +132,12 @@ public class DecacCompiler {
      * The main program. Every instruction generated will eventually end up here.
      */
     private final IMAProgram program = new IMAProgram();
+
+    public RegisterManager getRegisterManager() { return registerManager; }
+
+
+
+
  
 
     /** The global environment for types (and the symbolTable) */
@@ -136,8 +155,19 @@ public class DecacCompiler {
      * @return true on error
      */
     public boolean compile() {
+
         String sourceFile = source.getAbsolutePath();
-        String destFile = sourceFile.substring(0, sourceFile.length() - 5) + ".ass";
+        String destFile = null;
+        // A FAIRE: calculer le nom du fichier .ass à partir du nom du
+
+        int posPoint = sourceFile.lastIndexOf('.');
+
+        if (posPoint >= 0) {
+
+            destFile = sourceFile.substring(0, posPoint) + ".ass";
+        } else {
+            destFile = sourceFile + ".ass";
+        }
         PrintStream err = System.err;
         PrintStream out = System.out;
         LOG.debug("Compiling file " + sourceFile + " to assembly file " + destFile);

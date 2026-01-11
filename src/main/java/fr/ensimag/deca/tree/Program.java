@@ -45,10 +45,39 @@ public class Program extends AbstractProgram {
 
     @Override
     public void codeGenProgram(DecacCompiler compiler) {
-        // A FAIRE: compléter ce squelette très rudimentaire de code
+        //  Partie "Déclarations de classes" (Table des méthodes)
+        compiler.addComment("Construction des tables des methodes");
+        classes.codeGenListDeclClass(compiler);
+
+        //  Partie "Programme Principal"
         compiler.addComment("Main program");
-        main.codeGenMain(compiler);
-        compiler.addInstruction(new HALT());
+        main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill
+        compiler.addInstruction(new HALT()); // fin normale du programme
+
+        // Partie Gestion des erreurs
+        compiler.addLabel(new Label("stack_overflow_error"));
+        compiler.addInstruction(new WSTR("Error: Stack Overflow"));
+        compiler.addInstruction(new WNL());
+
+        compiler.addInstruction(new ERROR());
+
+        // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
+        int maxTemp = compiler.getRegisterManager().getTaillePileMax();
+        int nbGlob = compiler.getRegisterManager().getNbGlobales();
+
+        // 3. ADDSP #nbGlob
+        if (nbGlob > 0) {
+            compiler.addFirstInstruction(new ADDSP(new ImmediateInteger(nbGlob)));
+        }
+
+        // 2. BOV stack_overflow_error
+        compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
+
+        // 1. TSTO #(maxTemp + nbGlob)
+        // On teste si on a la place pour les globales + le max des temporaires
+        compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
+
+
     }
 
     @Override
