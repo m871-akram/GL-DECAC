@@ -55,6 +55,14 @@ public class CompilerOptions {
     public int getMaxRegisters() {
         return maxRegisters;
     }
+
+    public int getRegisters() {
+        if (maxRegisters != -1) {
+            return maxRegisters;
+        }
+        // valeur par défaut Deca
+        return 16;
+    }
     
     public void parseArgs(String[] args) throws CLIException {
         // A FAIRE : parcourir args pour positionner les options correctement.
@@ -155,4 +163,7 @@ public class CompilerOptions {
         System.out.println("  -d        active le mode debug (cumulable)");
         System.out.println("  -P        compilation parallèle");
     }
+
+
+
 }

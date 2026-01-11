@@ -142,7 +142,7 @@ public class RegisterManager {
         registreCourant = 2;
     }
 
-}}
+}
 
 
 

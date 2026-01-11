@@ -8,6 +8,10 @@ import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
+
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.ImmediateInteger;
+
 /**
  * Deca complete program (class definition plus main block)
  *
@@ -46,8 +50,8 @@ public class Program extends AbstractProgram {
     @Override
     public void codeGenProgram(DecacCompiler compiler) {
         //  Partie "Déclarations de classes" (Table des méthodes)
-        compiler.addComment("Construction des tables des methodes");
-        classes.codeGenListDeclClass(compiler);
+//        compiler.addComment("Construction des tables des methodes");
+//        classes.codeGenListDeclClass(compiler);
 
         //  Partie "Programme Principal"
         compiler.addComment("Main program");
