@@ -1,5 +1,7 @@
 package fr.ensimag.deca;
 
+import static org.mockito.ArgumentMatchers.refEq;
+
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class CompilerOptions {
 
     private int actionSpecial = -1;
     private boolean noCheck = false;
-    private int maxRegisters = -1;
+    private int maxRegisters = 16;
 
     public int getActionSpecial() {
         return actionSpecial;
@@ -142,6 +144,9 @@ public class CompilerOptions {
             logger.info("Java assertions disabled");
         }
 
+    }
+    public int getRegisters(){
+        return maxRegisters;
     }
 
     protected void displayUsage() {
