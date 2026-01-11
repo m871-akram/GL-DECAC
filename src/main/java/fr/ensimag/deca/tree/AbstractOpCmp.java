@@ -24,13 +24,12 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
         // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
-        if (!((t1.isInt() || t1.isFloat()) && 
-            !(t2.isInt() || t2.isFloat()))) {
-            throw new ContextualError(
-                "comparaison arithmétiques sont de types  invalides: " + t1 + " et " + t2,
-                this.getLocation());
-        }
-
+        if (!(t1.isInt() || t1.isFloat()) || 
+        !(t2.isInt() || t2.isFloat())) { throw new ContextualError(
+            "Comparaison arithmétique nécessite des types int ou float, non pas " + 
+            t1 + " et " + t2,
+            this.getLocation());
+    }
         
         setType(compiler.environmentType.BOOLEAN);
         return compiler.environmentType.BOOLEAN;
