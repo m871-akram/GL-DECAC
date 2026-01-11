@@ -1,6 +1,15 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Instruction;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.instructions.BOV;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.POP;
+import fr.ensimag.ima.pseudocode.instructions.PUSH;
+import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
+import fr.ensimag.ima.pseudocode.instructions.WINT;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
@@ -51,5 +60,73 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
         }
         
         return getType();
+    }
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+
+        getLeftOperand().codeGenExpr(compiler, register);
+
+        //  Évaluation de l'opérande droit
+        boolean hasRegister = compiler.getRegisterManager().registreLibre();
+
+        if (hasRegister) {
+            // SI il reste des registres disponibles
+            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+
+            getRightOperand().codeGenExpr(compiler, rRight);
+
+            
+            // IMA: OP Source, Dest 
+            compiler.addInstruction(getInstruction(rRight, register));
+
+            // Libération du registre temporaire
+            compiler.getRegisterManager().libererRegistre();
+        } else {
+            // SINON Plus de registres (Spill)
+            
+            //  Sauvegarder le résultat gauche sur la pile
+            compiler.addInstruction(new PUSH(register));
+            compiler.getRegisterManager().empiler(); // Pour TSTO
+
+            //  Calculer l'opérande droit dans le même registre 'register' 
+            getRightOperand().codeGenExpr(compiler, register);
+
+            //  Charger le résultat gauche (pile) dans R0 
+            compiler.addInstruction(new LOAD(register, Register.R0)); 
+            compiler.addInstruction(new POP(register));              
+            compiler.getRegisterManager().depiler();
+
+            // register = register OP R0
+            compiler.addInstruction(getInstruction(Register.R0, register));
+        }
+
+        // //  Gestion des erreurs d'exécution (Débordement / Division par zéro)
+        // if (!compiler.getCompilerOptions().getNoCheck()) {
+        //     if (this.getType().isFloat()) {
+        //         // Débordement flottant ou division par 0.0
+        //         compiler.addInstruction(new BOV(new Label("overflow_error")));
+        //     } else if (this instanceof AbstractOpExactCmp) {
+        //         // Pas de check pour les comparaisons
+        //     } else if (this.getInstruction(register, register).isDivOrMod()) {
+        //         // Pour DIV/REM entiers, IMA lève OV si division par 0
+        //         compiler.addInstruction(new BOV(new Label("overflow_error")));
+        //     }
+        // }
+    }
+
+    // Méthode abstraite que chaque sous-classe (Plus, Minus...) devra implémenter
+    // pour retourner l'instruction IMA correspondante (ADD, SUB...).
+    protected abstract Instruction getInstruction(GPRegister op1, GPRegister op2);
+
+    @Override
+    protected void codeGenPrint(DecacCompiler compiler) {
+        // Calcule l'expression dans R1 et affiche
+        codeGenExpr(compiler, Register.R1);
+        if (getType().isInt()) {
+            compiler.addInstruction(new WINT());
+        } else {
+            compiler.addInstruction(new WFLOAT());
+        }
     }
 }

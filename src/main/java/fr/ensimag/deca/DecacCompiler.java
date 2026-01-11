@@ -53,11 +53,7 @@ public class DecacCompiler {
         super();
         this.compilerOptions = compilerOptions;
         this.source = source;
-        if(compilerOptions != null){
-            this.registerManager = new RegisterManager(compilerOptions.getRegisters());
-        } else {
-            this.registerManager = new RegisterManager(16);
-        }
+        this.registerManager = new RegisterManager(compilerOptions.getRegisters());
     }
 
     /**
@@ -220,7 +216,7 @@ public class DecacCompiler {
             LOG.info("Parsing failed");
             return true;
         }
-        if(getCompilerOptions() !=null && getCompilerOptions().getActionSpecial() == 0){
+        if(compilerOptions.getActionSpecial() == 0){
             prog.decompile(out);
             LOG.info("Decompilation of " + sourceName + " successful.");
             return false;
@@ -233,7 +229,7 @@ public class DecacCompiler {
         prog.verifyProgram(this);
         assert(prog.checkAllDecorations());
         //gestion des drapeaux -v
-        if(getCompilerOptions() !=null && getCompilerOptions().getActionSpecial() == 1){
+        if(compilerOptions.getActionSpecial() == 1){
             return false;
         }
         //gestion des drapeaux -p

@@ -7,6 +7,7 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.DecacInternalError;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Label;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
@@ -110,18 +111,50 @@ public abstract class AbstractExpr extends AbstractInst {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
+
+    protected abstract void codeGenExpr(DecacCompiler compiler, GPRegister register);
+
+
+
     /**
      * Generate code to print the expression
      *
      * @param compiler
      */
     protected void codeGenPrint(DecacCompiler compiler) {
-        throw new UnsupportedOperationException("not yet implemented");
+        
+        //  Calculer la valeur de l'expression dans un registre temporaire
+        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMgr.prendreRegistre();
+        
+        codeGenExpr(compiler, register); // Évaluation
+        
+        //  Charger le résultat dans R1 pour l'instruction WINT/WFLOAT
+        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.LOAD(register, fr.ensimag.ima.pseudocode.Register.R1));
+        
+        //  Appeler l'instruction d'affichage selon le type
+        if (getType().isInt()) {
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.WINT());
+        } else if (getType().isFloat()) {
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.WFLOAT());
+        }
+        
+        //  Libérer le registre temporaire
+        regMgr.libererRegistre();
     }
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        throw new UnsupportedOperationException("not yet implemented");
+        // throw new UnsupportedOperationException("not yet implemented");
+
+        //  allouer un registre temporaire pour stocker le résultat 
+        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMgr.prendreRegistre();
+        
+        //  code de l'expression
+        codeGenExpr(compiler, register);
+        
+        regMgr.libererRegistre(); 
     }
     
 
