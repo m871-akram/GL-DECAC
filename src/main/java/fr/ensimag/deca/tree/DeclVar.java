@@ -48,8 +48,8 @@ public class DeclVar extends AbstractDeclVar {
         if (type == compiler.environmentType.VOID) {
             throw new ContextualError("Type void interdit pour les variables", getLocation());
         }
-        
         initialization.verifyInitialization(compiler, type, localEnv, currentClass);
+        
         // Declarer nouveau variable
         try {
             localEnv.declare(name, new VariableDefinition(type, getLocation()));
