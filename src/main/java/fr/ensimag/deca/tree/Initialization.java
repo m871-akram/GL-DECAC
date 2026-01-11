@@ -35,7 +35,14 @@ public class Initialization extends AbstractInitialization {
     protected void verifyInitialization(DecacCompiler compiler, Type t,
             EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        Type t2 = getExpression().verifyExpr(compiler, localEnv, currentClass);
+
+        if (!compiler.environmentType.assignCompatible(t, t2)) {
+            throw new ContextualError(
+                "Opérandes arithmétiques doivent être int ou float, pas " + 
+                t + " et " + t2,
+                this.getLocation());
+        }
     }
 
 
