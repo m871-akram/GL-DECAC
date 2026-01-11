@@ -39,7 +39,7 @@ public class Initialization extends AbstractInitialization {
 
         if (!compiler.environmentType.assignCompatible(t, t2)) {
             throw new ContextualError(
-                "Opérandes arithmétiques doivent être int ou float, pas " + 
+                "Initialization dois etre compatible " + 
                 t + " et " + t2,
                 this.getLocation());
         }
