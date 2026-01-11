@@ -1,4 +1,4 @@
-// Generated from /home/thibault/travail/genie/gl51/src/main/antlr4/fr/ensimag/deca/syntax/DecaLexer.g4 by ANTLR 4.13.1
+// Generated from /Users/mohammedakramlrhorfi/Desktop/gl51/src/main/antlr4/fr/ensimag/deca/syntax/DecaLexer.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

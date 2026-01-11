@@ -8,6 +8,13 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import java.io.PrintStream;
 
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.ImmediateInteger;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.WINT;
+
+
 /**
  * Integer literal
  *
@@ -32,6 +39,24 @@ public class IntLiteral extends AbstractExpr {
         return compiler.environmentType.INT;
     }
 
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister dest) {
+
+        //  LOAD #12, R2
+        compiler.addInstruction(new LOAD(new ImmediateInteger(value), dest));
+        
+    }
+
+    @Override
+    protected void codeGenPrint(DecacCompiler compiler) {
+
+        
+        compiler.addInstruction(new LOAD(new ImmediateInteger(value), Register.R1));
+        
+        compiler.addInstruction(new WINT());
+        
+    }
+
 
     @Override
     String prettyPrintNode() {
@@ -54,3 +79,5 @@ public class IntLiteral extends AbstractExpr {
     }
 
 }
+
+
