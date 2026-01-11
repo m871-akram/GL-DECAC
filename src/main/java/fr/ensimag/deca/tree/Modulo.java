@@ -34,7 +34,7 @@ public class Modulo extends AbstractOpArith {
                 this.getLocation());
         }
 
-        setType(compiler.getEnvironmentType().INT);
+        setType(compiler.environmentType.INT);
         return getType();
     }
 
