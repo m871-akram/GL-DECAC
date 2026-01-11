@@ -24,7 +24,7 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
         // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
-        if (!(t1.isInt() || t1.isFloat()) || !(t2.isInt() || t2.isFloat())) {
+        if (!compiler.environmentType.castCompatible(t1, t2)) {
             throw new ContextualError(
                 "Opérandes arithmétiques doivent être int ou float, pas " + 
                 t1 + " et " + t2,
