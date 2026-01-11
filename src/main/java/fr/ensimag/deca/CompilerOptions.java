@@ -153,9 +153,6 @@ public class CompilerOptions {
         }
 
     }
-    public int getRegisters(){
-        return maxRegisters;
-    }
 
     protected void displayUsage() {
         System.out.println("Usage: decac [[-p | -v] [-n] [-r X] [-d]* [-P] <fichier.deca>...] | [-b]");
