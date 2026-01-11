@@ -162,15 +162,46 @@ inst returns[AbstractInst tree]
 
 if_then_else returns[IfThenElse tree]
 @init {
+    ListInst elseBranch = new ListInst();
+    class ElsifData {
+        AbstractExpr cond;
+        ListInst thenBranch;
+        Token token;
+        ElsifData(AbstractExpr c, ListInst t, Token tok) {
+            cond = c; thenBranch = t; token = tok;
+        }
+    }
+    List<ElsifData> elsifChain = new ArrayList<>();
 }
     : if1=IF OPARENT condition=expr CPARENT OBRACE li_if=list_inst CBRACE {
+            assert($condition.tree != null);
+            assert($li_if.tree != null);
         }
       (ELSE elsif=IF OPARENT elsif_cond=expr CPARENT OBRACE elsif_li=list_inst CBRACE {
+            assert($elsif_cond.tree != null);
+            assert($elsif_li.tree != null);
+            elsifChain.add(new ElsifData($elsif_cond.tree, $elsif_li.tree, $elsif));
         }
       )*
       (ELSE OBRACE li_else=list_inst CBRACE {
+            assert($li_else.tree != null);
+            elseBranch = $li_else.tree;
         }
-      )?
+      )?{
+            for (int i = elsifChain.size() - 1; i >= 0; i--) {
+                ElsifData e = elsifChain.get(i);
+
+                ListInst wrapper = new ListInst();
+                IfThenElse ite = new IfThenElse(e.cond, e.thenBranch, elseBranch);
+                setLocation(ite, e.token);
+
+                wrapper.add(ite);
+                elseBranch = wrapper;
+            }
+
+            $tree = new IfThenElse($condition.tree, $li_if.tree, elseBranch);
+            setLocation($tree, $if1);
+      }
     ;
 
 list_expr returns[ListExpr tree]
