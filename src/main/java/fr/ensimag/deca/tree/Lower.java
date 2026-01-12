@@ -1,5 +1,12 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.ima.pseudocode.GPRegister;
+
+import fr.ensimag.ima.pseudocode.Instruction;
+
+
+import fr.ensimag.ima.pseudocode.instructions.SLT;
+
 
 /**
  *
@@ -17,5 +24,9 @@ public class Lower extends AbstractOpIneq {
     protected String getOperatorName() {
         return "<";
     }
+
+    @Override protected Instruction getSccInstruction(GPRegister register) { return new SLT(register); }
+
+    
 
 }
