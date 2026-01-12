@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
-
+import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.ImmediateInteger;
 
@@ -61,6 +61,7 @@ public class Program extends AbstractProgram {
         // Partie Gestion des erreurs
         compiler.addLabel(new Label("stack_overflow_error"));
         compiler.addInstruction(new WSTR("Error: Stack Overflow"));
+        // compiler.addInstruction(new WSTR(new ImmediateString("Error: Stack Overflow")));
         compiler.addInstruction(new WNL());
 
         compiler.addInstruction(new ERROR());
