@@ -1,0 +1,14 @@
+// Description:
+// test flottant invalide
+//
+// Resultats:
+//    erreur lex
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    float f2 = 1.;
+}
+
+//

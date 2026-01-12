@@ -1,0 +1,14 @@
+// Description:
+// test mauvais identificateur (mot réservé)
+//
+// Resultats:
+//    Erreur lexicale
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    asm = 3;
+}
+
+//

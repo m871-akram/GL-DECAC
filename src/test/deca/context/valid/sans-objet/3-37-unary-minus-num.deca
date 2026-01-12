@@ -1,0 +1,12 @@
+// Description :
+//    Succes (3.37) : Operateur unaire '-' sur int et float.
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    int x = -5;
+    float y = -3.14;
+}

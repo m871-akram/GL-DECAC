@@ -1,0 +1,14 @@
+// Description:
+// test flottant (hexadecimal)
+//
+// Resultats:
+//    ok lex et ok syn
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    float d = 0x1.Ap3;
+}
+
+//

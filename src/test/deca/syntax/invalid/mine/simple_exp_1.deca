@@ -1,0 +1,15 @@
+// Description:
+// test expression simple
+//
+// Resultats:
+//    Erreur syntaxe
+//    Pas d'erreur lexicale
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+2-2;
+}
+
+//

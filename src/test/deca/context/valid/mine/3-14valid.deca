@@ -1,0 +1,17 @@
+// Description:
+//    Simple test de la règle 3.14 
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+class A {
+    void test() {
+        int x = 1;
+    }
+}
+
+{
+}

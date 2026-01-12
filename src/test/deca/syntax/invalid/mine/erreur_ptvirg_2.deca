@@ -1,0 +1,16 @@
+// Description:
+// point virgule au mauvais endroit
+//
+// Resultats:
+//    Lex ok, erreur de syntaxe
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    if (x == 1); {
+        println("Erreur");
+    }
+}
+
+//

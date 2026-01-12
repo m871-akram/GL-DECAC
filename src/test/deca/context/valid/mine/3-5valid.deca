@@ -1,0 +1,20 @@
+// Description:
+//    Test de la règle (3.5) : Vérifie que le compilateur récupère bien env_exp 
+//    pour la classe en cours.
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+class A {
+    int x;
+    
+    void setX(int a) {
+        this.x = a; 
+    }
+}
+
+{
+}

@@ -1,0 +1,10 @@
+// Description:
+//    Test de la règle 3.1 avec absence du bloc main.
+//
+// Resultats:
+//    Erreur : bloc main attendu
+//
+// Historique:
+//    cree le 05/01/2026
+
+class A {}

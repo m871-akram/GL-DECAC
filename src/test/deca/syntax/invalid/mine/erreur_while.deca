@@ -1,0 +1,15 @@
+// Description:
+// test accolades manquantes après while
+//
+// Resultats:
+//    Lex ok, Erreur de syntaxe
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    while (true) 
+        int x = 1; 
+}
+
+//

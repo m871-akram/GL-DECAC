@@ -1,0 +1,13 @@
+// Description :
+//    Succes (3.28) : Affectation compatible (int vers float autorisee).
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    float f;
+    int i = 3;
+    f = i; 
+}

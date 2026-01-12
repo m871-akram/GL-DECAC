@@ -1,0 +1,14 @@
+// Description:
+// test mauvais identificateur (format identificateur invalide)
+//
+// Resultats:
+//    Erreur lexicale
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    4x = 3;
+}
+
+//

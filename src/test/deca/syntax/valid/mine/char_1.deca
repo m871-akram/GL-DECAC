@@ -1,0 +1,26 @@
+// Description:
+// test chaînes caractères valides
+//
+// Resultats:
+//    ok lex et ok syn
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    // chaîne simple
+    string s1 = "UnMot";
+
+    // Chaîne avec guillemet échappé (convention \")
+    string s2 = "Premier \"mot\"";
+
+    // Chaîne avec backslash échappé (convention \\)
+    string s3 = "Chemin: C:\\Users";
+
+    // MULTI_LINE_STRING : accepte les retours à la ligne
+    string s4 = "Ceci est une chaîne
+sur plusieurs
+lignes";
+}
+
+//

@@ -1,0 +1,12 @@
+// Description :
+//    Succes (3.32) : Affectation sur une variable (lvalue valide).
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    int x;
+    x = 3;
+}
