@@ -7,10 +7,10 @@ import fr.ensimag.ima.pseudocode.instructions.*;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
-
-import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.ImmediateInteger;
+
+import fr.ensimag.ima.pseudocode.ImmediateString;
 
 /**
  * Deca complete program (class definition plus main block)
@@ -58,12 +58,18 @@ public class Program extends AbstractProgram {
         main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill
         compiler.addInstruction(new HALT()); // fin normale du programme
 
-        // Partie Gestion des erreurs
+        // gestion des erreurs
         compiler.addLabel(new Label("stack_overflow_error"));
-        compiler.addInstruction(new WSTR("Error: Stack Overflow"));
-        // compiler.addInstruction(new WSTR(new ImmediateString("Error: Stack Overflow")));
+        
+        compiler.addInstruction(new WSTR(new ImmediateString("Error: Stack Overflow")));
         compiler.addInstruction(new WNL());
 
+        compiler.addInstruction(new ERROR());
+
+        //  Division by Zero 
+        compiler.addLabel(new Label("ereeur de div zero"));
+        compiler.addInstruction(new WSTR(new ImmediateString(" Divis par zero !!")));
+        compiler.addInstruction(new WNL());
         compiler.addInstruction(new ERROR());
 
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
