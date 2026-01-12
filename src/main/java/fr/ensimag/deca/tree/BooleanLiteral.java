@@ -15,8 +15,6 @@ import fr.ensimag.ima.pseudocode.Label;
 
 import java.io.PrintStream;
 
-import java.io.PrintStream;
-
 /**
  *
  * @author gl51
