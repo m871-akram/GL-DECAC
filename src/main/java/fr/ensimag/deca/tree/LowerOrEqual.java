@@ -1,4 +1,7 @@
 package fr.ensimag.deca.tree;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Instruction;
+import fr.ensimag.ima.pseudocode.instructions.SLE;
 
 
 /**
@@ -10,6 +13,9 @@ public class LowerOrEqual extends AbstractOpIneq {
     public LowerOrEqual(AbstractExpr leftOperand, AbstractExpr rightOperand) {
         super(leftOperand, rightOperand);
     }
+
+
+    @Override protected Instruction getSccInstruction(GPRegister register) { return new SLE(register); }
 
 
     @Override

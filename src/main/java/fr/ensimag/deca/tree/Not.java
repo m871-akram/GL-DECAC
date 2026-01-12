@@ -5,6 +5,11 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.ImmediateInteger;
+
+import fr.ensimag.ima.pseudocode.instructions.CMP;
+import fr.ensimag.ima.pseudocode.instructions.SEQ;
 
 /**
  *
@@ -33,4 +38,17 @@ public class Not extends AbstractUnaryExpr {
     protected String getOperatorName() {
         return "!";
     }
+
+
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+    
+        getOperand().codeGenExpr(compiler, register);
+        
+        // On compare à 0 
+        compiler.addInstruction(new CMP(new ImmediateInteger(0), register));
+        compiler.addInstruction(new SEQ(register));
+    }
+    
 }
