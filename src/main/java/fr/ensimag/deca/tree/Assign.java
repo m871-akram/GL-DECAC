@@ -7,6 +7,8 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.Definition;
 import fr.ensimag.deca.context.EnvironmentExp;
 
+import fr.ensimag.ima.pseudocode.GPRegister;
+
 /**
  * Assignment, i.e. lvalue = expr.
  *
@@ -31,6 +33,14 @@ public class Assign extends AbstractBinaryExpr {
             ClassDefinition currentClass) throws ContextualError {
         Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
+
+        if (t1.isFloat() && t2.isInt()) {
+            ConvFloat conv = new ConvFloat(getRightOperand());
+            conv.verifyExpr(compiler, localEnv, currentClass); // ConvFloat
+            this.setRightOperand(conv);
+            t2 = conv.getType(); // t2 devient float
+        }
+
         if(!compiler.environmentType.assignCompatible(t1, t2)){
             throw new ContextualError(
                 "Assignment entre des types invalides: " + t1 + " et " + t2,
@@ -38,6 +48,16 @@ public class Assign extends AbstractBinaryExpr {
         }
         setType(t1);
         return t1;
+    }
+
+
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        getRightOperand().codeGenExpr(compiler, register);
+        
+        //  stockage du résultat a gauche 
+        getLeftOperand().codeGenStore(compiler, register);
     }
 
 

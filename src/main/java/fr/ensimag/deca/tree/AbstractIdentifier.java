@@ -10,7 +10,12 @@ import fr.ensimag.deca.context.FieldDefinition;
 import fr.ensimag.deca.context.MethodDefinition;
 import fr.ensimag.deca.context.ExpDefinition;
 import fr.ensimag.deca.context.VariableDefinition;
+import fr.ensimag.deca.tools.DecacInternalError;
 import fr.ensimag.deca.tools.SymbolTable;
+import fr.ensimag.ima.pseudocode.GPRegister;
+
+import fr.ensimag.deca.DecacCompiler;
+
 
 /**
  *
@@ -93,4 +98,8 @@ public abstract class AbstractIdentifier extends AbstractLValue {
      *         (corresponds to the "type" attribute)
      */
     public abstract Type verifyType(DecacCompiler compiler) throws ContextualError;
+
+
+    protected abstract void codeGenStore(DecacCompiler compiler, GPRegister register);
+
 }

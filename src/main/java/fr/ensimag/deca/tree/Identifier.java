@@ -15,6 +15,14 @@ import fr.ensimag.deca.context.VariableDefinition;
 import fr.ensimag.deca.tools.DecacInternalError;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.STORE;
+import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
+import fr.ensimag.ima.pseudocode.instructions.WINT;
+
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -177,6 +185,9 @@ public class Identifier extends AbstractIdentifier {
             );
         }
 
+        // lier la definition à l'AST 
+        this.setDefinition(def);
+
         Type type = def.getType();
         this.setType(type);
         return type;
@@ -197,6 +208,8 @@ public class Identifier extends AbstractIdentifier {
             );
         }
 
+        this.setDefinition(def);
+
         Type type = def.getType();
         this.setType(type);
         return type;
@@ -204,6 +217,48 @@ public class Identifier extends AbstractIdentifier {
     
     
     private Definition definition;
+
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        // Cas 1 : Variable locale ou paramètre
+        if (!getDefinition().isField()) {
+            compiler.addInstruction(new LOAD(getExpDefinition().getOperand(), register));
+        } 
+        // Cas 2 : accès implicite via 'this' x est un champ, il faut charger this (-2(LB)) puis accéder au champ.
+        else {
+            FieldDefinition fieldDef = getFieldDefinition();
+            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
+            compiler.addInstruction(new LOAD(new RegisterOffset(fieldDef.getIndex(), register), register));
+        }
+    }
+
+    @Override
+    protected void codeGenStore(DecacCompiler compiler, GPRegister source) {
+        
+        // si variable locale ou paramètre
+        if (!getDefinition().isField()) {
+            compiler.addInstruction(new STORE(source, getExpDefinition().getOperand()));
+        } 
+        // implicit this.field = ...
+        else {
+            FieldDefinition fieldDef = getFieldDefinition();
+            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
+            compiler.addInstruction(new STORE(source, new RegisterOffset(fieldDef.getIndex(), Register.R1)));
+        }
+    }
+
+    @Override
+    protected void codeGenPrint(DecacCompiler compiler) {
+        
+        codeGenExpr(compiler, Register.getR(1)); // evaluation dans R1
+        
+        if (getType().isInt()) {
+            compiler.addInstruction(new WINT());
+        } else if (getType().isFloat()) {
+            compiler.addInstruction(new WFLOAT());
+        }
+    }
 
 
     @Override
