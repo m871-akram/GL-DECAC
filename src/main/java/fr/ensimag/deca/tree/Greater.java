@@ -1,6 +1,13 @@
 package fr.ensimag.deca.tree;
 
 
+
+
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Instruction;
+import fr.ensimag.ima.pseudocode.instructions.SGT;
+
+
 /**
  *
  * @author gl51
@@ -11,6 +18,9 @@ public class Greater extends AbstractOpIneq {
     public Greater(AbstractExpr leftOperand, AbstractExpr rightOperand) {
         super(leftOperand, rightOperand);
     }
+
+    @Override
+    protected Instruction getSccInstruction(GPRegister register) { return new SGT(register); }
 
 
     @Override
