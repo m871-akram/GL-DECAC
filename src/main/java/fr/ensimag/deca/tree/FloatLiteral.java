@@ -8,6 +8,11 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.ImmediateFloat;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+
+
 
 /**
  * Single precision, floating-point literal
@@ -36,6 +41,9 @@ public class FloatLiteral extends AbstractExpr {
             ClassDefinition currentClass) throws ContextualError {
         throw new UnsupportedOperationException("not yet implemented");        
     }
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) { compiler.addInstruction(new LOAD(new ImmediateFloat(value), register)); }
 
 
     @Override
