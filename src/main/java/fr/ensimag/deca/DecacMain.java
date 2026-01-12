@@ -26,6 +26,7 @@ public class DecacMain {
             System.exit(1);
         }
         if (options.getPrintBanner()) {
+            System.out.println("equipe 51: featuring Thibault marchand");
             throw new UnsupportedOperationException("decac -b not yet implemented");
         }
         if (options.getSourceFiles().isEmpty()) {
