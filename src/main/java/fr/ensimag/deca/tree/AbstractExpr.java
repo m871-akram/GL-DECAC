@@ -8,7 +8,12 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.DecacInternalError;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.ImmediateInteger;
 import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.instructions.BEQ;
+import fr.ensimag.ima.pseudocode.instructions.BNE;
+import fr.ensimag.ima.pseudocode.instructions.CMP;
+
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
@@ -155,6 +160,29 @@ public abstract class AbstractExpr extends AbstractInst {
         codeGenExpr(compiler, register);
         
         regMa.libererRegistre(); 
+    }
+
+    protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
+        
+        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
+        GPRegister reg = regMgr.prendreRegistre();
+
+        this.codeGenExpr(compiler, reg);
+        
+    
+        compiler.addInstruction(new CMP(new ImmediateInteger(0), reg));
+        
+        // le saut conditionnel
+        if (branchOn) {
+            // si (reg != 0) -> Saut
+            compiler.addInstruction(new BNE(target));
+        } else {
+            // si (reg == 0) -> Saut
+            compiler.addInstruction(new BEQ(target));
+        }
+        
+   
+        regMgr.libererRegistre();
     }
     
 
