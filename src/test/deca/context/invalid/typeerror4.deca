@@ -1,0 +1,14 @@
+// Description:
+//    Programme   incompatibilité type.
+//
+// Resultats:
+//    ligne 11 : erreur : println est de type void, pas int
+//
+// Historique:
+//    cree le 18/12/2025
+
+
+{
+   int x;
+   x = println("Hello");
+   }

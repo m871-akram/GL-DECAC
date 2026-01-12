@@ -1,0 +1,12 @@
+// Description:
+//    Programme   println pas de parentheses ;.
+//
+// Resultats:
+//    erreur synthaxique : ligne 11
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        println " Hello";
+}

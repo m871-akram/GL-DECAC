@@ -1,0 +1,14 @@
+// Description:
+//    Double declaration
+//
+// Resultats:
+// erreur indentificateur déjà utilisé
+
+// Historique:
+//    cree le 18/12/2025
+
+{
+   int a;
+   boolean a;
+
+}

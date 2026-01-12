@@ -1,0 +1,12 @@
+// Description:
+//    Programme   incompatibilité type.
+//
+// Resultats:
+//    ligne 11 : erreur
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        int i = i + "Hello";
+}
