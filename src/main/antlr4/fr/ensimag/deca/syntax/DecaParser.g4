@@ -220,9 +220,6 @@ list_expr returns[ListExpr tree]
 expr returns[AbstractExpr tree]
     : assign_expr {
             assert($assign_expr.tree != null);
-            if ($assign_expr.tree instanceof AbstractBinaryExpr) {
-                throw new InvalidLValue(this, $ctx);
-            }
             $tree = $assign_expr.tree;
         }
     ;
