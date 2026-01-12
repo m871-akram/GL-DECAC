@@ -25,7 +25,7 @@ INSTANCEOF : 'instanceof';
 NEW : 'new';
 NULL : 'null';
 READINT : 'readInt';
-READFLOAT : 'readFload';
+READFLOAT : 'readFloat';
 PRINT : 'print';
 PRINTLN : 'println';
 PRINTLNX : 'printlnx';

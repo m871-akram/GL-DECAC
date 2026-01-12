@@ -50,7 +50,7 @@ public class DecaLexer extends AbstractDecaLexer {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'asm'", "'class'", "'extends'", "'else'", "'false'", "'if'", "'instanceof'", 
-			"'new'", "'null'", "'readInt'", "'readFload'", "'print'", "'println'", 
+			"'new'", "'null'", "'readInt'", "'readFloat'", "'print'", "'println'", 
 			"'printlnx'", "'printx'", "'protected'", "'return'", "'this'", "'true'", 
 			"'while'", null, "'<'", "'>'", "'='", "'+'", "'-'", "'*'", "'/'", "'%'", 
 			"'.'", "','", "'('", "')'", "'{'", "'}'", "'!'", "';'", "'=='", "'!='", 
@@ -362,7 +362,7 @@ public class DecaLexer extends AbstractDecaLexer {
 		"\u0000\u00c5\u00c6\u0005r\u0000\u0000\u00c6\u00c7\u0005e\u0000\u0000\u00c7"+
 		"\u00c8\u0005a\u0000\u0000\u00c8\u00c9\u0005d\u0000\u0000\u00c9\u00ca\u0005"+
 		"F\u0000\u0000\u00ca\u00cb\u0005l\u0000\u0000\u00cb\u00cc\u0005o\u0000"+
-		"\u0000\u00cc\u00cd\u0005a\u0000\u0000\u00cd\u00ce\u0005d\u0000\u0000\u00ce"+
+		"\u0000\u00cc\u00cd\u0005a\u0000\u0000\u00cd\u00ce\u0005t\u0000\u0000\u00ce"+
 		"\u001a\u0001\u0000\u0000\u0000\u00cf\u00d0\u0005p\u0000\u0000\u00d0\u00d1"+
 		"\u0005r\u0000\u0000\u00d1\u00d2\u0005i\u0000\u0000\u00d2\u00d3\u0005n"+
 		"\u0000\u0000\u00d3\u00d4\u0005t\u0000\u0000\u00d4\u001c\u0001\u0000\u0000"+

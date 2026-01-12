@@ -3,8 +3,6 @@ package fr.ensimag.deca.syntax;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
- * Syntax error for an expression that should be an lvalue (ie that can be
- * assigned), but is not.
  *
  * @author gl51
  * @date 01/01/2026
