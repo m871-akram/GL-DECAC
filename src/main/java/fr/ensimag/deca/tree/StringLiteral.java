@@ -10,6 +10,7 @@ import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.instructions.WSTR;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
+import fr.ensimag.ima.pseudocode.GPRegister;
 
 /**
  * String literal
@@ -25,6 +26,13 @@ public class StringLiteral extends AbstractStringLiteral {
     }
 
     private String value;
+
+    
+
+     @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) { throw new UnsupportedOperationException("on evalue pas un stringliteral dans un registre "); }
+
+   
 
     public StringLiteral(String value) {
         Validate.notNull(value);
