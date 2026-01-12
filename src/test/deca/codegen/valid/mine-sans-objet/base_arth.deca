@@ -1,0 +1,20 @@
+// Description:
+//    Tests  +, -, *, /, %
+//
+// Resultats:
+//    8
+//    9
+//    4
+//    1
+//    -10
+//
+// Historique:
+//    cree le 09/01/2026
+
+{
+   println(2 + 2 * 3);       // priorite  2 + 6 = 7
+   println((1 + 2) * 3);
+   println(9 / 2);
+   println(7 % 2);
+   println(5 - 15);
+}

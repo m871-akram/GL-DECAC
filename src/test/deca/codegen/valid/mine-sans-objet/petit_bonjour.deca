@@ -1,0 +1,13 @@
+// Description:
+//
+//    Test  de   Program, Main, Println, StringLiteral
+//
+// Resultats:
+//   petit bonjour
+//
+// Historique:
+//    cree le 09/01/2026
+
+{
+    println("petit bonJour");
+}

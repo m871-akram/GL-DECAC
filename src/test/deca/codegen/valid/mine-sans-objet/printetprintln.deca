@@ -1,0 +1,16 @@
+// Description:
+//    différence entre print et println
+//
+// Resultats:
+//    HelloWorld
+//    Bonjour
+//
+// Historique:
+//    cree le 09/01/2026
+
+{
+    print("Hello");
+    println("World");
+    println("Bonjour");
+}
+

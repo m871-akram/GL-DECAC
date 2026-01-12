@@ -1,0 +1,12 @@
+// Description:
+//    entier simple
+//
+// Resultats:
+//    999887
+//
+// Historique:
+//    cree le 09/01/2026
+
+{
+   println(42);
+}

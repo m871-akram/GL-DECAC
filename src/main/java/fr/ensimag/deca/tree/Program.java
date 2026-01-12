@@ -76,16 +76,15 @@ public class Program extends AbstractProgram {
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
         int nbGlob = compiler.getRegisterManager().getNbGlobales();
 
-        // 3. ADDSP #nbGlob
+        // 3 ADDSP #nbGlob
         if (nbGlob > 0) {
             compiler.addFirstInstruction(new ADDSP(new ImmediateInteger(nbGlob)));
         }
 
-        // 2. BOV stack_overflow_error
+        // 2 BOV stack_overflow_error
         compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
 
-        // 1. TSTO #(maxTemp + nbGlob)
-        // On teste si on a la place pour les globales + le max des temporaires
+        // 1 TSTO #(maxTemp + nbGlob)
         compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
 
 
