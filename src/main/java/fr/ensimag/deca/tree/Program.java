@@ -60,17 +60,17 @@ public class Program extends AbstractProgram {
 
         // gestion des erreurs
         compiler.addLabel(new Label("stack_overflow_error"));
-        
-        compiler.addInstruction(new WSTR(new ImmediateString("Error: Stack Overflow")));
+        compiler.addInstruction(new WSTR("Error: Stack Overflow"));
+    
         compiler.addInstruction(new WNL());
 
         compiler.addInstruction(new ERROR());
 
-//        //  Division by Zero
-//        compiler.addLabel(new Label("ereeur de div zero"));
-//        compiler.addInstruction(new WSTR(new ImmediateString(" Divis par zero !!")));
-//        compiler.addInstruction(new WNL());
-//        compiler.addInstruction(new ERROR());
+        // //  Division by Zero 
+        // compiler.addLabel(new Label("on doit pas divoiser par 0"));
+        // compiler.addInstruction(new WSTR(new ImmediateString("erreur : division par zero")));
+        // compiler.addInstruction(new WNL());
+        // compiler.addInstruction(new ERROR());
 
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
