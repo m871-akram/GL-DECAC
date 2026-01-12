@@ -124,8 +124,8 @@ public abstract class AbstractExpr extends AbstractInst {
     protected void codeGenPrint(DecacCompiler compiler) {
         
         //  Calculer la valeur de l'expression dans un registre temporaire
-        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMgr.prendreRegistre();
+        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
         
         codeGenExpr(compiler, register); // Évaluation
         
@@ -140,7 +140,7 @@ public abstract class AbstractExpr extends AbstractInst {
         }
         
         //  Libérer le registre temporaire
-        regMgr.libererRegistre();
+        regMa.libererRegistre();
     }
 
     @Override
@@ -148,13 +148,13 @@ public abstract class AbstractExpr extends AbstractInst {
         // throw new UnsupportedOperationException("not yet implemented");
 
         //  allouer un registre temporaire pour stocker le résultat 
-        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMgr.prendreRegistre();
+        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
         
         //  code de l'expression
         codeGenExpr(compiler, register);
         
-        regMgr.libererRegistre(); 
+        regMa.libererRegistre(); 
     }
     
 

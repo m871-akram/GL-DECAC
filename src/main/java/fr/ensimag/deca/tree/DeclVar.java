@@ -10,6 +10,10 @@ import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
+import fr.ensimag.ima.pseudocode.DAddr;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
@@ -38,6 +42,9 @@ public class DeclVar extends AbstractDeclVar {
             EnvironmentExp localEnv, ClassDefinition currentClass) 
         throws ContextualError {
         Symbol name = this.varName.getName();
+
+        // pour la partie c 
+        VariableDefinition varDef = new VariableDefinition(this.type.verifyType(compiler), getLocation());
         
         // pas de doublon
         if (localEnv.get(name) != null) {
@@ -52,13 +59,30 @@ public class DeclVar extends AbstractDeclVar {
         
         // Declarer nouveau variable
         try {
-            localEnv.declare(name, new VariableDefinition(type, getLocation()));
+            localEnv.declare(name, varDef);
         } catch (DoubleDefException e) {
             throw new ContextualError("nouveau variable est un doublon", getLocation());
         }
+
+        // lier la def a l AST 
+        this.varName.setDefinition(varDef);
     }
 
-    
+    @Override
+    protected void codeGenDeclVar(DecacCompiler compiler) {
+        //  Gestion de l'adresse dans la pile 
+        compiler.getRegisterManager().incrNbGlobales();
+        int index = compiler.getRegisterManager().getNbGlobales();
+        //  index(GB)
+        RegisterOffset addr = new RegisterOffset(index, Register.GB);
+        
+        this.varName.getVariableDefinition().setOperand(addr);
+
+        //  initialisation
+        this.initialization.codeGenInit(compiler, this.varName.getVariableDefinition().getType(), this.varName.getVariableDefinition());
+    }
+
+
     @Override
     public void decompile(IndentPrintStream s) {
         type.decompile(s);
@@ -67,6 +91,7 @@ public class DeclVar extends AbstractDeclVar {
         initialization.decompile(s);
         s.print(";");
     }
+    
 
     @Override
     protected

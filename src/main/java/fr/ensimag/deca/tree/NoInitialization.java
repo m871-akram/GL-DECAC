@@ -1,6 +1,7 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.context.VariableDefinition;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
@@ -23,6 +24,11 @@ public class NoInitialization extends AbstractInitialization {
             throws ContextualError {
     }
 
+
+    @Override
+    protected void codeGenInit(DecacCompiler compiler, Type t, VariableDefinition varDef) {
+        // on fait rien ( peut etre il va recevoir un 0 !! )
+    }
 
     /**
      * Node contains no real information, nothing to check.
