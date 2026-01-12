@@ -8,6 +8,8 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.instructions.BRA;
 
 /**
  * Full if/else if/else statement.
@@ -47,9 +49,30 @@ public class IfThenElse extends AbstractInst {
         elseBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
     }
 
+    // if_else.1, if_else.2...
+    private static int c = 0;
+
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        throw new UnsupportedOperationException("not yet implemented");
+        c++;
+        String a = "." + c;
+        
+        Label elseLabel = new Label("else" + a);
+        Label endLabel = new Label("end_if" + a);
+    
+        // <Code(Condition, faux, E_Sinon)>
+        condition.codeGenBool(compiler, false, elseLabel);
+
+        // (Then)
+        thenBranch.codeGenListInst(compiler);
+
+        // on saute à la fin pour ne pas exécuter le Sinon après le Alors
+       
+        compiler.addInstruction(new BRA(endLabel));
+
+        compiler.addLabel(elseLabel);
+        elseBranch.codeGenListInst(compiler);
+        compiler.addLabel(endLabel);
     }
 
     @Override
