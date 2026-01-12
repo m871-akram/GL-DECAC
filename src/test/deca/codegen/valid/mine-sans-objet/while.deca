@@ -1,0 +1,20 @@
+// Description:
+//    test while
+//
+// Resultats:
+//    1
+//    2
+//    3
+//
+// Historique:
+//    cree le 11/01/2026
+
+{
+    int c = 1;
+    while (c <= 3) {
+        println(c);
+        c = c + 1;
+    }
+
+
+}

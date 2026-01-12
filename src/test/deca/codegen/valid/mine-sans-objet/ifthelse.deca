@@ -1,0 +1,25 @@
+// Description:
+//    Test If-Then-Else
+//
+// Resultats:
+//    Vrai
+//     revise les maths
+//
+// Historique:
+//    cree le 11/01/2026
+
+{
+    if (9 < 23) {
+        println("Vrai");
+    } else {
+        println("hmmm c est impossible !!");
+    }
+
+    if (87 < 77) {
+        println("erreur ");
+
+    } else {
+        println(" revise les maths");
+    }
+
+}

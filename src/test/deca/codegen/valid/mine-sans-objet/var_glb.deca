@@ -1,0 +1,17 @@
+// Description:
+//    DeclVar, Initialization, Assign et Identifier
+//
+// Resultats:
+//    87
+//    88
+//
+// Historique:
+//    cree le 10/01/2026
+
+{
+    int l = 87;      // Test DeclVar + Initialization (STORE)
+    println(l);
+
+    l = l + 1;      // Test Assign (STORE)
+    println(l);
+}

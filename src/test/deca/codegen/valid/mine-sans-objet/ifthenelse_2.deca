@@ -1,0 +1,26 @@
+// Description:
+//    if et whiel
+//
+// Resultats:
+//    0  est pair
+//    2  est pair
+//    4  est pair
+//    6  est pair
+//
+// Historique:
+//    cree le 11/01/2026
+
+{
+    int i = 0;
+
+    while (i <= 6) {
+
+        if (i % 2 == 0) {
+            println(i, "  est pair");
+        }
+
+        i = i + 1;
+
+    }
+
+}
