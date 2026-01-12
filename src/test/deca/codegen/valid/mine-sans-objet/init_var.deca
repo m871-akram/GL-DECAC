@@ -1,0 +1,20 @@
+// Description:
+//    Test init d'une variable par une autre
+//
+// Resultats:
+//    10
+//    90
+//    100
+//
+// Historique:
+//    cree le 10/01/2026
+
+{
+    int x = 10;
+    int y = x * 9;
+    int z = x + y;     // Init utilisant deux Identifiers et une Add
+
+    println(x);
+    println(y);
+    println(z);
+}

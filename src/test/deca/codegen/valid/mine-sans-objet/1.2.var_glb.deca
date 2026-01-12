@@ -1,0 +1,23 @@
+// Description:
+//    vérifie que les adresses (offsets GB) ne se chevauchet pas
+//
+// Resultats:
+//    9
+//    2
+//    3
+//    14
+//
+// Historique:
+//    cree le 10/01/2026
+
+{
+    int a = 9;      //   1(GB)
+    int b = 2;      //  2(GB)
+    int c = 3;      // 3(GB)
+
+    println(a);
+    println(b);
+    println(c);
+
+    println(a + b + c);
+}

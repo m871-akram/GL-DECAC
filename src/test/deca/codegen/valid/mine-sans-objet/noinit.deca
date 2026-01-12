@@ -1,0 +1,14 @@
+// Description:
+// NoInitialization et Assign
+//
+// Resultats:
+//    23
+//
+// Historique:
+//    cree le 10/01/2026
+
+{
+    int b;
+    b = 23;
+    println(b);
+}
