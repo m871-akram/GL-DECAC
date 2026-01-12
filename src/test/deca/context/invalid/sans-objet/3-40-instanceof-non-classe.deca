@@ -1,0 +1,12 @@
+// Description :
+//    Erreur (3.40) : Instanceof avec types non-classes.
+//
+// Resultats :
+//    Erreur contextuelle
+//    Ligne 11 : 'instanceof' incompatible avec les types 'int' et 'int'.
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    3 instanceof int;
+}

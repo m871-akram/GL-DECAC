@@ -1,0 +1,18 @@
+// Description:
+//    Test de la règle 3.8 : Initialisation avec un sous-type
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+class A {}
+class B extends A {}
+
+class Test {
+    A y = new B(); 
+}
+
+{
+}

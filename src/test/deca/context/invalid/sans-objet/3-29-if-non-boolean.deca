@@ -1,0 +1,12 @@
+// Description :
+//    Erreur (3.29) : Condition non booleenne dans if.
+//
+// Resultats :
+//    Erreur contextuelle
+//    Ligne 11 : Condition doit etre booleenne, type 'int' trouve
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    if (5) { }
+}

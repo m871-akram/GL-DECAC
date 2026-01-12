@@ -1,0 +1,17 @@
+// Description:
+//    Test règle 3.22 : Visibilité dans les blocs If/Else.
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+{
+   int x = 55;
+   if (x == 55) {
+      int y = 66; 
+   } else {
+      int y = 44; 
+   }
+}

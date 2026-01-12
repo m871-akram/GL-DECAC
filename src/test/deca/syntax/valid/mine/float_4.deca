@@ -1,0 +1,14 @@
+// Description:
+// test flottant avec notation scientifique
+//
+// Resultats:
+//    ok lex et ok syn
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    float c = 1.0e-2;
+}
+
+//

@@ -1,0 +1,15 @@
+// Description:
+// point virgule manquant après une instruction
+//
+// Resultats:
+//    Lex ok, erreur de syntaxe
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    int x = 5  
+    println(x);
+}
+
+//

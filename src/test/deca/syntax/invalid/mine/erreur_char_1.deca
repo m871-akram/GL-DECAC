@@ -1,0 +1,14 @@
+// Description:
+// test chaîne caractère invalides
+//
+// Resultats:
+//    erreur lex
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    string err1 = "Ceci est une erreur \ car il est seul";
+}
+
+//

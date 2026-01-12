@@ -1,0 +1,15 @@
+// Description:
+// test flottant trop grand
+//
+// Resultats:
+//    erreur lex
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    //Ce nombre est au-delà du maximum IEEE-754
+    float tropGrand = 5.0e60; 
+}
+
+//

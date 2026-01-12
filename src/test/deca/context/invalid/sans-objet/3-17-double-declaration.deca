@@ -1,0 +1,13 @@
+// Description :
+//    Erreur : Double declaration dans meme bloc.
+//
+// Resultats :
+//    Erreur contextuelle
+//    Ligne 12 : Declaration multiple de l'identificateur "x".
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    int x;
+    float x;
+}

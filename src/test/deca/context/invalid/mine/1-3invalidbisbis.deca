@@ -1,0 +1,14 @@
+// Description:
+//    Test de la règle 1.3 avec un doublon
+//
+// Resultats:
+//    Erreur ligne 11 : La classe A a déjà été définie.
+//
+// Historique:
+//    cree le 05/01/2026
+
+class A {}
+class A {}
+
+{
+}

@@ -1,0 +1,16 @@
+// Description:
+// test parentheses manquantes condition if
+//
+// Resultats:
+//    Lex ok, erreur de syntaxe
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    if x > 0 {
+        println("Erreur");
+    }
+}
+
+//

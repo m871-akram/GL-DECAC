@@ -1,0 +1,14 @@
+// Description:
+//    Test ordre blocs (règle 1.1)
+//
+// Resultats:
+//    Ligne 14 erreur: déclarations de classes doivent précéder MAIN
+// 
+// Historique:
+//    cree le 05/01/2026
+
+{
+    println("jkhdfhg")
+}
+
+class A {}

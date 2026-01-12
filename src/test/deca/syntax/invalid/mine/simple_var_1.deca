@@ -1,0 +1,14 @@
+// Description:
+// test entier commençant avec 0 
+//
+// Resultats:
+//    Erreur lexicale
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+    int i = 02;
+}
+
+//

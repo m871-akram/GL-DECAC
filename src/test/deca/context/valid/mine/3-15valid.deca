@@ -1,0 +1,15 @@
+// Description:
+//    Test de la règle 3.15 : une méthode avec corps Assembleur
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+class A {
+    void methodeAsm() asm("WSTR \"jhfdhgdj\""); 
+}
+
+{
+}
