@@ -27,10 +27,12 @@ public class DecacMain {
         }
         if (options.getPrintBanner()) {
             System.out.println("equipe 51: featuring Thibault marchand");
-            throw new UnsupportedOperationException("decac -b not yet implemented");
+//            throw new UnsupportedOperationException("decac -b not yet implemented");
+            System.exit(0);
         }
         if (options.getSourceFiles().isEmpty()) {
-            throw new UnsupportedOperationException("decac without argument not yet implemented");
+            options.displayUsage();
+            System.exit(0);
         }
         if (options.getParallel()) {
             // A FAIRE : instancier DecacCompiler pour chaque fichier à
@@ -49,3 +51,5 @@ public class DecacMain {
         System.exit(error ? 1 : 0);
     }
 }
+
+

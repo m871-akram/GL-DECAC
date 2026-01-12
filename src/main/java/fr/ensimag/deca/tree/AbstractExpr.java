@@ -96,9 +96,9 @@ public abstract class AbstractExpr extends AbstractInst {
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-        //throw new UnsupportedOperationException("not yet implemented");
-        Type exprType = this.verifyExpr(compiler, localEnv, currentClass);
-        this.setType(exprType);
+        throw new ContextualError(
+            " on ne peut pas mettre une expression comme instruction !! ",
+            this.getLocation());
     }
 
     /**
