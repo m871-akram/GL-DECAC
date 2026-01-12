@@ -40,14 +40,14 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
         if( t1.isFloat() && t2.isInt()){
             setRightOperand(new ConvFloat(getRightOperand()));
             this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
-            setType(compiler.environmentType.FLOAT);
-            return compiler.environmentType.FLOAT;
+            setType(compiler.environmentType.BOOLEAN);
+            return compiler.environmentType.BOOLEAN;
         }
         if( t2.isFloat() && t1.isInt()){
             setLeftOperand(new ConvFloat(getLeftOperand()));
             this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-            setType(compiler.environmentType.FLOAT);
-            return compiler.environmentType.FLOAT;
+            setType(compiler.environmentType.BOOLEAN);
+            return compiler.environmentType.BOOLEAN;
         }
         
         setType(compiler.environmentType.BOOLEAN);
