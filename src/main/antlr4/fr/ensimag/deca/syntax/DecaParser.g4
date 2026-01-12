@@ -227,6 +227,7 @@ expr returns[AbstractExpr tree]
 assign_expr returns[AbstractExpr tree]
     : e=or_expr (
         /* condition: expression e must be a "LVALUE" */ {
+            assert($e.tree != null);
             if (! ($e.tree instanceof AbstractLValue) && !($e.tree instanceof AbstractReadExpr)) {
                 throw new InvalidLValue(this, $ctx);
             }
@@ -453,7 +454,11 @@ literal returns[AbstractExpr tree]
             setLocation($tree, $INT);
         }
     | fd=FLOAT {
-            $tree =new FloatLiteral(Float.parseFloat($fd.text));
+            Float temp = Float.parseFloat($fd.text);
+            if(Float.isInfinite(temp) || Float.isNaN(temp)){
+                throw new InvalidFloat(this, $ctx);
+            }
+            $tree =new FloatLiteral(temp);
             setLocation($tree, $fd);
         }
     | s=STRING {
@@ -471,6 +476,8 @@ literal returns[AbstractExpr tree]
     | THIS {
     }
     | NULL {
+        $tree = new nullLiteral();
+        setLocation($tree, $NULL);
     }
     ;
 
