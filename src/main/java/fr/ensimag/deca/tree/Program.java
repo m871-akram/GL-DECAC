@@ -66,11 +66,11 @@ public class Program extends AbstractProgram {
 
         compiler.addInstruction(new ERROR());
 
-        //  Division by Zero 
-        compiler.addLabel(new Label("ereeur de div zero"));
-        compiler.addInstruction(new WSTR(new ImmediateString(" Divis par zero !!")));
-        compiler.addInstruction(new WNL());
-        compiler.addInstruction(new ERROR());
+//        //  Division by Zero
+//        compiler.addLabel(new Label("ereeur de div zero"));
+//        compiler.addInstruction(new WSTR(new ImmediateString(" Divis par zero !!")));
+//        compiler.addInstruction(new WNL());
+//        compiler.addInstruction(new ERROR());
 
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
