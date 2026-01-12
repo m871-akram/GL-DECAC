@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * @date 01/01/2026
  */
 public class Identifier extends AbstractIdentifier {
-    
+
     @Override
     protected void checkDecoration() {
         if (getDefinition() == null) {
@@ -50,10 +50,10 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * ClassDefinition.
-     * 
+     *
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
-     * 
+     *
      * @throws DecacInternalError
      *             if the definition is not a class definition.
      */
@@ -72,10 +72,10 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * MethodDefinition.
-     * 
+     *
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
-     * 
+     *
      * @throws DecacInternalError
      *             if the definition is not a method definition.
      */
@@ -94,10 +94,10 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * FieldDefinition.
-     * 
+     *
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
-     * 
+     *
      * @throws DecacInternalError
      *             if the definition is not a field definition.
      */
@@ -116,10 +116,10 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * VariableDefinition.
-     * 
+     *
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
-     * 
+     *
      * @throws DecacInternalError
      *             if the definition is not a field definition.
      */
@@ -137,10 +137,10 @@ public class Identifier extends AbstractIdentifier {
 
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a ExpDefinition.
-     * 
+     *
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
-     * 
+     *
      * @throws DecacInternalError
      *             if the definition is not a field definition.
      */
@@ -185,7 +185,7 @@ public class Identifier extends AbstractIdentifier {
             );
         }
 
-        // lier la definition à l'AST 
+        // lier la definition à l'AST
         this.setDefinition(def);
 
         Type type = def.getType();
@@ -214,18 +214,18 @@ public class Identifier extends AbstractIdentifier {
         this.setType(type);
         return type;
     }
-    
-    
+
+
     private Definition definition;
 
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // Cas 1 : Variable locale ou paramètre
+        //  variable locale
         if (!getDefinition().isField()) {
             compiler.addInstruction(new LOAD(getExpDefinition().getOperand(), register));
-        } 
-        // Cas 2 : accès implicite via 'this' x est un champ, il faut charger this (-2(LB)) puis accéder au champ.
+        }
+        // accès implicite via 'this' x est un champ
         else {
             FieldDefinition fieldDef = getFieldDefinition();
             compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
@@ -235,11 +235,11 @@ public class Identifier extends AbstractIdentifier {
 
     @Override
     protected void codeGenStore(DecacCompiler compiler, GPRegister source) {
-        
-        // si variable locale ou paramètre
-        if (!getDefinition().isField()) {
+
+        // si variable locale
+        if (!getExpDefinition().isField()) {
             compiler.addInstruction(new STORE(source, getExpDefinition().getOperand()));
-        } 
+        }
         // implicit this.field = ...
         else {
             FieldDefinition fieldDef = getFieldDefinition();
@@ -250,9 +250,9 @@ public class Identifier extends AbstractIdentifier {
 
     @Override
     protected void codeGenPrint(DecacCompiler compiler) {
-        
+
         codeGenExpr(compiler, Register.getR(1)); // evaluation dans R1
-        
+
         if (getType().isInt()) {
             compiler.addInstruction(new WINT());
         } else if (getType().isFloat()) {
