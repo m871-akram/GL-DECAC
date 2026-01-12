@@ -1,0 +1,13 @@
+// Description:
+//    expression complexe pour gestion des registres, au moins 3 registres disponible
+//
+// Resultats:
+//    114
+//
+// Historique:
+//    cree le 10/01/2026
+
+{
+   // (3 * 3) + (4 * 5) + (100 - 15) = 9 + 20 + 85 = 114
+   println( (1 + 2) * 3 + 4 * 5 + (10 * 10 - 15) );
+}

@@ -1,0 +1,17 @@
+// Description:
+//    bcp println et print et de println sans arguments
+//
+// Resultats:
+//    Un quatre singe
+//
+//    on doit voir une ligne vide en haut
+//
+// Historique:
+//    cree le 09/01/2026
+
+{
+    print("Un ", "quatre ");
+    println("singe");
+    println();
+    println("on doit voir une ligne vide en haut");
+}

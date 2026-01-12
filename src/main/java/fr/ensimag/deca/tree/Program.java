@@ -60,32 +60,31 @@ public class Program extends AbstractProgram {
 
         // gestion des erreurs
         compiler.addLabel(new Label("stack_overflow_error"));
-        
-        compiler.addInstruction(new WSTR(new ImmediateString("Error: Stack Overflow")));
+        compiler.addInstruction(new WSTR("Error: Stack Overflow"));
+    
         compiler.addInstruction(new WNL());
 
         compiler.addInstruction(new ERROR());
 
-//        //  Division by Zero
-//        compiler.addLabel(new Label("ereeur de div zero"));
-//        compiler.addInstruction(new WSTR(new ImmediateString(" Divis par zero !!")));
-//        compiler.addInstruction(new WNL());
-//        compiler.addInstruction(new ERROR());
+        // //  Division by Zero 
+        // compiler.addLabel(new Label("on doit pas divoiser par 0"));
+        // compiler.addInstruction(new WSTR(new ImmediateString("erreur : division par zero")));
+        // compiler.addInstruction(new WNL());
+        // compiler.addInstruction(new ERROR());
 
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
         int nbGlob = compiler.getRegisterManager().getNbGlobales();
 
-        // 3. ADDSP #nbGlob
+        // 3 ADDSP #nbGlob
         if (nbGlob > 0) {
             compiler.addFirstInstruction(new ADDSP(new ImmediateInteger(nbGlob)));
         }
 
-        // 2. BOV stack_overflow_error
+        // 2 BOV stack_overflow_error
         compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
 
-        // 1. TSTO #(maxTemp + nbGlob)
-        // On teste si on a la place pour les globales + le max des temporaires
+        // 1 TSTO #(maxTemp + nbGlob)
         compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
 
 
