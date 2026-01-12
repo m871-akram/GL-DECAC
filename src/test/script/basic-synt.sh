@@ -50,16 +50,6 @@ test_synt_valide () {
     fi
 }
 
-############################
-# Tests invalides
-############################
-
-echo "=== Tests syntaxiques invalides ==="
-
-for cas_test in src/test/deca/syntax/invalid/**/*.deca
-do
-    test_synt_invalide "$cas_test"
-done
 
 ############################
 # Tests valides
@@ -73,3 +63,14 @@ do
 done
 
 echo "=== Tous les tests syntaxiques sont réussi ==="
+
+############################
+# Tests invalides
+############################
+
+echo "=== Tests syntaxiques invalides ==="
+
+for cas_test in src/test/deca/syntax/invalid/**/*.deca
+do
+    test_synt_invalide "$cas_test"
+done
