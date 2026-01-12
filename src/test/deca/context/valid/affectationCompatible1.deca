@@ -1,0 +1,15 @@
+// Description:
+//    affectation Compatible
+//
+// Resultats:
+//    Ligne 14: Affectation de types compatibles.
+//
+// Historique:
+//    cree le 18/12/2025
+
+
+{
+   float a = 1;
+   int b = 4;
+   a = b;
+}

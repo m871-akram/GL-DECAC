@@ -1,0 +1,12 @@
+// Description:
+//    Programme   affectation à un boolean.
+//
+// Resultats:
+//    ligne 11 : erreur
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        boolean b = readInt();
+}

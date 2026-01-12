@@ -1,0 +1,13 @@
+// Description:
+//    Concaténation Compatible
+//
+// Resultats:
+//    Ligne 12: Concaténation de types compatibles.
+//
+// Historique:
+//    cree le 18/12/2025
+
+
+{
+ println (" Hello " + " 1" );
+}

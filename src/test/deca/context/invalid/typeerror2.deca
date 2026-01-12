@@ -1,0 +1,12 @@
+// Description:
+//    Programme   incompatibilité type.
+//
+// Resultats:
+//    erreur : chaine de caractère + nombre
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        println("Hello" + 5);
+}

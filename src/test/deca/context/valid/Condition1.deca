@@ -1,0 +1,15 @@
+// Description:
+//    Condition if et comparaison
+//
+// Resultats:
+//    Ligne 12 :  conversion de i en float avant comparaison
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+   int i = 3;
+   if (i <= 7.25) {
+      println("OK");
+   }
+}

@@ -16,3 +16,5 @@ fi
 
 mvn -q -f $POM -Djacoco.skip=false jacoco:restore-instrumented-classes
 mvn -f $POM -Djacoco.skip=false jacoco:report $args
+
+

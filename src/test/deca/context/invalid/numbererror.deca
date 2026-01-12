@@ -1,0 +1,17 @@
+// Description:
+//    Programme   probleme de typage;.
+//
+// Resultats:
+//    erreur : pas de cast
+//    ligne 13 ok, cast
+//    ligne 15 : error type
+
+// Historique:
+//    cree le 18/12/2025
+
+{
+        float f;
+        f=readInt();
+        int i;
+        i=1.4;
+}

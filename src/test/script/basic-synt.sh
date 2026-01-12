@@ -19,29 +19,57 @@ cd "$(dirname "$0")"/../../.. || exit 1
 
 PATH=./src/test/script/launchers:"$PATH"
 
-# exemple de définition d'une fonction
+
+############################
+# Fonctions utilitaires
+############################
+
+# Test syntaxique invalide : erreur est attendue
 test_synt_invalide () {
-    # $1 = premier argument.
-    if test_synt "$1" 2>&1 | grep -q -e "$1:[0-9][0-9]*:"
+    fichier="$1"
+
+    if test_synt "$fichier" 2>&1 | grep -q -e "$fichier:[0-9][0-9]*:"
     then
-        echo "Echec attendu pour test_synt sur $1."
+        echo "[OK] Échec attendu pour $fichier"
     else
-        echo "Succes inattendu de test_synt sur $1."
+        echo "[ERREUR] Succès inattendu pour $fichier"
         exit 1
     fi
-}    
+}
 
-for cas_de_test in src/test/deca/syntax/invalid/provided/*.deca
+# Test syntaxique valide : aucune erreur ne doit apparaître
+test_synt_valide () {
+    fichier="$1"
+
+    if test_synt "$fichier" 2>&1 | grep -q -e ':[0-9][0-9]*:'
+    then
+        echo "[ERREUR] Échec inattendu pour $fichier"
+        exit 1
+    else
+        echo "[OK] Succès attendu pour $fichier"
+    fi
+}
+
+############################
+# Tests invalides
+############################
+
+echo "=== Tests syntaxiques invalides ==="
+
+for cas_test in src/test/deca/syntax/invalid/**/*.deca
 do
-    test_synt_invalide "$cas_de_test"
+    test_synt_invalide "$cas_test"
 done
 
+############################
+# Tests valides
+############################
 
-if test_synt src/test/deca/syntax/valid/hello.deca 2>&1 | \
-    grep -q -e ':[0-9][0-9]*:'
-then
-    echo "Echec inattendu pour test_synt"
-    exit 1
-else
-    echo "Succes attendu de test_synt"
-fi
+echo "=== Tests syntaxiques valides ==="
+
+for cas_test in src/test/deca/syntax/valid/**/*.deca
+do
+    test_synt_valide "$cas_test"
+done
+
+echo "=== Tous les tests syntaxiques sont réussi ==="
