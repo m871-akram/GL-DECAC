@@ -77,9 +77,11 @@ fragment NUMHEX : DIGITHEX+;
 fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM [Ff]?;
 FLOAT : FLOATDEC | FLOATHEX;
 
-fragment STRING_CAR : ~('"' | '\\' | '\n');
-STRING : '"' (STRING_CAR | '\\"' | '\\\\')* '"';
-MULTI_LINE_STRING : '"' (STRING_CAR | '\n' | '\\"' | '\\\\')* '"';
+
+
+fragment STRING_CAR : '\\' ('"' | '\\' | 'n' | 'r' | 't') ;
+STRING : '"' (~["\\\n] | STRING_CAR)* '"' ;
+MULTI_LINE_STRING : '"' (~["\\] | '\n' | STRING_CAR)* '"' ;
 
 
 COMMENT : '/*' .*? '*/' { skip(); };
