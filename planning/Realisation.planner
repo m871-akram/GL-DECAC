@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Projet GL" company="Ensimag" manager="" phase="" project-start="20251215T000000Z" mrproject-version="2" calendar="2">
+<project name="Projet GL" company="Ensimag" manager="" phase="" project-start="20251215T000000Z" mrproject-version="2" calendar="1">
   <properties/>
   <phases/>
   <calendars>
@@ -9,16 +9,6 @@
       <day-type id="2" name="Use base" description="Use day from base calendar"/>
     </day-types>
     <calendar id="1" name="Default">
-      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
-      <overridden-day-types>
-        <overridden-day-type id="0">
-          <interval start="0800" end="1200"/>
-          <interval start="1300" end="1700"/>
-        </overridden-day-type>
-      </overridden-day-types>
-      <days/>
-    </calendar>
-    <calendar id="2" name="Default">
       <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
       <overridden-day-types>
         <overridden-day-type id="0">
@@ -39,7 +29,7 @@
         <day date="20251231" type="day-type" id="1"/>
       </days>
     </calendar>
-    <calendar id="3" name="Default">
+    <calendar id="2" name="Default">
       <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
       <overridden-day-types>
         <overridden-day-type id="0">
@@ -51,94 +41,6 @@
     </calendar>
   </calendars>
   <tasks>
-
-
-
-
-
-<task id="1" name="PHASE 1 : Infrastructure &amp; Tests" note="" work="0" duration="144000" start="20251215T000000Z" end="20251219T170000Z" type="normal" scheduling="fixed-work">
-
-      <task id="2" name="Setup Git/Maven + Lecture Sujet" note="Tout le monde" work="14400" duration="14400" start="20251215T000000Z" end="20251215T120000Z" type="normal" scheduling="fixed-work"/>
-
-      <task id="3" name="Stream QA (Tests &amp; Extension)" note="Groupe QA" work="0" duration="100800" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-
-        <task id="4" name="Cr&#xE9;ation arborescence tests (valid/invalid)" note="Groupe QA" work="14400" duration="14400" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-          <predecessors>
-            <predecessor id="1" predecessor-id="2" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="5" name="&#xC9;criture tests Syntaxe (Mots-cl&#xE9;s, Op&#xE9;rateurs)" note="Groupe QA" work="57600" duration="57600" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-          <predecessors>
-            <predecessor id="1" predecessor-id="4" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="6" name="Scripting automatique (test_lex, test_synt)" note="Groupe QA" work="28800" duration="28800" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="5" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="7" name="&#xC9;tude &amp; Choix Extension (Trigo/Matrice)" note="Groupe QA" work="28800" duration="28800" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="2" type="FS"/>
-          </predecessors>
-        </task>
-      </task>
-
-      <task id="8" name="Stream DEV (Impl&#xE9;mentation)" note="Groupe DEV" work="0" duration="115200" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-
-        <task id="9" name="Grammaire Lexer/Parser (Hello World)" note="Groupe DEV" work="43200" duration="43200" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="2" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="10" name="S&#xE9;mantique de base (Env, Type String)" note="Groupe DEV" work="43200" duration="43200" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="9" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="11" name="CRITIQUE : GenCode Bouchon (Print)" note="Groupe DEV" work="28800" duration="28800" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="10" type="FS"/>
-          </predecessors>
-        </task>
-      </task>
-
-      <task id="12" name="Convergence &amp; Livrables" note="" work="0" duration="28800" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-
-        <task id="13" name="Int&#xE9;gration (Lancer les tests sur le code)" note="Tout le monde" work="14400" duration="14400" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="6" type="FS"/>
-            <predecessor id="2" predecessor-id="11" type="FS"/>
-          </predecessors>
-        </task>
-
-        <task id="14" name="Documentation (Charte, Liste erreurs)" note="ISI, MMIS_B" work="14400" duration="14400" start="20251215T130000Z" type="normal" scheduling="fixed-work">
-           <predecessors>
-            <predecessor id="1" predecessor-id="13" type="FS"/>
-          </predecessors>
-        </task>
-      </task>
-    </task>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <task id="1" name="Analyse lexicosyntaxique" note="" work="230400" duration="57600" start="20251215T000000Z" end="20251216T170000Z" work-start="20251215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <task id="2" name="Lexeur" note="" work="115200" duration="57600" start="20251215T000000Z" end="20251216T170000Z" work-start="20251215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
       <task id="3" name="Parseur" note="" work="115200" duration="57600" start="20251215T000000Z" end="20251216T170000Z" work-start="20251215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
@@ -183,11 +85,11 @@
   </tasks>
   <resource-groups/>
   <resources>
-    <resource id="1" name="Ikhlas AZMAOUI" short-name="Ikhlas" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="2" name="Widad Benkhadra" short-name="widad" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="3" name="ahmed bennasser " short-name="ahmed" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="4" name="akram mohammed lrhorfi" short-name="akram" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="5" name="thibault marchand" short-name="thibault" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="1" name="Etudiant 5" short-name="E5" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="2" name="Etudiant 4" short-name="E4" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="3" name="Etudiant 3" short-name="E3" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="4" name="Etudiant 2" short-name="E2" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="5" name="Etudiant 1" short-name="E1" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
     <allocation task-id="4" resource-id="1" units="100"/>
