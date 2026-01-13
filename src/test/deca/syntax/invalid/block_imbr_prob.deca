@@ -11,7 +11,7 @@
    int i = 5;
    {
       int i = 9;
-      println(x);
+      println(i);
    }
-   println(x);
+   println(i);
 }

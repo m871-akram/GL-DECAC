@@ -1,5 +1,5 @@
 // Description:
-//    Programme   operateur successifs;.
+//    Programme   la valeur de gauche manque après le =
 //
 // Resultats:
 //    erreur synthaxique : ligne 12
@@ -9,5 +9,5 @@
 
 {
         int i = 1;
-        i =7 *5;
+        i = *5;
 }

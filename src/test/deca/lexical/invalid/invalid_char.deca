@@ -1,0 +1,12 @@
+// Description:
+//    Programme   Le caractère ù n'appartient pas à l'alphabet du langage Deca;.
+//
+// Resultats:
+//    erreur lexicale : ligne 11
+//
+// Historique:
+//    cree le 18/12/2025
+
+{
+        int i = ù;
+}
