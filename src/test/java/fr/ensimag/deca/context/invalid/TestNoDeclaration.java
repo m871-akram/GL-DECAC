@@ -7,8 +7,7 @@ public class TestNoDeclaration extends AbstractContextInvalidTest {
 
     @Override
     protected String getDecaFilePath() {
-        return "src/test/deca/context/invalid/noDeclaration
-.deca";
+        return "src/test/deca/context/invalid/noDeclaration.deca";
     }
 
     public static void main(String[] args) throws IOException {
