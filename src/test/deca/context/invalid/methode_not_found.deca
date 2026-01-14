@@ -1,0 +1,18 @@
+// Description:
+//    appel d'une methode qui n'existe pas (3.71)
+//
+// Resultats:
+//    Ligne 17 :  Erreur : methode n'existe pas
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {}
+
+
+{
+    A a = new A();
+    a.noMethode();
+}

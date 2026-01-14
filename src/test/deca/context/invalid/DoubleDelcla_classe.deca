@@ -1,0 +1,15 @@
+// Description:
+//    deux declarations d'une meme variable dans meme classe
+//
+// Resultats:
+//    Ligne 14 :  Erreur : non unicité du nom de variable dans l'environnement
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+   int i;
+   float i;
+}

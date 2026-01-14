@@ -1,0 +1,17 @@
+// Description:
+//    declaration et instanciation simple(2.1 et 3.17)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    int i;
+}
+
+{
+    A a = new A();
+}

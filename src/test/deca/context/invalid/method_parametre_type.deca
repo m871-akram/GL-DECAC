@@ -1,0 +1,19 @@
+// Description:
+//    appel d'une methode avec type faux de parametres
+//
+// Resultats:
+//    Ligne 18 :  Erreur : type de paramètres passés dans la méthode est incorrecte
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    int methode(int i){}
+}
+
+{
+    A a = new A();
+    a.methode("aaa");
+}

@@ -1,0 +1,15 @@
+// Description:
+//  classe qui hérite d'elle même (2.1)
+//
+// Resultats:
+//    Ligne 12 :  Erreur : héritage impossible
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A extends B{}
+
+class B extends A {}
+

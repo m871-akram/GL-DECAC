@@ -1,0 +1,15 @@
+// Description:
+//    utilsation de méthodes récursives
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    int fact(int n){
+        return n*fact(n-1);
+    }
+}

@@ -1,0 +1,20 @@
+// Description:
+//    sous-classe accède aux champs de son parent (3.66)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    int i;
+}
+
+class B extends A {
+    void methode(){
+        i = 1;
+    }
+}
+

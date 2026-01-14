@@ -1,0 +1,15 @@
+// Description:
+//    ùethode avec parametre de type void(2.5)
+//
+// Resultats:
+//    Ligne 13 :  Erreur : type de parametre ne peut pas être void
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    void methode(void x){}
+}
+

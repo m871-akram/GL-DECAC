@@ -1,0 +1,13 @@
+// Description:
+//    new sur un type primitif(3.17)
+// Resultats:
+//    Ligne 18 :  Erreur : new ne s'applique qu'aux classes
+//    Résultat : erreur
+// Historique:
+//    cree le 12/01/2026
+
+
+
+{
+    int i = new int();
+}
