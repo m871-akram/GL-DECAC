@@ -1,0 +1,17 @@
+// Description:
+//    acces via this
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    int i;
+    void setI(int i){
+        this.i=i;
+    }
+}
+

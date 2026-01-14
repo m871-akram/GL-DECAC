@@ -1,0 +1,18 @@
+// Description:
+//    methode qui utilise un champ de sa propore classe
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+//*****NOT SURE
+
+class A {
+    int x;
+    void methode(){
+        println("x" + x);
+    }
+}
+

@@ -1,0 +1,18 @@
+// Description:
+//    compatibalité des signatures dans l'heritage
+//
+// Resultats:
+//    Ligne 17 :  Erreur : redéfinition avec un type de retour différent
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+   int methode(){}
+}
+
+Class B extends A{
+    float methode(){}
+}

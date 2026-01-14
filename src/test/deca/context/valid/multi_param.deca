@@ -1,0 +1,14 @@
+// Description:
+//    methode avec plusieurs parametres avec differents types (2.5)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    void mehtode(int a, float b){}
+}
+

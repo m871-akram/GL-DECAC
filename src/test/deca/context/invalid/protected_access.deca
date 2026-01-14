@@ -1,0 +1,22 @@
+// Description:
+//    acces à un champs protected hhors d'une sous-classe
+//
+// Resultats:
+//    Ligne 19 :  Erreur : x est protégé
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    protected int i;
+}
+
+class X{
+    void method(){
+        A a = new A();
+        println(a.x);
+    }
+}
+

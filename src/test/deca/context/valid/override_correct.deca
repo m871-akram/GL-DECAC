@@ -1,0 +1,19 @@
+// Description:
+//    signature identique
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {
+    void methode(){}
+}
+
+class B extends A{
+    void methode(){}
+
+}
+

@@ -1,0 +1,17 @@
+// Description:
+//    compatibalité de types
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 14/01/2026
+
+
+
+class A {}
+
+class B extends A{}
+
+{
+    A a = new B();
+}

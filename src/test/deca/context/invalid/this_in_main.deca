@@ -1,0 +1,15 @@
+// Description:
+//    utilisation de this dans un bloc main (3.34)
+//
+// Resultats:
+//    Ligne 14 :  Erreur : this est interdit hors d'une classe
+//    Résultat : erreur
+// Historique:
+//    cree le 14/01/2026
+
+
+
+
+{
+    println(this);
+}
