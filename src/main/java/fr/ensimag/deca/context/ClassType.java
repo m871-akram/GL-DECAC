@@ -53,8 +53,8 @@ public class ClassType extends Type {
 
     @Override
     public boolean sameType(Type otherType) {
-        //throw new UnsupportedOperationException("not yet implemented");
-        return this.getName().equals(otherClass.getName());
+        throw new UnsupportedOperationException("not yet implemented");
+        //return this.getName().equals(otherClass.getName());
     }
 
     /**
