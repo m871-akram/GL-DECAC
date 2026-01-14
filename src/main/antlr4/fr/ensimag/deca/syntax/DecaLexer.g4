@@ -75,7 +75,10 @@ fragment FLOATDEC : DEC EXP? [Ff]?;
 fragment DIGITHEX : '0'  ..  '9' | 'A'  ..  'F' | 'a'  ..  'f';
 fragment NUMHEX : DIGITHEX+;
 fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM [Ff]?;
-FLOAT : FLOATDEC | FLOATHEX;
+FLOAT : (FLOATDEC | FLOATHEX) {  Float temp = Float.parseFloat(getText());
+                                 if(Float.isInfinite(temp) || Float.isNaN(temp)){
+                                    throw new InvalidFloat(this,getInputStream());
+                                 }};
 
 
 
@@ -100,14 +103,20 @@ INCLUDE : '#include' (' ')* '"' FILENAME '"' {
    ;
 UNCLOSED_COMMENT
     : '/*' .*? EOF
-      { System.err.println(getSourceName() + ":" +
-                           getLine() + ":" +
-                           getCharPositionInLine() + 
-                           ": commentaire non fermé"); 
-                           skip(); } // todo: gestion corecte des erreur
-    ;
-DEFAULT : . {System.err.println(getSourceName() + ":" +
-                           getLine() + ":" +
-                           getCharPositionInLine() + 
-                           ": il y un caratere non reconue " + getText() ); 
-                           skip();} ; 
+      { LexerNoViableAltException e =
+            new LexerNoViableAltException(
+                this,
+                _input,
+                _tokenStartCharIndex,
+                null
+            );
+        notifyListeners(e); } 
+      ;
+DEFAULT : . { LexerNoViableAltException e =
+            new LexerNoViableAltException(
+                this,
+                _input,
+                _tokenStartCharIndex,
+                null
+            );
+        notifyListeners(e); } ; 

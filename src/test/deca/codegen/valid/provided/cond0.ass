@@ -1,0 +1,25 @@
+	TSTO #0
+	BOV stack_overflow_error
+; start main program
+; Main program
+; Beginning of main declarations:
+; Beginning of main instructions:
+	LOAD #1, R2
+	LOAD #0, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else.1
+	WSTR "ok"
+	WNL
+	BRA end_if.1
+else.1:
+	WSTR "erreur"
+	WNL
+end_if.1:
+	HALT
+stack_overflow_error:
+	WSTR "Error: Stack Overflow"
+	WNL
+	ERROR
+; end main program

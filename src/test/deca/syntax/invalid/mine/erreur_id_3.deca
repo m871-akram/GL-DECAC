@@ -2,7 +2,7 @@
 // test mauvais identificateur (format identificateur invalide)
 //
 // Resultats:
-//    Erreur lexicale
+//    Erreur parseur
 //
 // Historique:
 //    cree le 18/12/2025

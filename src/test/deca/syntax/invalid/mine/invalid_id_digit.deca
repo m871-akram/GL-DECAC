@@ -2,7 +2,7 @@
 //    Programme   identificateur incorrect ;.
 //
 // Resultats:
-//    erreur lexicale : ligne 11 ident commence par chiffre
+//    erreur parseur : ligne 11 ident commence par chiffre
 //
 // Historique:
 //    cree le 18/12/2025
