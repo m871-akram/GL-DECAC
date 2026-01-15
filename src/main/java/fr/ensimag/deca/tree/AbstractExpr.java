@@ -130,7 +130,7 @@ public abstract class AbstractExpr extends AbstractInst {
         
         //  Calculer la valeur de l'expression dans un registre temporaire
         fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre(null);
         
         codeGenExpr(compiler, register); // Évaluation
         
@@ -154,7 +154,7 @@ public abstract class AbstractExpr extends AbstractInst {
 
         //  allouer un registre temporaire pour stocker le résultat 
         fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
+        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre(null);
         
         //  code de l'expression
         codeGenExpr(compiler, register);
@@ -165,7 +165,7 @@ public abstract class AbstractExpr extends AbstractInst {
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
         
         fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
-        GPRegister reg = regMgr.prendreRegistre();
+        GPRegister reg = regMgr.prendreRegistre(null);
 
         this.codeGenExpr(compiler, reg);
         

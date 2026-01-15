@@ -62,7 +62,7 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
 
        
         if (compiler.getRegisterManager().registreLibre()) {
-            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+            GPRegister rRight = compiler.getRegisterManager().prendreRegistre(register);
             getRightOperand().codeGenExpr(compiler, rRight);
             
             //  CMP Val, Reg => Codes conditions basés sur (Reg - Val)

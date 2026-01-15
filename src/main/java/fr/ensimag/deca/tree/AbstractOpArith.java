@@ -63,7 +63,7 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
 
         getLeftOperand().codeGenExpr(compiler, register);
 
-        GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+        GPRegister rRight = compiler.getRegisterManager().prendreRegistre(register);
 
         getRightOperand().codeGenExpr(compiler, rRight);
 
