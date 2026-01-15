@@ -57,7 +57,7 @@ public class RegisterManager {
      * @return true s'il reste un registre libre
      */
     public boolean registreLibre() {
-        return registreCourant <= registreMax;
+        return registreCourant < registreMax;
     }
 
     /**
@@ -70,7 +70,7 @@ public class RegisterManager {
             compiler.addInstruction(new PUSH(oldestRegister));
             toRestore.add(oldestRegister);
             this.empiler();
-            registreLibre =oldestRegister.getNumber();
+            registreLibre = oldestRegister.getNumber();
         }else{
             registreCourant++;
             registreLibre =registreCourant;
