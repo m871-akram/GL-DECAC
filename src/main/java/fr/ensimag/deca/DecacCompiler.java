@@ -162,18 +162,22 @@ public class DecacCompiler {
 
         String sourceFile = source.getAbsolutePath();
         String destFile = null;
-        // A FAIRE: calculer le nom du fichier .ass à partir du nom du
+        // A FAIRE: calculer le nom du fichier .ass à partir du nom du fcihier deca
 
         int posPoint = sourceFile.lastIndexOf('.');
+
+
+        PrintStream err = System.err;
+        PrintStream out = System.out;
 
         if (posPoint >= 0) {
 
             destFile = sourceFile.substring(0, posPoint) + ".ass";
         } else {
-            destFile = sourceFile + ".ass";
+            err.println("Erreur : le fichier  \"" + sourceFile + "\" n a pas l extension .deca ");
+            return true;
         }
-        PrintStream err = System.err;
-        PrintStream out = System.out;
+
         LOG.debug("Compiling file " + sourceFile + " to assembly file " + destFile);
         try {
             return doCompile(sourceFile, destFile, out, err);
