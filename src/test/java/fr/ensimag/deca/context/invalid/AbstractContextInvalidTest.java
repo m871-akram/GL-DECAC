@@ -13,10 +13,15 @@ import fr.ensimag.deca.syntax.DecaLexer;
 import fr.ensimag.deca.syntax.DecaParser;
 import fr.ensimag.deca.tree.AbstractProgram;
 
-
+/**
+ * Template générique pour les tests contextuels invalides.
+ * Un test est réussi si une ContextualError est levée.
+ */
 public abstract class AbstractContextInvalidTest {
 
-
+    /**
+     * Chemin du fichier .deca invalide à tester
+     */
     protected abstract String getDecaFilePath();
 
     /**
