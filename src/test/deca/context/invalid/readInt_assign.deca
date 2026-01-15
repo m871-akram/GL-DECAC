@@ -1,0 +1,23 @@
+// Description:
+// Assigner ReadInt à une classe (3.28) 
+//
+// Resultats:
+//    Ligne 12 :  Erreur : Non compatiilité de type de retour
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+class A{}
+
+
+{
+    A a = readInt();
+}
+
+
+
+
+
+
+
+

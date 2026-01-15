@@ -1,0 +1,16 @@
+// Description:
+//  Deux paramètres avec le même nom dans une méthode (2.5)
+//
+// Resultats:
+//    Ligne 13 :  Erreur : Deux paramètres avec le même nom dans une méthode
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    void method(int a,int a){} 
+}
+
+

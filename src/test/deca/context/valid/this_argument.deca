@@ -1,0 +1,17 @@
+// Description:
+//    passer l'objet courant en parametre (3.43)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    void methodA(A a ) {}
+    void methodB () { 
+        methodA(this);}
+}
+
+

@@ -1,0 +1,22 @@
+// Description:
+//    utiliser instanceOf sur une hiearchie (3.40)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+//NOT SURE
+
+class A {}
+
+class B extends A {} 
+
+{
+    A a = new B() ;
+    if (a instanceOf B) {
+        println("OK);
+    }
+}
+
+

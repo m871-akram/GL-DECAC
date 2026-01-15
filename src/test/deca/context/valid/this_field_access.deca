@@ -1,0 +1,18 @@
+// Description:
+//    utiliser this pour acceder à un champ masqué (3.43)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    int i;
+    void set(int i ) {
+        this.i = i;
+    }
+}
+
+

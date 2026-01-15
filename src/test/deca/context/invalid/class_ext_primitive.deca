@@ -1,0 +1,14 @@
+// Description:
+//  héritage d'un type prédéfini (2.1)
+//
+// Resultats:
+//    Ligne 12 :  Erreur : héritage impossible
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A extends int{}
+
+
