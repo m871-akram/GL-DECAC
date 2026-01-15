@@ -174,7 +174,7 @@ public class DecacCompiler {
 
             destFile = sourceFile.substring(0, posPoint) + ".ass";
         } else {
-            err.println("Erreur : le fichier  \"" + sourceFile + "\" n a pas l extension .deca ");
+            err.println("Erreur : le fichier  " + sourceFile + " n a pas l extension .deca ");
             return true;
         }
 
