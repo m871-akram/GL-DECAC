@@ -1,10 +1,17 @@
 
 
 package fr.ensimag.deca.codegen;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.tools.DecacInternalError;
 
 import fr.ensimag.ima.pseudocode.Register;
-
+import fr.ensimag.ima.pseudocode.instructions.POP;
+import fr.ensimag.ima.pseudocode.instructions.PUSH;
 import fr.ensimag.ima.pseudocode.GPRegister;
 
 
@@ -17,10 +24,13 @@ import fr.ensimag.ima.pseudocode.GPRegister;
 
 
 public class RegisterManager {
-
+    private DecacCompiler compiler;
     // Registres
     private int registreCourant = 2;  // R0 et R1 sont scratch
-    private  int registreMax; // 15 ,  X-1 si option -r X
+    private int registreMax; // 15 ,  X-1 si option -r X
+    private Deque<GPRegister> allocationStack = new ArrayDeque<>();
+    private Deque<GPRegister> toRestore = new ArrayDeque<>();
+    private Queue<GPRegister> used = new LinkedList<>();
     // TSTO
     private int taillePileCourante = 0; // spills
     private int taillePileMax = 0; // taille maximale atteinte dans le bloc courant
@@ -30,7 +40,7 @@ public class RegisterManager {
      * @param numRegisters Le nombre de registres disponibles (valeur de l'option -r, défaut 16).
      */
 
-    public RegisterManager(int numRegisters) {
+    public RegisterManager(int numRegisters, DecacCompiler compiler) {
 
         // on a besoin de  au moins R0, R1 et R2
         if (numRegisters < 4 || numRegisters > 16) {
@@ -38,6 +48,7 @@ public class RegisterManager {
         }
 
         this.registreMax = numRegisters - 1;
+        this.compiler = compiler;
     }
 
     // REGISTRES
@@ -53,26 +64,44 @@ public class RegisterManager {
      * Alloue un registre temporaire
      */
     public GPRegister prendreRegistre() {
-
+        int registreLibre;
         if (!registreLibre()) {
-            throw new DecacInternalError(
-                    "Plus de registres disponibles"
-            );
+            GPRegister oldestRegister= findOldRegister();
+            compiler.addInstruction(new PUSH(oldestRegister));
+            toRestore.add(oldestRegister);
+            this.empiler();
+            registreLibre =oldestRegister.getNumber();
+        }else{
+            registreCourant++;
+            registreLibre =registreCourant;
         }
 
-        GPRegister reg = Register.getR(registreCourant);
-        registreCourant++;
+        GPRegister reg = Register.getR(registreLibre);
+        used.add(reg);
+        allocationStack.push(reg);
         return reg;
     }
 
+
+    private GPRegister findOldRegister() {
+        return used.poll();
+    }
 
     /**
      * Libère le dernier registre utilisé
      */
     public void libererRegistre() {
-        if (registreCourant > 2) {
+        GPRegister reg = allocationStack.pop();
+
+        if (toRestore.contains(reg)) {
+            compiler.addInstruction(new POP(reg));
+            compiler.getRegisterManager().depiler();
+            toRestore.remove(reg);
+        } else {
             registreCourant--;
         }
+
+        used.remove(reg);
     }
     /**
      * Pour debug
@@ -136,10 +165,12 @@ public class RegisterManager {
      * Réinitialise les compteurs pour un.  nouvelle méthode
      */
     public void reset() {
-
         taillePileCourante = 0;
         taillePileMax = 0;
         registreCourant = 2;
+        allocationStack.clear();
+        used.clear();
+        toRestore.clear();
     }
 
 }

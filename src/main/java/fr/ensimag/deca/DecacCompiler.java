@@ -54,9 +54,9 @@ public class DecacCompiler {
         this.compilerOptions = compilerOptions;
         this.source = source;
         if(compilerOptions != null){
-            this.registerManager = new RegisterManager(compilerOptions.getRegisters());
+            this.registerManager = new RegisterManager(compilerOptions.getRegisters(), this);
         } else {
-            this.registerManager = new RegisterManager(16);
+            this.registerManager = new RegisterManager(16, this);
         }
     }
 
