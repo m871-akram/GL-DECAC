@@ -1,0 +1,24 @@
+// Description:
+// acces à une methode comme si c'est un champ (3.65) 
+//
+// Resultats:
+//    Ligne 16 :  Erreur : L'identificateur doit être un champ
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+class A{
+    void method(){}  
+}  
+
+{ 
+    A a = new A(); 
+    int y = a.method();
+    }
+
+
+
+
+
+
+

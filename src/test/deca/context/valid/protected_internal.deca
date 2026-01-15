@@ -1,0 +1,18 @@
+// Description:
+//    acces à un champ protected dans la meme classe (3.66)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    protected int x;
+    void methode(){
+        println(x);
+    }
+}
+
+

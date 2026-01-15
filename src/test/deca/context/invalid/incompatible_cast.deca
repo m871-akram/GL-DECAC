@@ -1,0 +1,18 @@
+// Description:
+//    cast entre deux classes sans hiéarchie(3.39)
+//
+// Resultats:
+//    Ligne 16 :  Erreur : cast impossible
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {}
+
+
+{
+    boolean b = (boolean)(new A())
+
+}

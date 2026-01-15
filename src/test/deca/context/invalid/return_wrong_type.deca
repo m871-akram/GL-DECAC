@@ -1,0 +1,22 @@
+// Description:
+// methode float qui retourne bool (3.24) 
+//
+// Resultats:
+//    Ligne 12 :  Erreur : Non compatiilité de type de retour
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+class A{
+    float method(){
+        return true;
+    }  
+}  
+
+
+
+
+
+
+
+

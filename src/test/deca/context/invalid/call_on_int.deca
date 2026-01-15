@@ -1,0 +1,24 @@
+// Description:
+// Appel de méthode sur un entier (3.71) 
+//
+// Resultats:
+//    Ligne 16 :  Erreur : Le destinataire doit être un objet
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+class A{
+    void methode(){}  
+}  
+
+{ 
+    int x = 3; 
+    x.method();
+    }
+
+
+
+
+
+
+
