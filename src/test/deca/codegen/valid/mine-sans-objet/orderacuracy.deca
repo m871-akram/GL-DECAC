@@ -1,0 +1,20 @@
+// Description:
+//    verifie l'ordre des: add
+//
+// Resultats (pour 17 19):
+//   
+//      0.00000e+00
+//      1.49012e-08
+// Historique:
+//    cree le 15/01/2026
+
+{
+    float a,b,c;
+    float resultat;
+
+    a=0.1; b=0.2; c=0.3;
+    resultat = c-(a+b);
+    println(resultat);
+    resultat = c - a - b;
+    println(resultat);
+}

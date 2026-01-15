@@ -10,5 +10,5 @@
 {
     float b;
     b = readFloat();
-    println(b * 4.0);
+    println(f * 4.0);
 }

@@ -1,0 +1,12 @@
+// Description :
+//    Initialisation d'un float par un int.
+//
+// Resultats :
+//    1
+//
+// Historique :
+//    cree le 15/01/2026
+{
+    float x = 1;
+    print(x);
+}
