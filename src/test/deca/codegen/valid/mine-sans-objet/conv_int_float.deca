@@ -1,0 +1,14 @@
+// Description:
+//    Test conversion de type int vers float
+//
+// Resultats:
+//    3
+//
+// Historique:
+//    cree le 15/01/2026
+
+{
+    float a = 3.4;
+    int x = (int)(a);
+    println(x);
+}
