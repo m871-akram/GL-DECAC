@@ -1,0 +1,16 @@
+// Description:
+// test flottants
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 15/01/2025
+
+{
+    float a = 1.25;
+    float b = 0x1.Ap3;
+    float c = 1.0e-2;
+}
+
+//

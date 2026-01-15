@@ -1,0 +1,13 @@
+// Description :
+//    Conditions booleennes correctes dans un if, while
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 15/01/2026
+{
+    if (true) { }
+    if (1 < 2) { }
+    while (false) { }
+}
