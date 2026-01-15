@@ -74,7 +74,7 @@ public class Initialization extends AbstractInitialization {
     protected void codeGenInit(DecacCompiler compiler, Type type, VariableDefinition varDef) {
 
         fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        GPRegister register = regMa.prendreRegistre();
+        GPRegister register = regMa.prendreRegistre(null);
 
         // code de  expression dans ce registre
         getExpression().codeGenExpr(compiler, register);

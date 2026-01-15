@@ -62,11 +62,12 @@ public class RegisterManager {
 
     /**
      * Alloue un registre temporaire
+     * @param register 
      */
-    public GPRegister prendreRegistre() {
+    public GPRegister prendreRegistre(GPRegister register) {
         int registreLibre;
         if (!registreLibre()) {
-            GPRegister oldestRegister= findOldRegister();
+            GPRegister oldestRegister= findOldRegister(register);
             compiler.addInstruction(new PUSH(oldestRegister));
             toRestore.add(oldestRegister);
             this.empiler();
@@ -83,8 +84,13 @@ public class RegisterManager {
     }
 
 
-    private GPRegister findOldRegister() {
-        return used.poll();
+    private GPRegister findOldRegister(GPRegister register) {
+        GPRegister current = used.poll();
+        while (current.getNumber() == register.getNumber()) {
+            used.add(current);
+            current = used.poll();
+        }
+        return current;
     }
 
     /**
