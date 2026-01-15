@@ -1,8 +1,12 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
+import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.instructions.SUB;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.POP;
+import fr.ensimag.ima.pseudocode.instructions.PUSH;
 
 
 /**
@@ -21,10 +25,29 @@ public class Minus extends AbstractOpArith {
     }
 
     @Override
-    protected Instruction getInstruction(GPRegister op1, GPRegister op2) {
-        return new SUB(op1, op2);
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        getLeftOperand().codeGenExpr(compiler, register);
 
-    }   
+        if (compiler.getRegisterManager().registreLibre()) {
+            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+            getRightOperand().codeGenExpr(compiler, rRight);
+
+            compiler.addInstruction(new SUB(rRight, register));
+
+            compiler.getRegisterManager().libererRegistre();
+        } else {
+            compiler.addInstruction(new PUSH(register));
+            compiler.getRegisterManager().empiler();
+
+            getRightOperand().codeGenExpr(compiler, register);
+
+            compiler.addInstruction(new LOAD(register, Register.R0));
+            compiler.addInstruction(new POP(register));
+            compiler.getRegisterManager().depiler();
+
+            compiler.addInstruction(new SUB(Register.R0, register));
+        }
+    }
     
 }
 

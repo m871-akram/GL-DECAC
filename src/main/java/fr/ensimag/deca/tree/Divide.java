@@ -4,7 +4,18 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.ima.pseudocode.instructions.DIV;
 import fr.ensimag.ima.pseudocode.instructions.QUO;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
+
+
+
+import fr.ensimag.deca.DecacCompiler;
+
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.Label;
+
+import fr.ensimag.ima.pseudocode.instructions.BOV;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.POP;
+import fr.ensimag.ima.pseudocode.instructions.PUSH;
 
 
 
@@ -20,12 +31,47 @@ public class Divide extends AbstractOpArith {
     }
 
     @Override
-    protected Instruction getInstruction(GPRegister op1, GPRegister op2) {
-        if (this.getType().isInt()) {
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        getLeftOperand().codeGenExpr(compiler, register);
 
-            return new QUO(op1, op2);
+
+
+        if (compiler.getRegisterManager().registreLibre()) {
+            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+            getRightOperand().codeGenExpr(compiler, rRight);
+
+            // Choix de l'instruction
+            if (this.getType().isFloat()) {
+                compiler.addInstruction(new DIV(rRight, register));
+            } else {
+                compiler.addInstruction(new QUO(rRight, register));
+            }
+
+            compiler.getRegisterManager().libererRegistre();
         } else {
-            return new DIV(op1, op2);
+            // Cas Spill (Pile pleine)
+            compiler.addInstruction(new PUSH(register));
+            compiler.getRegisterManager().empiler();
+
+            getRightOperand().codeGenExpr(compiler, register);
+
+            compiler.addInstruction(new LOAD(register, Register.R0));
+            compiler.addInstruction(new POP(register));
+            compiler.getRegisterManager().depiler();
+
+            if (this.getType().isFloat()) {
+                compiler.addInstruction(new DIV(Register.R0, register));
+            } else {
+                compiler.addInstruction(new QUO(Register.R0, register));
+            }
+        }
+
+        // Vérification Erreur
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.addInstruction(new BOV(new Label("division_par_0")));
+            if (this.getType().isFloat()) {
+                compiler.addInstruction(new BOV(new Label("erreur de pile_OV")));
+            }
         }
     }
     

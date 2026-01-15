@@ -41,9 +41,10 @@ public class ReadFloat extends AbstractReadExpr {
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
   
         compiler.addInstruction(new RFLOAT());
-        
+
+        // cela dpd de l option -n nocheck si elle est active ou non a revoir dans le compiler options
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("entre/sortie erreurr")));
+            compiler.addInstruction(new BOV(new Label("erreur_io")));
         }
 
         //  on.  déplace R1 vers le registre cible

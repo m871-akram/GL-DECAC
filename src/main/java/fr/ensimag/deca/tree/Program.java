@@ -59,18 +59,27 @@ public class Program extends AbstractProgram {
         compiler.addInstruction(new HALT()); // fin normale du programme
 
         // gestion des erreurs
-        compiler.addLabel(new Label("stack_overflow_error"));
-        compiler.addInstruction(new WSTR("Error: Stack Overflow"));
+
+        // erreur de pile_OV
+        compiler.addLabel(new Label("erreur_pile_OV"));
+        compiler.addInstruction(new WSTR("Error: pile_OV"));
     
         compiler.addInstruction(new WNL());
 
         compiler.addInstruction(new ERROR());
 
-        // //  Division by Zero 
-        // compiler.addLabel(new Label("on doit pas divoiser par 0"));
-        // compiler.addInstruction(new WSTR(new ImmediateString("erreur : division par zero")));
-        // compiler.addInstruction(new WNL());
-        // compiler.addInstruction(new ERROR());
+        // erreur_io
+
+        compiler.addLabel(new Label("erreur_io"));
+        compiler.addInstruction(new WSTR("Error: erreur I/O"));
+        compiler.addInstruction(new WNL());
+        compiler.addInstruction(new ERROR());
+
+        // erreur de division_par_0
+         compiler.addLabel(new Label("division_par_0"));
+         compiler.addInstruction(new WSTR(new ImmediateString("Error: division par 0")));
+         compiler.addInstruction(new WNL());
+         compiler.addInstruction(new ERROR());
 
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
@@ -81,8 +90,8 @@ public class Program extends AbstractProgram {
             compiler.addFirstInstruction(new ADDSP(new ImmediateInteger(nbGlob)));
         }
 
-        // 2 BOV stack_overflow_error
-        compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
+        // 2 BOV erreur de pile_OV
+        compiler.addFirstInstruction(new BOV(new Label("erreur_pile_OV")));
 
         // 1 TSTO #(maxTemp + nbGlob)
         compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));

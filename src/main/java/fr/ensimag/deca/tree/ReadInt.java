@@ -31,9 +31,13 @@ public class ReadInt extends AbstractReadExpr {
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         // R1 <- entier lu.
         compiler.addInstruction(new RINT());
+
+        // cela dpd de l option -n nocheck si elle est active ou non a revoir dans le compiler options
+
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("entre/sortie erreur")));
+            compiler.addInstruction(new BOV(new Label("erreur_io")));
         }
+
         compiler.addInstruction(new LOAD(Register.R1, register));
     }
 

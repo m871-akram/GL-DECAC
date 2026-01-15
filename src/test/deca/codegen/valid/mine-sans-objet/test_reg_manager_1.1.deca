@@ -1,0 +1,18 @@
+// Description:
+//    Test avec beaucoup de variables pour vérifier ADDSP et les offsets GB
+//
+// Resultats:
+//    Somme = 55
+//
+// Historique:
+//    cree le 15/01/2026
+
+{
+    int a = 1; int b = 2; int c = 3; int d = 4; int e = 5;
+    int f = 6; int g = 7; int h = 8; int i = 9; int j = 10;
+
+    // Si les offsets sont mal gérés, le calcul sera faux
+    int total = a + b + c + d + e + f + g + h + i + j;
+
+    println("Somme = ", total);
+}
