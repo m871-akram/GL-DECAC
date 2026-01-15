@@ -1,0 +1,12 @@
+// Description :
+//    Operateur modulo sur des entiers.
+//
+// Resultats :
+//    3
+//
+// Historique :
+//    cree le 15/01/2026
+{
+    int x = 10 % 3;
+    print(x);
+}
