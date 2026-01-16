@@ -1,0 +1,11 @@
+class Point {
+    int x = 10;
+    int y = 20;
+}
+
+{
+    Point p = new Point();
+    println(p.x);  // Doit afficher 10
+    p.y = 99;
+    println(p.y);  // Doit afficher 99
+}

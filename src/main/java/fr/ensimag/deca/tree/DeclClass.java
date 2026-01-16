@@ -5,9 +5,7 @@ import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.ima.pseudocode.*;
-import fr.ensimag.ima.pseudocode.instructions.LEA;
-import fr.ensimag.ima.pseudocode.instructions.LOAD;
-import fr.ensimag.ima.pseudocode.instructions.STORE;
+import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
@@ -188,6 +186,45 @@ public class DeclClass extends AbstractDeclClass {
             compiler.addInstruction(new LOAD(new LabelOperand(new Label(methodLabel)), Register.R0));
             compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(offset, Register.GB)));
         }
+    }
+
+    protected void codeGenInit(DecacCompiler compiler) {
+        ClassDefinition classDef = getClassSymbol().getClassDefinition();
+        String className = getClassName().getName().getName();
+
+        compiler.addLabel(new Label("init." + className));
+        compiler.addComment("===== Initialisation de " + className + " =====");
+
+        // 1. Sauvegarder les registres utilisés (R2-R15)
+        // NOTE: Pour l'initialisation, on utilise peu de registres, mais par sécurité
+        compiler.addInstruction(new PUSH(Register.R2));
+
+        // 2. Mettre les NOUVEAUX champs à zéro
+        // (this est à -2(LB) après le BSR)
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R2)); // this dans R2
+
+        int firstNewFieldOffset = classDef.getSuperClass().getNumberOfFields() + 1;
+        int nbNewFields = classDef.getNumberOfFields() - classDef.getSuperClass().getNumberOfFields();
+
+        for (int i = 0; i < nbNewFields; i++) {
+            compiler.addInstruction(new LOAD(new ImmediateInteger(0), Register.R0));
+            compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(firstNewFieldOffset + i, Register.R2)));
+        }
+
+        // 3. Appeler init.SuperClasse si pas Object
+        if (!classDef.getSuperClass().getType().isObject()) {
+            compiler.addInstruction(new PUSH(Register.R2)); // Empiler this
+            String superClassName = classDef.getSuperClass().getType().getName().getName();
+            compiler.addInstruction(new BSR(new Label("init." + superClassName)));
+            compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
+        }
+
+        // 4. Générer le code des initialisations explicites
+        getFields().codeGenListDeclField(compiler); // Nouveau dans ListDeclField
+
+        // 5. Restaurer registres et retourner
+        compiler.addInstruction(new POP(Register.R2));
+        compiler.addInstruction(new RTS());
     }
 
 

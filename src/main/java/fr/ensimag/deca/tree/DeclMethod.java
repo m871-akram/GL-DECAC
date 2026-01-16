@@ -1,6 +1,10 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.MethodDefinition;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
 import java.io.PrintStream;
@@ -61,7 +65,7 @@ public class DeclMethod extends AbstractDeclMethod {
         MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
         try {
             localEnv.declare(name.getName(), methodDef);
-        } catch (DoubleDefException e) {
+        } catch (EnvironmentExp.DoubleDefException e) {
             throw new ContextualError(e.getMessage(), getLocation());
         }
     }
@@ -109,6 +113,65 @@ public class DeclMethod extends AbstractDeclMethod {
         // Génération du label code.Classe.Methode [7]
         compiler.addLabel(name.getMethodDefinition().getLabel());
         body.codeGenMethodBody(compiler);
+    }
+
+    protected void codeGenMethod(DecacCompiler compiler) {
+        String className = getCurrentClass().getName().getName();
+        String methodName = getMethodName().getName().getName();
+
+        compiler.addLabel(new Label("code." + className + "." + methodName));
+        compiler.addComment("===== Méthode " + className + "." + methodName + " =====");
+
+        // 1. Réinitialiser le RegisterManager pour ce nouveau bloc
+        compiler.getRegisterManager().resetForNewBlock();
+
+        // 2. Générer le corps (pour calculer TSTO)
+        // On génère d'abord dans un buffer temporaire
+        IMAProgram tempProgram = compiler.swapProgram(new IMAProgram()); // NOUVELLE méthode utilitaire
+
+        // Sauvegarder R2-R15 (on va calculer lesquels sont utilisés)
+        List<GPRegister> usedRegisters = new ArrayList<>();
+        for (int i = 2; i <= compiler.getRegisterManager().getRegistreMax(); i++) {
+            usedRegisters.add(Register.getR(i));
+        }
+
+        for (GPRegister reg : usedRegisters) {
+            compiler.addInstruction(new PUSH(reg));
+            compiler.getRegisterManager().empiler();
+        }
+
+        // Générer le code du corps
+        getMethodBody().codeGenInst(compiler);
+
+        // Label de fin (pour les return)
+        compiler.addLabel(new Label("end." + className + "." + methodName));
+
+        // Restaurer R2-R15
+        for (int i = usedRegisters.size() - 1; i >= 0; i--) {
+            compiler.addInstruction(new POP(usedRegisters.get(i)));
+            compiler.getRegisterManager().depiler();
+        }
+
+        compiler.addInstruction(new RTS());
+
+        // 3. Récupérer le TSTO calculé
+        int tstoValue = compiler.getRegisterManager().getTSTOValue();
+        IMAProgram bodyProgram = compiler.swapProgram(tempProgram);
+
+        // 4. Insérer TSTO en tête
+        compiler.addInstruction(new TSTO(new ImmediateInteger(tstoValue)));
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.addInstruction(new BOV(new Label("erreur_pile_OV")));
+        }
+
+        // 5. ADDSP pour les variables locales
+        int nbLocals = getMethodBody().countLocalVariables(); // NOUVELLE méthode
+        if (nbLocals > 0) {
+            compiler.addInstruction(new ADDSP(new ImmediateInteger(nbLocals)));
+        }
+
+        // 6. Réinsérer le code du corps
+        compiler.appendProgram(bodyProgram); // NOUVELLE méthode
     }
 
 

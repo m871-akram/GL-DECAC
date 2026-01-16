@@ -68,6 +68,12 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         LOG.debug("generation table des methodes: end");
     }
 
+    public void codeGenListInit(DecacCompiler compiler) {
+        for (AbstractDeclClass classe : getList()) {
+            classe.codeGenInit(compiler);
+        }
+    }
+
 
 
 

@@ -7,6 +7,8 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
 
 import java.io.PrintStream;
 
@@ -59,9 +61,39 @@ public class New extends AbstractExpr {
 
 
 
+
+
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, fr.ensimag.ima.pseudocode.GPRegister dest) {
-        throw new UnsupportedOperationException("not yet implemented");
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        ClassDefinition classDef = getType().asClassType("Not a class", getLocation()).getDefinition();
+        int nbFields = classDef.getNumberOfFields();
+        int objectSize = 1 + nbFields; // 1 pour vTable + champs
+
+        // NEW #objectSize, register
+        compiler.addInstruction(new NEW(new ImmediateInteger(objectSize), register));
+
+        // Vérification débordement tas
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.addInstruction(new BOV(new Label("tas_plein")));
+        }
+
+        // Stocker l'adresse de la vTable à l'offset 0 de l'objet
+        int vTableAddr = classDef.getVTableAddr();
+        compiler.addInstruction(new LEA(new RegisterOffset(vTableAddr, Register.GB), Register.R0));
+        compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
+
+        // Appeler init.Classe(this)
+        // PUSH this (dans register)
+        compiler.addInstruction(new PUSH(register));
+        compiler.getRegisterManager().empiler();
+
+        // BSR init.Classe
+        String className = classDef.getType().getName().getName();
+        compiler.addInstruction(new BSR(new Label("init." + className)));
+
+        // POP (nettoyer la pile, mais résultat déjà dans register)
+        compiler.addInstruction(new SUBSP(new ImmediateInteger(1))); // Enlever le paramètre this
+        compiler.getRegisterManager().depiler();
     }
 
     @Override

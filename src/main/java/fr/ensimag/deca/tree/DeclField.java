@@ -4,6 +4,11 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.STORE;
 
 
 /**
@@ -128,6 +133,22 @@ public class DeclField extends AbstractDeclField {
     protected void codeGenInitField(DecacCompiler compiler) {
         // Étape C (4.3) : Générer le code pour l'initialisation par défaut ou explicite
         initialization.codeGenInit(compiler, fieldName.getFieldDefinition());
+    }
+
+    protected void codeGenInitField(DecacCompiler compiler) {
+        // Si pas d'initialisation explicite, déjà à 0
+        if (getInitialization().getExpression() == null) return;
+
+        // Calculer la valeur d'initialisation dans R0
+        GPRegister reg = compiler.getRegisterManager().prendreRegistre();
+        getInitialization().getExpression().codeGenExpr(compiler, reg);
+
+        // Stocker dans this.champ
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1)); // this
+        int fieldOffset = getFieldName().getFieldDefinition().getIndex();
+        compiler.addInstruction(new STORE(reg, new RegisterOffset(fieldOffset, Register.R1)));
+
+        compiler.getRegisterManager().libererRegistre();
     }
 }
 

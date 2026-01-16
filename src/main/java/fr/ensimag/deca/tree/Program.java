@@ -58,6 +58,10 @@ public class Program extends AbstractProgram {
 
         // ===== PASSE 2 : Programme Principal =====
 
+        // PASSE 2A : Sous-programmes init
+        compiler.addComment("===== Sous-programmes d'initialisation =====");
+        classes.codeGenListInit(compiler); // NOUVELLE méthode
+
         //  passe 2 :Partie "Programme Principal"
         compiler.addComment("Main program");
         main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill

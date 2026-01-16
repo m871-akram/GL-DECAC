@@ -5,7 +5,9 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.DAddr;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.instructions.STORE;
 
 /**
  * Assignment, i.e. lvalue = expr.
@@ -61,6 +63,23 @@ public class Assign extends AbstractBinaryExpr {
         
         //  stockage du résultat a gauche 
         getLeftOperand().codeGenStore(compiler, register);
+    }
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        AbstractLValue lValue = getLeftOperand();
+
+        if (lValue instanceof Selection) {
+            // Cas objet.champ = expr
+            DAddr addr = ((Selection)lValue).codeGenLValue(compiler);
+            getRightOperand().codeGenExpr(compiler, register);
+            compiler.addInstruction(new STORE(register, addr));
+            // Libérer le registre de l'objet si alloué
+        } else if (lValue instanceof Identifier) {
+            // Cas variable = expr (déjà implémenté)
+            getRightOperand().codeGenExpr(compiler, register);
+            compiler.addInstruction(new STORE(register, ((Identifier)lValue).getExpDefinition().getOperand()));
+        }
     }
 
 
