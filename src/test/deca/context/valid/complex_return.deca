@@ -1,0 +1,17 @@
+// Description:
+//    une methode qui retourne le résultat d'un calcul (3.24)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    float method() {
+        return 3 * 7.5;
+    }
+}
+
+

@@ -1,0 +1,24 @@
+
+// Description:
+//  Tentative d'accès à un champ sur un type primitif (3.65) 
+//
+// Resultats:
+//    Ligne 16 :  Erreur : Le destinataire doit être de type classe
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+
+{ 
+    int x = 3; 
+    x.field = 7;
+    }
+
+
+
+
+
+
+

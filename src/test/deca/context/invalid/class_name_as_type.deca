@@ -1,0 +1,22 @@
+
+// Description:
+//  Utiliser un nom de classe comme variable sans type (2.1) 
+//
+// Resultats:
+//    Ligne 15 :  Erreur : Pas de distinction entre types et identificateurs.
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {}
+
+{ A=1;}
+
+
+
+
+
+
+

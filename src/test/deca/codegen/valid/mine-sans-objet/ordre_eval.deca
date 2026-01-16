@@ -1,0 +1,13 @@
+// Description:
+//    Vérifie l'ordre d'évaluation de gauche à droite (Point 4 Sémantique).
+//    
+// Resultats:
+//    11
+//
+//
+// Historique: cree le 15/01/2026
+
+{
+    int a = 1;
+    println(a + (a = 10));
+}

@@ -1,0 +1,21 @@
+// Description:
+//  Redéfinition d'une méthode en changeant le type des paramètres (2.7)
+//
+// Resultats:
+//    Ligne 18 :  Erreur : Signatures identiques requises dans l'heritage
+//    Résultat : erreur
+// Historique:
+//    cree le 15/01/2026
+
+
+
+class A {
+    void method(int a){} 
+}
+
+
+class B extends A {
+    method(float a){} 
+}
+
+

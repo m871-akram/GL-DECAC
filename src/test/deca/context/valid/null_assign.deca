@@ -1,0 +1,17 @@
+// Description:
+//    affectation d'une variable de classe par null (3.29)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+class A {}
+
+
+{
+    A a = null;
+}
+
+

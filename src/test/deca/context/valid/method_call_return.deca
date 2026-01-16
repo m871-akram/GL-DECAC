@@ -1,0 +1,21 @@
+// Description:
+//    test de cohence des expressions booleennes complexsx (3.33)
+//
+// Resultats:
+//    Test OK
+// Historique:
+//    cree le 15/01/2026
+
+
+class A {
+    int calcul(){
+         return 1;
+        }
+}
+
+
+{
+    int i = 10 + (new A().calcul());
+}
+
+

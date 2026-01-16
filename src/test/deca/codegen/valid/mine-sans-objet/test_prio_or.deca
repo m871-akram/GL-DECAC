@@ -7,7 +7,7 @@
 // Historique :
 //    cree le 15/01/2026
 {
-    int x = 0
+    int x = 0;
     if (true || (2/x == 0)) {
             println("1");
         } else {
