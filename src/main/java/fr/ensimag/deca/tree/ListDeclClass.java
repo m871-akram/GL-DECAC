@@ -46,15 +46,19 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
-//    /**
-//     * Génération de code pour les déclarations de classes.
-//     * (Construction des tables des méthodes, etc.)
-//     */
-//    public void codeGenListDeclClass(DecacCompiler compiler) {
-//        for (AbstractDeclClass c : getList()) {
-//            c.codeGenDeclClass(compiler);
-//        }
-//    }
+    /**
+     * génération de code pour les déclarations de classes
+     */
+    public void codeGenListDeclClass(DecacCompiler compiler) {
+
+        LOG.debug("generation table des methodes: start");
+        for (AbstractDeclClass c : getList()) {
+            c.codeGenDeclClass(compiler);
+        }
+        LOG.debug("generation table des methodes: end");
+    }
+
+
 
 
 }

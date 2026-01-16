@@ -8,9 +8,7 @@ import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import fr.ensimag.ima.pseudocode.Label;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
 
-import fr.ensimag.ima.pseudocode.ImmediateString;
 
 /**
  * Deca complete program (class definition plus main block)
@@ -49,11 +47,15 @@ public class Program extends AbstractProgram {
 
     @Override
     public void codeGenProgram(DecacCompiler compiler) {
-        //  Partie "Déclarations de classes" (Table des méthodes)
-//        compiler.addComment("Construction des tables des methodes");
-//        classes.codeGenListDeclClass(compiler);
+        //  passe 1 : Partie "Déclarations de classes" (Table des méthodes)
+        compiler.addComment("Construction des tables des methodes");
+        classes.codeGenListDeclClass(compiler);
 
-        //  Partie "Programme Principal"
+
+
+        // ===== PASSE 2 : Programme Principal =====
+
+        //  passe 2 :Partie "Programme Principal"
         compiler.addComment("Main program");
         main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill
         compiler.addInstruction(new HALT()); // fin normale du programme
@@ -77,7 +79,7 @@ public class Program extends AbstractProgram {
 
         // erreur de division_par_0
          compiler.addLabel(new Label("division_par_0"));
-         compiler.addInstruction(new WSTR(new ImmediateString("Error: division par 0")));
+         compiler.addInstruction(new WSTR("Error: division par 0"));
          compiler.addInstruction(new WNL());
          compiler.addInstruction(new ERROR());
 
@@ -87,14 +89,14 @@ public class Program extends AbstractProgram {
 
         // 3 ADDSP #nbGlob
         if (nbGlob > 0) {
-            compiler.addFirstInstruction(new ADDSP(new ImmediateInteger(nbGlob)));
+            compiler.addFirstInstruction(new ADDSP(nbGlob));
         }
 
         // 2 BOV erreur de pile_OV
         compiler.addFirstInstruction(new BOV(new Label("erreur_pile_OV")));
 
         // 1 TSTO #(maxTemp + nbGlob)
-        compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
+        compiler.addFirstInstruction(new TSTO(maxTemp + nbGlob));
 
 
     }
