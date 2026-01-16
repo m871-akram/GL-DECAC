@@ -13,6 +13,13 @@ import fr.ensimag.ima.pseudocode.instructions.*;
 import java.io.PrintStream;
 
 
+
+/**
+ * Integer literal
+ * new classname()
+ * @author G51
+ * @date 16/01/2026
+ */
 public class New extends AbstractExpr {
 
     private final AbstractIdentifier className;
@@ -54,7 +61,8 @@ public class New extends AbstractExpr {
         // si tout est bon , on retourn son type
         ClassDefinition classDef = (ClassDefinition) typeDef;
         Type classType = classDef.getType();
-
+        className.setType(classType);
+        className.setDefinition(classDef);
         setType(classType);
         return classType;
     }

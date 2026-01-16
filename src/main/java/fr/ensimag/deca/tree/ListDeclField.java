@@ -12,6 +12,11 @@ public class ListDeclField extends TreeList<AbstractDeclField>{
             method.verifyDeclField(compiler, superClassEnv,localEnv,currentClassDef);
         }
     }
+    public void verifyDeclFieldPrototype2(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError{
+        for (AbstractDeclField method : getList()) {
+            method.verifyDeclField2(compiler, currentClassDef, localEnv);
+        }
+    }
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclField field : getList()) {

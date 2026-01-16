@@ -44,14 +44,14 @@ public class InstanceOf extends AbstractExpr {
 
         if (!exprType.isClassOrNull()) {
             throw new ContextualError(
-                    "instanceof ne s'applique qu'à un objet",
-                    leftOperand.getLocation());
+                "instanceof ne s'applique qu'à un objet",
+                leftOperand.getLocation());
         }
 
         if (!classType.isClass()) {
             throw new ContextualError(
-                    "instanceof attend un type classe",
-                    rightOperand.getLocation());
+                "instanceof attend un type classe",
+                rightOperand.getLocation());
         }
 
         setType(compiler.environmentType.BOOLEAN);

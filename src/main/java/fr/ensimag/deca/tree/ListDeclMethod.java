@@ -12,6 +12,11 @@ public class ListDeclMethod extends TreeList<AbstractDeclMethod>{
             method.verifyDeclMethodPrototype(compiler, superClassEnv,currentClassDef,localEnv);
         }
     }
+    public void verifyDeclMethodPrototype2(DecacCompiler compiler,EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError{
+        for (AbstractDeclMethod method : getList()) {
+            method.verifyDeclMethodPrototype2(compiler, currentClassDef, localEnv);
+        }
+    }
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclMethod methode : getList()) {

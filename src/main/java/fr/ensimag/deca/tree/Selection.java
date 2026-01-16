@@ -8,6 +8,14 @@ import fr.ensimag.ima.pseudocode.instructions.BEQ;
 import fr.ensimag.ima.pseudocode.instructions.CMP;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.FieldDefinition;
+import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.GPRegister;
+
 import java.io.PrintStream;
 
 public class Selection extends AbstractLValue {
@@ -74,33 +82,36 @@ public class Selection extends AbstractLValue {
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
-        // Rule (3.65/3.66): The receiver must be a class type [3].
-        Type receiverType = receiver.verifyExpr(compiler, localEnv, currentClass);
-        ClassType classType = receiverType.asClassType("Selection target must be an object", receiver.getLocation());
+        Type objectType = getObject().verifyExpr(compiler, localEnv, currentClass);
+        ClassDefinition classDef = objectType.asClassType("Sélection impossible sur un type non-classe", getLocation()).getDefinition();
+        var def = classDef.getMembers().get(getItem().getName());
 
-        // Look up the field in the class members [3].
-        ExpDefinition def = classType.getDefinition().getMembers().get(field.getName());
-        if (def == null || !def.isField()) {
-            throw new ContextualError("Field " + field.getName() + " not found in class " + classType.getName(),
-                    field.getLocation());
-        }
-        FieldDefinition fieldDef = (FieldDefinition) def;
-
-        // Rule (3.66): Visibility rules for protected fields [4, 5].
-        if (fieldDef.getVisibility() == Visibility.PROTECTED) {
-            // (1) Receiver type must be a subtype of current class.
-            // (2) Current class must be a subtype of the class declaring the field.
-            if (currentClass == null ||
-                    !compiler.environmentType.subType(classType, currentClass.getType()) ||
-                    !compiler.environmentType.subType(currentClass.getType(), fieldDef.getContainingClass().getType())) {
-                throw new ContextualError("Access to protected field " + field.getName() + " is forbidden here",
-                        getLocation());
-            }
+        if (def == null) {
+            throw new ContextualError(
+                "Champ " + getItem().getName().getName() + " inexistant",
+                getLocation()
+            );
         }
 
-        field.setDefinition(fieldDef);
-        this.setType(fieldDef.getType());
-        return fieldDef.getType();
+        if (!def.isField()) {
+            throw new ContextualError(
+                getItem().getName().getName() + " n'est pas un champ",
+                getLocation()
+            );
+        }
+
+        FieldDefinition fieldDef = def.asFieldDefinition("Ce n'est pas un champ", getLocation());
+
+        if (fieldDef.getVisibility()== Visibility.PROTECTED && !currentClass.isSubClassOf(fieldDef.getContainingClass())) {
+            throw new ContextualError(
+                "Champ PROTECTED '" + getItem().getName().getName() + "' non accessible dans cette classe",
+                getLocation()
+            );
+        }
+
+        getItem().setDefinition(fieldDef);
+        Type fieldType = fieldDef.getType();
+        setType(fieldType);
+        return fieldType;
     }
-}
 }

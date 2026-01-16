@@ -27,8 +27,8 @@ public class nullLiteral extends AbstractExpr {
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
-        this.setType(compiler.environmentType.VOID);
-        return compiler.environmentType.VOID;
+        this.setType(compiler.environmentType.NULL);
+        return compiler.environmentType.NULL;
     }
 
     @Override

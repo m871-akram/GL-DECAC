@@ -26,8 +26,7 @@ public class DeclParam extends AbstractDeclParam {
 
 
     @Override
-    protected void verifyDeclParam(DecacCompiler compiler, EnvironmentExp localEnv,
-                                ClassDefinition currentClass) throws ContextualError {
+    protected Type verifyDeclParam(DecacCompiler compiler) throws ContextualError {
 
         // on vérifie que le type existe
         Symbol typeName = type.getName();
@@ -47,26 +46,21 @@ public class DeclParam extends AbstractDeclParam {
                 getLocation()
             );
         }
-
-        Symbol paramName = name.getName();
-
-        if (localEnv != null && localEnv.get(paramName) != null) {
+        this.type.setDefinition(typeDef);
+        this.type.setType(paramType);
+        return paramType;
+    }
+    @Override
+    protected void verifyDeclParam2(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+        VariableDefinition paramDef = new VariableDefinition(this.type.getType(), getLocation());
+        this.name.setDefinition(paramDef);
+        this.name.setType(this.type.getType());
+        try {
+            localEnv.declare(name.getName(), paramDef);
+        } catch (EnvironmentExp.DoubleDefException e) {
             throw new ContextualError(
-                "Paramètre:" + paramName.getName() + "est déjà déclaré",getLocation()
+                e.getMessage(),getLocation()
             );
-        }
-
-        ExpDefinition paramDef = new ExpDefinition(
-            paramType,
-            getLocation()
-        );
-
-        if (localEnv != null) {
-            try {
-                localEnv.declare(paramName, paramDef);
-            } catch (DoubleDefException e) {
-                throw new ContextualError(e.getMessage(), getLocation());
-            }
         }
     }
 
@@ -78,19 +72,19 @@ public class DeclParam extends AbstractDeclParam {
         //throw new UnsupportedOperationException("Unimplemented method 'decompile'");
         type.decompile(s);
         s.print(" ");
-        paramName.decompile(s);
+        name.decompile(s);
     }
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        type.prettyPrint(s, prefix, false);
-        paramName.prettyPrint(s, prefix, true);
+        type.prettyPrint(s, prefix, true);
+        name.prettyPrint(s, prefix, false);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
         type.iter(f);
-        paramName.iter(f);
+        name.iter(f);
     }
 
 //    @Override

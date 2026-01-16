@@ -91,6 +91,8 @@ public class DeclField extends AbstractDeclField {
         } catch (DoubleDefException e) {
             throw new ContextualError(e.getMessage(), getLocation());
         }
+        name.setDefinition(fieldDef);
+        name.setType(fieldType);
     }
 //
 //    @Override

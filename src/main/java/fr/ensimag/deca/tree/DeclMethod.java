@@ -1,9 +1,17 @@
 package fr.ensimag.deca.tree;
 
+import java.io.PrintStream;
+
+import org.apache.commons.lang.Validate;
+
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
+import fr.ensimag.deca.context.ExpDefinition;
 import fr.ensimag.deca.context.MethodDefinition;
+import fr.ensimag.deca.context.Signature;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
@@ -177,7 +185,9 @@ public class DeclMethod extends AbstractDeclMethod {
 
 //    protected void verifyDeclMethod(DecacCompiler compiler, Symbol currentClass, Symbol superClass)
 //            throws ContextualError {
-//        throw new UnsupportedOperationException("Not yet implemented");
+//                EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
+//        params.verifyListDeclParam2(compiler,methodEnv);
+//        body.verifyMethodBody(compiler, methodEnv, currentClass, type.getType());
 //    }
 //
 //    @Override
@@ -228,6 +238,18 @@ public class DeclMethod extends AbstractDeclMethod {
 //        EnvironmentExp localEnv = new EnvironmentExp(nameClass.getMembers());
 //        params.verifyListDeclParamBody(compiler, localEnv);
 //        body.verifyMethodBody(compiler, localEnv, nameClass, type.getType());
+//    }
+
+//    @Override
+//    protected void verifyDeclMethodPrototype2(DecacCompiler compiler, ClassDefinition currentClassDef,
+//                                              EnvironmentExp localEnv) throws ContextualError {
+//        EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
+//
+//        this.params.verifyListDeclParam2(compiler, methodEnv);
+//        this.body.verifyMethodBody(compiler, methodEnv, currentClassDef, type.getType());
+//        MethodDefinition methodDef = (MethodDefinition) localEnv.get(name.getName()); // récupérée en passe 2
+//        this.name.setDefinition(methodDef);
+//        this.name.setType(type.getType());
 //    }
 
 }

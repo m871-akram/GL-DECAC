@@ -40,7 +40,9 @@ public class EnvironmentType {
         Symbol stringSymb = compiler.createSymbol("string");
         STRING = new StringType(stringSymb);
         // not added to envTypes, it's not visible for the user.
-        
+        Symbol nullSymb = compiler.createSymbol("null");
+        this.NULL = new NullType(nullSymb);
+
         // Classe  Objet necessaire en Partie Objet
         Symbol objectSymb = compiler.createSymbol("Object");
 
@@ -48,13 +50,13 @@ public class EnvironmentType {
         ClassDefinition objectDef = objectType.getDefinition();
 
         EnvironmentExp objectMembers = objectDef.getMembers();
-        Signature equalsSign = new Signature();
-        MethodDefinition equalsMethodDef = new MethodDefinition(
-            BOOLEAN,
-            Location.BUILTIN,
-            equalsSign,
-            0
-        );
+        // Signature equalsSign = new Signature();
+        // MethodDefinition equalsMethodDef = new MethodDefinition(
+        //     BOOLEAN,
+        //     Location.BUILTIN,
+        //     equalsSign,
+        //     0
+        // );
 
         Symbol equalsSymbol = compiler.createSymbol("equals");
         ExpDefinition equalsExpDef = new ExpDefinition(
@@ -83,6 +85,12 @@ public class EnvironmentType {
         return envTypes.get(s);
     }
     public boolean subType(Type T1, Type T2){
+        if (T1.sameType(T2)) {
+            return true;
+        }
+        if ( T1.isClass() && T2.isNull() ) {
+            return true;
+        }
         if (T1.isClass() && T2.isClass()) {
             ClassDefinition defT2 = ((ClassType) T2).getDefinition();
             ClassDefinition defT1 = ((ClassType) T1).getDefinition();
@@ -96,9 +104,6 @@ public class EnvironmentType {
         return false;
     }
     public boolean assignCompatible(Type T1, Type T2) {
-        if (T1.sameType(T2)) {
-            return true;
-        }
 
         if (T1.isFloat() && T2.isInt()) {
             return true;
@@ -125,4 +130,5 @@ public class EnvironmentType {
     public final FloatType   FLOAT;
     public final StringType  STRING;
     public final BooleanType BOOLEAN;
+    public final NullType NULL;
 }
