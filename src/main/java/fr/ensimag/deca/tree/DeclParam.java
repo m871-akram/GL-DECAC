@@ -1,33 +1,81 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
+import java.io.PrintStream;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
+import fr.ensimag.deca.context.ExpDefinition;
+import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.context.TypeDefinition;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import java.io.PrintStream;
-import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
-import fr.ensimag.deca.context.*;
-import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.deca.ima.pseudocode.RegisterOffset;
-import fr.ensimag.deca.ima.pseudocode.Register;
 import java.io.PrintStream;
 
 public class DeclParam extends AbstractDeclParam {
 
     private final AbstractIdentifier type;
-    private final AbstractIdentifier paramName;
+    private final AbstractIdentifier name;
 
-    public DeclParam(AbstractIdentifier type, AbstractIdentifier paramName) {
+    public DeclParam(AbstractIdentifier type, AbstractIdentifier name) {
         this.type = type;
-        this.paramName = paramName;
+        this.name = name;
     }
+
+
+    @Override
+    protected void verifyDeclParam(DecacCompiler compiler, EnvironmentExp localEnv,
+                                ClassDefinition currentClass) throws ContextualError {
+
+        // on vérifie que le type existe
+        Symbol typeName = type.getName();
+        TypeDefinition typeDef = compiler.environmentType.defOfType(typeName);
+
+        if (typeDef == null) {
+            throw new ContextualError(
+                "Type :" + typeName.getName() + "est inconnu pour le paramètre", getLocation()
+            );
+        }
+
+        Type paramType = typeDef.getType();
+
+        // Un paramètre peut pas etre void
+        if (paramType.isVoid()) {
+            throw new ContextualError("Un paramètre ne peut pas être de type void",
+                getLocation()
+            );
+        }
+
+        Symbol paramName = name.getName();
+
+        if (localEnv != null && localEnv.get(paramName) != null) {
+            throw new ContextualError(
+                "Paramètre:" + paramName.getName() + "est déjà déclaré",getLocation()
+            );
+        }
+
+        ExpDefinition paramDef = new ExpDefinition(
+            paramType,
+            getLocation()
+        );
+
+        if (localEnv != null) {
+            try {
+                localEnv.declare(paramName, paramDef);
+            } catch (DoubleDefException e) {
+                throw new ContextualError(e.getMessage(), getLocation());
+            }
+        }
+    }
+
+
+
 
     @Override
     public void decompile(IndentPrintStream s) {
+        //throw new UnsupportedOperationException("Unimplemented method 'decompile'");
         type.decompile(s);
         s.print(" ");
         paramName.decompile(s);

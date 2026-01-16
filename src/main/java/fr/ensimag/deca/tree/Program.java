@@ -3,11 +3,12 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.*;
-import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
-import fr.ensimag.ima.pseudocode.Label;
+
+import java.io.PrintStream;
 
 
 /**
@@ -38,9 +39,11 @@ public class Program extends AbstractProgram {
     public void verifyProgram(DecacCompiler compiler) throws ContextualError {
         LOG.debug("verify program: start");
         
-        //classes.verifyListClass(compiler);
-        //classes.verifyListClassMembers(compiler);
-        //classes.verifyListClassBody(compiler);
+        classes.verifyListClass(compiler);
+        classes.verifyListClassMembers(compiler);
+        classes.verifyListClassBody(compiler);
+
+
         main.verifyMain(compiler);
         LOG.debug("verify program: end");
     }
@@ -83,6 +86,13 @@ public class Program extends AbstractProgram {
          compiler.addInstruction(new WNL());
          compiler.addInstruction(new ERROR());
 
+//        // 5. Null Dereference - Pour Selection/MethodCall
+//        compiler.addLabel(new Label("null_dereference"));
+//        compiler.addInstruction(new WSTR("Error: Null dereference"));
+//        compiler.addInstruction(new WNL());
+//        compiler.addInstruction(new ERROR());
+
+
         // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
         int maxTemp = compiler.getRegisterManager().getTaillePileMax();
         int nbGlob = compiler.getRegisterManager().getNbGlobales();
@@ -97,6 +107,13 @@ public class Program extends AbstractProgram {
 
         // 1 TSTO #(maxTemp + nbGlob)
         compiler.addFirstInstruction(new TSTO(maxTemp + nbGlob));
+
+//        // 2. Vérification débordement pile initiale
+//        if (!compiler.getCompilerOptions().getNoCheck()) {
+//            compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
+//            // 1. TSTO
+//            compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
+//        }
 
 
     }

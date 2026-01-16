@@ -1,14 +1,16 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.ClassType;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.LEA;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.STORE;
+import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.ima.pseudocode.Label;
 
 
 /**
@@ -21,12 +23,12 @@ public class DeclClass extends AbstractDeclClass {
     private final AbstractIdentifier name;
     private final AbstractIdentifier superClass;
     private final ListDeclField fields;
-    private final ListDeclMethod methods;
+    private final ListDeclMethod methodes;
     public DeclClass(AbstractIdentifier name, AbstractIdentifier superClass) {
         this.name = name;
         this.superClass = superClass;
         this.fields = fields;
-        this.methods = methods;
+        this.methodes = methodes;
     }
 
 
@@ -40,7 +42,7 @@ public class DeclClass extends AbstractDeclClass {
         s.println(" {");
         s.indent();
         fields.decompile(s);
-        methods.decompile(s);
+        methodes.decompile(s);
         s.unindent();
         s.println("}");
     }
@@ -51,42 +53,78 @@ public class DeclClass extends AbstractDeclClass {
         Symbol name = this.name.getName();
         Symbol superName = this.superClass.getName();
 
-        // on verifie la condition : est ce la super class existe ?
-        ClassDefinition superDef = (ClassDefinition) compiler.environmentType.defOfType(superName);
-        if(superDef == null || !superDef.isClass()){  // on verifie i la cuper class existe deja ou non
-        // et aussi , dans le cas ou elle existe mais pas une classe
-        throw new  RuntimeException("Super-class n'existe pas");
+        TypeDefinition superTypeDef = compiler.environmentType.defOfType(superName);
+
+        //on verifie si la super classe existe ou non
+        if (superTypeDef == null) {
+            // La super classe n'existe pas
+            throw new ContextualError(
+                    "La super-classe :" + superName.getName() + "n'existe pas",
+                    this.getLocation()
+            );
         }
 
-        ClassType classType=new ClassType( name,  this.getLocation(),  superDef);
-        ClassDefinition classDef =new ClassDefinition( classType, this.getLocation(),  superDef);
+        //on verifie  que c'est une classe
+        if (!superTypeDef.isClass()) {
+            throw new ContextualError(
+                    superName.getName() + "n'est pas une classe", this.getLocation()
+            );
+        }
+
+        //caster en class definition
+        ClassDefinition superClassDef = (ClassDefinition) superTypeDef;
+
+        ClassType classType = new ClassType(
+                name, this.getLocation(),
+                superClassDef
+        );
+
+
+        ClassDefinition classDef = classType.getDefinition();
+
         compiler.environmentType.declareClass(name, classDef);
+
+        Logger.getLogger(DeclClass.class).debug("Classe :" + name.getName() + "ajoutée, super = " + superName.getName() + "'");
     }
+
+
+
 
     @Override
-    protected void verifyClassMembers(DecacCompiler compiler) throws ContextualError {
-        ClassDefinition classDef = (ClassDefinition) compiler.environmentType.defOfType(name.getName());
+    protected void verifyClassMembers(DecacCompiler compiler)
+            throws ContextualError {
+        Symbol className = this.name.getName();
+        ClassDefinition currentClassDef = (ClassDefinition) compiler.environmentType.defOfType(className);
 
-        // Vérification des champs (Règle 2.5) et méthodes (Règle 2.7)
-        fields.verifyListDeclField(compiler, superClass.getName(), name.getName());
-        methods.verifyListDeclMethod(compiler, superClass.getName());
+        // environnement de la super classe
+        Symbol superName = this.superClass.getName();
+        ClassDefinition superClassDef = (ClassDefinition)
+                compiler.environmentType.defOfType(superName);
 
-        // Mise à jour des compteurs (numberOfFields, numberOfMethods) via les définitions décorées [5]
+        EnvironmentExp superClassEnv = null;
+        if (superClassDef != null) {
+            superClassEnv = superClassDef.getMembers();
+        }
+
+        String currentClassName = className.getName();
+
+        // on vérifier les champs
+        for (AbstractDeclField field : fields.getList()) {
+            field.verifyDeclField(compiler, superClassEnv, currentClassName);
+            currentClassDef.incNumberOfFields();
+        }
+
+        // on Verifier les méthodes
+        for (AbstractDeclMethod method : methodes.getList()) {
+            method.verifyDeclMethodPrototype(compiler, superClassEnv);
+            currentClassDef.incNumberOfMethods();
+        }
     }
-
-//    @Override
-//    protected void verifyClassMembers(DecacCompiler compiler)
-//            throws ContextualError {
-//        throw new UnsupportedOperationException("not yet implemented");
-//    }
 
     @Override
     protected void verifyClassBody(DecacCompiler compiler) throws ContextualError {
-        ClassDefinition classDef = (ClassDefinition) compiler.environmentType.defOfType(name.getName());
-
-        // Vérification des corps des champs (initialisations) et des méthodes
-        fields.verifyListDeclFieldBody(compiler, compiler.environmentType, classDef);
-        methods.verifyListDeclMethodBody(compiler, compiler.environmentType, classDef);
+         ClassDefinition classDef = (ClassDefinition) this.name.getDefinition();
+         methodes.verifyListMethodBody(compiler, classDef);
     }
 
 //    @Override
@@ -96,17 +134,68 @@ public class DeclClass extends AbstractDeclClass {
 
 
 
+//    @Override
+//    protected void codeGenDeclClass(DecacCompiler compiler) {
+//        // 1. Génération de la vTable (Passe 1 de l'étape C)
+//        // LOAD #null / LEA super_vtable, R0 ... STORE ... [9]
+//
+//        // 2. Génération du sous-programme d'initialisation init.NomClasse [11]
+//        compiler.addLabel(new Label("init." + name.getName()));
+//        // Code pour init (Test TSTO, initialisation des champs hérités puis propres) [12]
+//
+//        // 3. Génération du code des méthodes [13]
+//        methods.codeGenListDeclMethod(compiler);
+//    }
+
+    /**
+     * Génère la vTable (Passe 1)
+     */
     @Override
     protected void codeGenDeclClass(DecacCompiler compiler) {
-        // 1. Génération de la vTable (Passe 1 de l'étape C)
-        // LOAD #null / LEA super_vtable, R0 ... STORE ... [9]
+        // Récupération de la définition via le nom
+        ClassDefinition classDef = (ClassDefinition) this.name.getDefinition();
+        String className = this.name.getName().getName();
 
-        // 2. Génération du sous-programme d'initialisation init.NomClasse [11]
-        compiler.addLabel(new Label("init." + name.getName()));
-        // Code pour init (Test TSTO, initialisation des champs hérités puis propres) [12]
+        compiler.addComment("===== Table des méthodes de " + className + " =====");
 
-        // 3. Génération du code des méthodes [13]
-        methods.codeGenListDeclMethod(compiler);
+        // 1. Calcul Adresse vTable (dans GB)
+        int addrVTable = compiler.getRegisterManager().getNbGlobales();
+
+        // IMPORTANT: Stocker l'adresse pour les NEW plus tard
+        // classDef.setVTableAddr(addrVTable); // Décommenter quand ClassDefinition aura setVTableAddr
+
+        compiler.getRegisterManager().incrNbGlobales(); // +1 pour le Pointeur Super
+
+        // 2. Pointeur Super-Classe
+        ClassDefinition superClassDef = classDef.getSuperClass();
+
+        if (superClassDef == null || "Object".equals(superClassDef.getType().getName().getName())) {
+            compiler.addInstruction(new LOAD(new NullOperand(), Register.R0));
+        } else {
+            // LEA addrSuper, R0
+            // compiler.addInstruction(new LEA(new RegisterOffset(superClassDef.getVTableAddr(), Register.GB), Register.R0));
+            // Placeholder temporaire :
+            compiler.addInstruction(new LEA(new RegisterOffset(1, Register.GB), Register.R0));
+        }
+
+        compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(addrVTable, Register.GB)));
+
+        // 3. Méthodes (Construction vTable)
+        int nbMethods = classDef.getNumberOfMethods();
+        for (int i = 1; i <= nbMethods; i++) {
+            // MethodDefinition methodDef = classDef.getMethodByIndex(i);
+            MethodDefinition methodDef = null; // Placeholder
+
+            if (methodDef == null) continue;
+
+            String methodLabel = "code." + methodDef.getLabel().getName();
+
+            compiler.getRegisterManager().incrNbGlobales();
+            int offset = addrVTable + i;
+
+            compiler.addInstruction(new LOAD(new LabelOperand(new Label(methodLabel)), Register.R0));
+            compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(offset, Register.GB)));
+        }
     }
 
 
@@ -115,7 +204,7 @@ public class DeclClass extends AbstractDeclClass {
         name.prettyPrint(s, prefix, false);
         superClass.prettyPrint(s, prefix, false);
         fields.prettyPrint(s, prefix, false);
-        methods.prettyPrint(s, prefix, true);
+        methodes.prettyPrint(s, prefix, true);
     }
 
     @Override
@@ -123,7 +212,7 @@ public class DeclClass extends AbstractDeclClass {
         name.iter(f);
         superClass.iter(f);
         fields.iter(f);
-        methods.iter(f);
+        methodes.iter(f);
     }
 
 }

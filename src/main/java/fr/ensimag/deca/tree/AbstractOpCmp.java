@@ -1,5 +1,9 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Instruction;
@@ -8,10 +12,6 @@ import fr.ensimag.ima.pseudocode.instructions.CMP;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import fr.ensimag.ima.pseudocode.instructions.POP;
 import fr.ensimag.ima.pseudocode.instructions.PUSH;
-import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
 
 /**
  *
@@ -55,44 +55,44 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
     }
 
 
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
- 
-        getLeftOperand().codeGenExpr(compiler, register);
-
-       
-        if (compiler.getRegisterManager().registreLibre()) {
-            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
-            getRightOperand().codeGenExpr(compiler, rRight);
-            
-            //  CMP Val, Reg => Codes conditions basés sur (Reg - Val)
-            compiler.addInstruction(new CMP(rRight, register));
-            
-            compiler.getRegisterManager().libererRegistre();
-        } else {
-            // gestion du Spill 
-            GPRegister rRight = Register.R0; 
-            
-            // sauvegard gauche
-            compiler.addInstruction(new PUSH(register));
-            
-
-            getRightOperand().codeGenExpr(compiler, register);
-           
-            compiler.addInstruction(new LOAD(register, rRight)); 
-            compiler.addInstruction(new POP(register));         
-            
-            //  CMP Droite, Gauche
-            compiler.addInstruction(new CMP(rRight, register));
-        }
-
-        // si (cc = vrai) alors Rm <- 1 sinon Rm <- 0"
-        
-        compiler.addInstruction(getSccInstruction(register));
-    }
-    
-    // Retourne l'instruction Scc (Set on Condition Code) correspondant à l'opérateur
-    protected abstract Instruction getSccInstruction(GPRegister register);
+//    @Override
+//    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+//
+//        getLeftOperand().codeGenExpr(compiler, register);
+//
+//
+//        if (compiler.getRegisterManager().registreLibre()) {
+//            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
+//            getRightOperand().codeGenExpr(compiler, rRight);
+//
+//            //  CMP Val, Reg => Codes conditions basés sur (Reg - Val)
+//            compiler.addInstruction(new CMP(rRight, register));
+//
+//            compiler.getRegisterManager().libererRegistre();
+//        } else {
+//            // gestion du Spill
+//            GPRegister rRight = Register.R0;
+//
+//            // sauvegard gauche
+//            compiler.addInstruction(new PUSH(register));
+//
+//
+//            getRightOperand().codeGenExpr(compiler, register);
+//
+//            compiler.addInstruction(new LOAD(register, rRight));
+//            compiler.addInstruction(new POP(register));
+//
+//            //  CMP Droite, Gauche
+//            compiler.addInstruction(new CMP(rRight, register));
+//        }
+//
+//        // si (cc = vrai) alors Rm <- 1 sinon Rm <- 0"
+//
+//        compiler.addInstruction(getSccInstruction(register));
+//    }
+//
+//    // Retourne l'instruction Scc (Set on Condition Code) correspondant à l'opérateur
+//    protected abstract Instruction getSccInstruction(GPRegister register);
 
 
 }

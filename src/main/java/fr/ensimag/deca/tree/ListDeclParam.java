@@ -1,25 +1,20 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
-import fr.ensimag.deca.DecacCompiler;
-
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
-
-import fr.ensimag.deca.context.*;
 
 
 public class ListDeclParam extends TreeList<AbstractDeclParam> {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        int count = 0;
-        for (AbstractDeclParam p : getList()) {
-            if (count > 0) s.print(", ");
-            p.decompile(s);
-            count++;
+        //throw new UnsupportedOperationException("Unimplemented method 'decompile'");
+        boolean first = true;  //pour gerer la virgule apres le premier param
+        for (AbstractDeclParam param : getList()) {
+            if (!first) {
+                s.print(", ");
+            }
+            param.decompile(s);
+            first = false;
         }
     }
 

@@ -1,19 +1,16 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.tools.IndentPrintStream;
-import java.io.PrintStream;
-import fr.ensimag.deca.tools.SymbolTable.Symbol;
-
 import fr.ensimag.deca.context.*;
-import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.deca.tools.SymbolTable.Symbol;
-import java.io.PrintStream;
+import fr.ensimag.deca.tools.SymbolTable;
+
+
+/**
+ * Declaration of a Field
+ * @author G51
+ * @date 15/01/2026
+ */
 
 public class DeclField extends AbstractDeclField {
 
@@ -32,7 +29,7 @@ public class DeclField extends AbstractDeclField {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        if (visibility == Visibility.PROTECTED) {
+        if (visibility == Visibility.PROTECTED) {//pas besoin si ce n'est pas protected
             s.print("protected ");
         }
         type.decompile(s);
@@ -55,10 +52,45 @@ public class DeclField extends AbstractDeclField {
         initialization.iter(f);
     }
 
-//    protected void verifyDeclField(DecacCompiler compiler, Symbol currentClass, Symbol superClass)
-//            throws ContextualError {
-//        throw new UnsupportedOperationException("Not yet implemented");
-//    }
+    protected void verifyDeclField(DecacCompiler compiler, Symbol currentClass, Symbol superClass)
+            throws ContextualError {
+        // on vérifier le type du champ
+        Type fieldType = this.type.verifyType(compiler);
+        if (fieldType.isVoid()) {
+            throw new ContextualError("Un champ ne peut pas être de type void", getLocation());
+        }
+
+        // on vérifier si le champ existe déjà dans la super classe
+        SymbolTable.Symbol fieldName = this.name.getName();
+        if (superClassEnv != null && superClassEnv.get(fieldName) != null) {
+            // on vérifier que c'est bien un champ (et pas une méthode par exemple)
+            ExpDefinition def = superClassEnv.get(fieldName);
+            if (!def.isField()) {
+                throw new ContextualError(
+                        fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
+                        getLocation()
+                );
+            }
+        }
+
+        ClassDefinition currentClassDef = (ClassDefinition)
+                compiler.environmentType.defOfType(compiler.createSymbol(currentClassName));
+
+        if (currentClassDef != null) {
+            // on créer FieldDefinition et on l'ajoute
+            FieldDefinition fieldDef = new FieldDefinition(
+                    fieldType,
+                    getLocation(),
+                    this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
+            );
+
+            try {
+                currentClassDef.getMembers().declare(fieldName, fieldDef);
+            } catch (EnvironmentExp.DoubleDefException e) {
+                throw new ContextualError(e.getMessage(), getLocation());
+            }
+        }
+    }
 //
 //    @Override
 //    protected void verifyFieldMembers(DecacCompiler compiler, Symbol superClass, Symbol nameClass)

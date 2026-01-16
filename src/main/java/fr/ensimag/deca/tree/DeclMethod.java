@@ -1,13 +1,9 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
+
 import java.io.PrintStream;
-import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
 public class DeclMethod extends AbstractDeclMethod {
 
@@ -23,6 +19,19 @@ public class DeclMethod extends AbstractDeclMethod {
         this.name = name;
         this.params = params;
         this.body = body;
+    }
+
+    public void verifyDeclMethodPrototype(DecacCompiler compiler,
+                                         EnvironmentExp superClassEnv)
+        throws ContextualError {
+        // Vérification de la signature passe 2
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public void verifyDeclMethodBody(DecacCompiler compiler) throws ContextualError {
+        // Vérification de body passe 3
+        throw new UnsupportedOperationException("not yet implemented");
+
     }
 
     @Override
