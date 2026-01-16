@@ -142,6 +142,16 @@ public class RegisterManager {
         registreCourant = 2;
     }
 
+//    public void resetForNewBlock() {
+//        taillePileCourante = 0;
+//        taillePileMax = 0;
+//        // Ne PAS réinitialiser registreCourant (contexte local)
+//    }
+//
+//    public int getTSTOValue() {
+//        return taillePileMax + nbGlobales; // TSTO = max(spills) + locales
+//    }
+
 }
 
 

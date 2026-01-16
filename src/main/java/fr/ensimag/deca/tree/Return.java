@@ -91,4 +91,15 @@ public class Return extends AbstractInst {
         compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.BRA(
                 compiler.getCurrentMethodEndLabel()));
     }
+
+    @Override
+    protected void codeGenInst(DecacCompiler compiler) {
+        // 1. Évaluer l'expression de retour dans R0
+        getReturnExpr().codeGenExpr(compiler, Register.R0);
+
+        // 2. Sauter vers le label de fin de la méthode
+        String className = getCurrentClass().getName().getName();
+        String methodName = getCurrentMethod().getName().getName();
+        compiler.addInstruction(new BRA(new Label("end." + className + "." + methodName)));
+    }
 }

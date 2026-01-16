@@ -25,6 +25,12 @@ public class DeclMethod extends AbstractDeclMethod {
     private final ListDeclParam params;
     private final AbstractMethodBody body;
 
+    // Avant de générer le corps, définir les opérandes des paramètres
+    ListDeclParam params = getParams();
+for (int i = 0; i < params.size(); i++) {
+        params.getList().get(i).codeGenParam(compiler, i);
+    }
+
     public DeclMethod(AbstractIdentifier type, AbstractIdentifier name,
                       ListDeclParam params, AbstractMethodBody body) {
         this.type = type;

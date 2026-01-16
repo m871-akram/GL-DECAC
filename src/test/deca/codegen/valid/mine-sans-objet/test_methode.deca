@@ -1,0 +1,19 @@
+class Point {
+    int x = 5;
+    int y = 10;
+
+    int getX() {
+        return x;
+    }
+
+    void setX(int newX) {
+        x = newX;
+    }
+}
+
+{
+    Point p = new Point();
+    println(p.getX());    // Doit afficher 5
+    p.setX(42);
+    println(p.getX());    // Doit afficher 42
+}

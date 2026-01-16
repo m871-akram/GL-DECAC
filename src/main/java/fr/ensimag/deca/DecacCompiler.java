@@ -139,7 +139,18 @@ public class DecacCompiler {
 
     public RegisterManager getRegisterManager() { return registerManager; }
 
-
+//    // Utilitaire pour générer temporairement dans un autre IMAProgram
+//    public IMAProgram swapProgram(IMAProgram newProg) {
+//        IMAProgram old = this.program;
+//        this.program = newProg;
+//        return old;
+//    }
+//
+//    public void appendProgram(IMAProgram prog) {
+//        for (AbstractLine line : prog.getLines()) {
+//            this.program.add(line);
+//        }
+//    }
 
 
  

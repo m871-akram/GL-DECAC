@@ -224,6 +224,24 @@ public class Identifier extends AbstractIdentifier {
     }
 
     @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        Definition def = getDefinition();
+
+        if (def.isParam()) {
+            // Paramètre de méthode
+            compiler.addInstruction(new LOAD(def.getOperand(), register));
+        } else if (!def.isField()) {
+            // Variable locale/globale (déjà implémenté)
+            compiler.addInstruction(new LOAD(getExpDefinition().getOperand(), register));
+        } else {
+            // Champ (accès implicite via this)
+            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register)); // this
+            int fieldOffset = getFieldDefinition().getIndex();
+            compiler.addInstruction(new LOAD(new RegisterOffset(fieldOffset, register), register));
+        }
+    }
+
+    @Override
     protected void codeGenStore(DecacCompiler compiler, GPRegister source) {
 
         // si variable locale

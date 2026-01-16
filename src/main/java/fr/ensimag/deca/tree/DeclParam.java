@@ -64,6 +64,14 @@ public class DeclParam extends AbstractDeclParam {
         }
     }
 
+    protected void codeGenParam(DecacCompiler compiler, int paramIndex) {
+        // Les paramètres sont stockés dans la pile à -3(LB), -4(LB), ...
+        // paramIndex = 0 pour le premier paramètre
+        int offset = -3 - paramIndex;
+
+        ParamDefinition paramDef = getParamName().getParamDefinition();
+        paramDef.setOperand(new RegisterOffset(offset, Register.LB));
+    }
 
 
 

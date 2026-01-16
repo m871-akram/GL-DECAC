@@ -90,9 +90,17 @@ public class Program extends AbstractProgram {
          compiler.addInstruction(new WNL());
          compiler.addInstruction(new ERROR());
 
-//        // 5. Null Dereference - Pour Selection/MethodCall
-//        compiler.addLabel(new Label("null_dereference"));
-//        compiler.addInstruction(new WSTR("Error: Null dereference"));
+
+
+//        // Déréférencement de null
+//        compiler.addLabel(new Label("dereferencement_null"));
+//        compiler.addInstruction(new WSTR("Error: Null Dereference"));
+//        compiler.addInstruction(new WNL());
+//        compiler.addInstruction(new ERROR());
+//
+//        // Erreur de cast
+//        compiler.addLabel(new Label("cast_error"));
+//        compiler.addInstruction(new WSTR("Error: Invalid Cast"));
 //        compiler.addInstruction(new WNL());
 //        compiler.addInstruction(new ERROR());
 

@@ -231,6 +231,11 @@ public class DeclClass extends AbstractDeclClass {
     }
 
 
+    protected void codeGenMethods(DecacCompiler compiler) {
+        compiler.addComment("===== Méthodes de " + getClassName().getName().getName() + " =====");
+        getClassBody().codeGenListDeclMethod(compiler); // NOUVELLE méthode dans ListDeclMethod
+    }
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         name.prettyPrint(s, prefix, false);

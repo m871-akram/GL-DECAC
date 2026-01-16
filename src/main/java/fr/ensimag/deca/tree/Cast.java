@@ -56,6 +56,50 @@ public class Cast extends AbstractExpr {
         return classType;
     }
 
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        ClassType targetType = getCastType().getType().asClassType("Not a class", getLocation());
+
+        // 1. Évaluer l'objet
+        getObject().codeGenExpr(compiler, register);
+
+        // 2. Si null, cast OK (null peut être casté en n'importe quoi)
+        compiler.addInstruction(new CMP(new NullOperand(), register));
+        Label end = new Label("cast_end_" + getCastCounter());
+        compiler.addInstruction(new BEQ(end));
+
+        // 3. Vérifier instanceof (réutiliser la logique ci-dessus)
+        // Si instanceof échoue, sauter vers cast_error
+        // (Pour simplifier, on peut copier la logique instanceof ici)
+
+        // Version simplifiée : dupliquer le code instanceof
+        ClassDefinition targetClassDef = targetType.getDefinition();
+        GPRegister tempReg = Register.R0;
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), tempReg)); // vTable
+
+        int targetVTableAddr = targetClassDef.getVTableAddr();
+        Label loop = new Label("cast_loop_" + getCastCounter());
+        Label success = new Label("cast_success_" + getCastCounter());
+
+        compiler.addLabel(loop);
+        compiler.addInstruction(new LOAD(new RegisterOffset(targetVTableAddr, Register.GB), Register.R1));
+        compiler.addInstruction(new CMP(Register.R1, tempReg));
+        compiler.addInstruction(new BEQ(success));
+
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, tempReg), tempReg)); // super
+        compiler.addInstruction(new CMP(new NullOperand(), tempReg));
+        compiler.addInstruction(new BNE(loop));
+
+        // Échec du cast
+        compiler.addInstruction(new BRA(new Label("cast_error")));
+
+        compiler.addLabel(success);
+        compiler.addLabel(end);
+    }
+
+    private static int castCounter = 0;
+    private static int getCastCounter() { return castCounter++; }
+
 
 
 }

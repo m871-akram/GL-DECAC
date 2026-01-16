@@ -1,15 +1,13 @@
 package fr.ensimag.deca.tree;
 import java.io.PrintStream;
 
+import fr.ensimag.deca.context.*;
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.commons.lang.Validate;
 
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.GPRegister;
 
 public class MethodCall extends AbstractExpr {
     private final ListExpr args;
@@ -101,8 +99,54 @@ public class MethodCall extends AbstractExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codeGenExpr'");
+        ClassType classType = getObject().getType().asClassType("Not a class", getLocation());
+        ClassDefinition classDef = classType.getDefinition();
+        MethodDefinition methodDef = getMethodName().getMethodDefinition();
+
+        // 1. Empiler les paramètres en ordre inverse
+        ListExpr params = getArguments();
+        for (int i = params.size() - 1; i >= 0; i--) {
+            GPRegister paramReg = compiler.getRegisterManager().prendreRegistre();
+            params.getList().get(i).codeGenExpr(compiler, paramReg);
+            compiler.addInstruction(new PUSH(paramReg));
+            compiler.getRegisterManager().empiler();
+            compiler.getRegisterManager().libererRegistre();
+        }
+
+        // 2. Empiler this (l'objet)
+        getObject().codeGenExpr(compiler, register);
+
+        // Vérifier null
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.addInstruction(new CMP(new NullOperand(), register));
+            compiler.addInstruction(new BEQ(new Label("dereferencement_null")));
+        }
+
+        compiler.addInstruction(new PUSH(register));
+        compiler.getRegisterManager().empiler();
+
+        // 3. Liaison dynamique : récupérer l'adresse de la méthode depuis la vTable
+        // vTable = [objet + 0]
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register)); // Adresse vTable
+
+        // Adresse méthode = vTable[index+1] (offset +1 car vTable[0] = super)
+        int methodIndex = methodDef.getIndex();
+        compiler.addInstruction(new LOAD(new RegisterOffset(methodIndex + 1, register), register));
+
+        // 4. Appel indirect
+        compiler.addInstruction(new BSR(register)); // BSR Rm (IMA 2.9)
+
+        // 5. Nettoyer la pile (this + params)
+        int nbParams = params.size();
+        compiler.addInstruction(new SUBSP(new ImmediateInteger(nbParams + 1)));
+        for (int i = 0; i < nbParams + 1; i++) {
+            compiler.getRegisterManager().depiler();
+        }
+
+        // 6. Résultat dans R0, le copier dans register
+        if (!register.equals(Register.R0)) {
+            compiler.addInstruction(new LOAD(Register.R0, register));
+        }
     }
 
     @Override
