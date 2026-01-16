@@ -1,7 +1,6 @@
 package fr.ensimag.deca.context;
 
 import fr.ensimag.deca.tree.Location;
-import fr.ensimag.ima.pseudocode.Label;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -75,6 +74,17 @@ public class ClassDefinition extends TypeDefinition {
         }
         members = new EnvironmentExp(parent);
         this.superClass = superClass;
+    }
+
+    public boolean isSubClassOf(ClassDefinition containingClass) {
+        ClassDefinition current = this;
+        while (current != null) {
+            if (current == containingClass) {
+                return true;
+            }
+            current = current.getSuperClass();
+        }
+        return false;
     }
     
 }

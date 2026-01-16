@@ -50,11 +50,11 @@ public class DeclVar extends AbstractDeclVar {
             throw new ContextualError("Variable"+ name +  "déjà déclarée", getLocation());
         }
         
-        Type type = this.type.verifyType(compiler);
-        if (type == compiler.environmentType.VOID) {
+        Type varType = this.type.verifyType(compiler);
+        if (varType == compiler.environmentType.VOID) {
             throw new ContextualError("Type void interdit pour les variables", getLocation());
         }
-        initialization.verifyInitialization(compiler, type, localEnv, currentClass);
+        initialization.verifyInitialization(compiler, varType, localEnv, currentClass);
         
         // Declarer nouveau variable
         try {
@@ -62,9 +62,10 @@ public class DeclVar extends AbstractDeclVar {
         } catch (DoubleDefException e) {
             throw new ContextualError("nouveau variable est un doublon", getLocation());
         }
-
+        
         // lier la def a l AST 
         this.varName.setDefinition(varDef);
+        this.varName.setType(varType);
     }
 
     @Override
@@ -88,7 +89,6 @@ public class DeclVar extends AbstractDeclVar {
         s.print(" ");
         varName.decompile(s);
         initialization.decompile(s);
-        s.print(";");
     }
     
 

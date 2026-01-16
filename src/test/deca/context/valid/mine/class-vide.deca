@@ -1,0 +1,12 @@
+// Description:
+//    Test blocs et insctructions, règle 3.23 : Instruction vide
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 06/01/2026
+
+{
+   class A { }
+}

@@ -188,6 +188,7 @@ public class Identifier extends AbstractIdentifier {
 
         Type type = def.getType();
         this.setType(type);
+        this.setDefinition(def);
         return type;
     }
 

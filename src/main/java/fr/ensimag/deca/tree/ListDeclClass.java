@@ -24,7 +24,7 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
     /**
      * Pass 1 of [SyntaxeContextuelle]
      */
-    void verifyListClass(DecacCompiler compiler) throws ContextualError {
+    public void verifyListClass(DecacCompiler compiler) throws ContextualError {
         LOG.debug("verify listClass: start");
         for(AbstractDeclClass classe : getList()){
             classe.verifyClass(compiler);
@@ -36,25 +36,36 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
      * Pass 2 of [SyntaxeContextuelle]
      */
     public void verifyListClassMembers(DecacCompiler compiler) throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
-    }
+        //throw new UnsupportedOperationException("not yet implemented");
+        LOG.debug("verify listClassMembers: start");
+        for(AbstractDeclClass classe : getList()){
+            classe.verifyClassMembers(compiler);
+        }
+        LOG.debug("verify listClassMembers: end");
+        }
     
     /**
      * Pass 3 of [SyntaxeContextuelle]
      */
     public void verifyListClassBody(DecacCompiler compiler) throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        //throw new UnsupportedOperationException("not yet implemented");
+        LOG.debug("verify listClassBody: start");
+        for(AbstractDeclClass classe : getList()){
+            classe.verifyClassBody(compiler);
+        }
+        LOG.debug("verify listClassBody: end");
     }
+    
 
-//    /**
-//     * Génération de code pour les déclarations de classes.
-//     * (Construction des tables des méthodes, etc.)
-//     */
-//    public void codeGenListDeclClass(DecacCompiler compiler) {
-//        for (AbstractDeclClass c : getList()) {
-//            c.codeGenDeclClass(compiler);
-//        }
-//    }
-
-
+    /**
+     * Génération de code pour les déclarations de classes.
+     * (Construction des tables des méthodes, etc.)
+     */
+    public void codeGenListDeclClass(DecacCompiler compiler) {
+        for (AbstractDeclClass c : getList()) {
+            c.codeGenDeclClass(compiler);
+        }
+    }
 }
+
+
