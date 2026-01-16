@@ -117,6 +117,6 @@ DEFAULT : . { LexerNoViableAltException e =
                 this,
                 _input,
                 _tokenStartCharIndex,
-                null
+                null 
             );
         notifyListeners(e); } ; 
