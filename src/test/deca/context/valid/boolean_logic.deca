@@ -10,7 +10,7 @@
 
 
 {
-    boolean b = (true || false) && (8 <=17)
+    boolean b = (true || false) && (8 <=17);
     if (b) {
         printlb( "OK");
     }

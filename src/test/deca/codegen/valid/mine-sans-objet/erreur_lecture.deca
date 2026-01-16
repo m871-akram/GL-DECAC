@@ -1,0 +1,13 @@
+// Description:
+//    Vérifie que pas de crash si l'utilisateur entre le mauvais type d'input
+//    
+// Resultats (pour "jjj"):
+//    Message d'erreur
+//
+//
+// Historique: cree le 15/01/2026
+
+{
+    println("Entrez votre nom :");
+    println(readInt());
+}
