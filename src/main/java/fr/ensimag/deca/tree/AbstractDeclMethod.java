@@ -4,6 +4,7 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.EnvironmentType;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
@@ -28,4 +29,10 @@ public abstract class AbstractDeclMethod extends Tree {
      * Génération de code pour le corps de la méthode (étiquette code.A.m) [8].
      */
     protected abstract void codeGenDeclMethod(DecacCompiler compiler);
+
+    protected abstract void verifyDeclMethodPrototype(DecacCompiler compiler,
+                                                      EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
+            throws ContextualError;
+
+    protected abstract void verifyDeclMethodBody(DecacCompiler compiler,EnvironmentExp localEnv, ClassDefinition currentClass) throws ContextualError ;
 }

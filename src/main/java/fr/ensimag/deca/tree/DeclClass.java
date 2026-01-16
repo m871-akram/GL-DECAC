@@ -106,19 +106,11 @@ public class DeclClass extends AbstractDeclClass {
             superClassEnv = superClassDef.getMembers();
         }
 
-        String currentClassName = className.getName();
-
         // on vérifier les champs
-        for (AbstractDeclField field : fields.getList()) {
-            field.verifyDeclField(compiler, superClassEnv, currentClassName);
-            currentClassDef.incNumberOfFields();
-        }
-
+        fields.verifyDeclFieldPrototype(compiler, superClassEnv, currentClassDef,currentClassDef.getMembers());
         // on Verifier les méthodes
-        for (AbstractDeclMethod method : methodes.getList()) {
-            method.verifyDeclMethodPrototype(compiler, superClassEnv);
-            currentClassDef.incNumberOfMethods();
-        }
+        methodes.verifyDeclMethodPrototype(compiler, superClassEnv, currentClassDef,currentClassDef.getMembers());
+
     }
 
     @Override

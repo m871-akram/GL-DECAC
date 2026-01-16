@@ -9,7 +9,7 @@ import fr.ensimag.ima.pseudocode.DAddr;
  * @author gl51
  * @date 01/01/2026
  */
-public abstract class ExpDefinition extends Definition {
+public class ExpDefinition extends Definition {
 
     public void setOperand(DAddr operand) {
         this.operand = operand;
@@ -22,6 +22,16 @@ public abstract class ExpDefinition extends Definition {
 
     public ExpDefinition(Type type, Location location) {
         super(type, location);
+    }
+
+    @Override
+    public String getNature() {
+        return "field";
+    }
+
+    @Override
+    public boolean isExpression() {
+        return true;
     }
 
 }

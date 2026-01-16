@@ -1,5 +1,10 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
 import java.io.PrintStream;
@@ -31,18 +36,25 @@ public class InstanceOf extends AbstractExpr {
         type.iter(f);
     }
 
-//    @Override
-//    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
-//            throws ContextualError {
-//        // Rule (3.40): Verify both the expression and the target type [5].
-//        Type type1 = expr.verifyExpr(compiler, localEnv, currentClass);
-//        Type type2 = type.verifyType(compiler);
-//
-//        // Check if the types are compatible with the instanceof operator [4].
-//        Type resultType = compiler.environmentType.instanceOfCompatible(type1, type2);
-//
-//        // Result is always a boolean [4, 5].
-//        this.setType(resultType);
-//        return resultType;
-//    }
+    @Override
+    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
+            throws ContextualError {
+        Type exprType = leftOperand.verifyExpr(compiler, localEnv, currentClass);
+        Type classType = rightOperand.verifyType(compiler);
+
+        if (!exprType.isClassOrNull()) {
+            throw new ContextualError(
+                    "instanceof ne s'applique qu'à un objet",
+                    leftOperand.getLocation());
+        }
+
+        if (!classType.isClass()) {
+            throw new ContextualError(
+                    "instanceof attend un type classe",
+                    rightOperand.getLocation());
+        }
+
+        setType(compiler.environmentType.BOOLEAN);
+        return compiler.environmentType.BOOLEAN;
+    }
 }

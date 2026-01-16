@@ -11,24 +11,38 @@ import java.io.PrintStream;
 
 public class This extends AbstractExpr {
 
+
+
     @Override
-    public void decompile(IndentPrintStream s) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    String prettyPrintNode() {
+        return "This(" + value + ")";
     }
 
     @Override
-    protected void prettyPrintChildren(PrintStream s, String prefix) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void decompile(IndentPrintStream s) {
+        if(!value){
+
+            s.print("this");
+        }
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        // leaf node => nothing to do
     }
 
+
     @Override
-    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
-            throws ContextualError {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
+                           ClassDefinition currentClass) throws ContextualError {
+        if (currentClass == null) {
+            throw new ContextualError(
+                    "this interdit dans le programme principal",
+                    getLocation()
+            );
+        }
+
+        setType(currentClass.getType());
+        return currentClass.getType();
     }
 }

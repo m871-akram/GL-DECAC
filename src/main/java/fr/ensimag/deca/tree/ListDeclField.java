@@ -1,16 +1,22 @@
 package fr.ensimag.deca.tree;
 
-
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
-
-public class ListDeclField extends TreeList<AbstractDeclField> {
-
+public class ListDeclField extends TreeList<AbstractDeclField>{
+    public void verifyDeclFieldPrototype(DecacCompiler compiler, EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv) throws ContextualError{
+        for (AbstractDeclField method : getList()) {
+            method.verifyDeclField(compiler, superClassEnv,localEnv,currentClassDef);
+        }
+    }
     @Override
     public void decompile(IndentPrintStream s) {
-        for (AbstractDeclField f : getList()) {
-            f.decompile(s);
-            s.println();
+        for (AbstractDeclField field : getList()) {
+                field.decompile(s);
+                s.println();
         }
     }
 

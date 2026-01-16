@@ -61,34 +61,30 @@ public class DeclField extends AbstractDeclField {
         }
 
         // on vérifier si le champ existe déjà dans la super classe
-        SymbolTable.Symbol fieldName = this.name.getName();
+        Symbol fieldName = this.name.getName();
         if (superClassEnv != null && superClassEnv.get(fieldName) != null) {
             // on vérifier que c'est bien un champ (et pas une méthode par exemple)
             ExpDefinition def = superClassEnv.get(fieldName);
             if (!def.isField()) {
                 throw new ContextualError(
-                        fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
-                        getLocation()
+                    fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
+                    getLocation()
                 );
             }
         }
 
-        ClassDefinition currentClassDef = (ClassDefinition)
-                compiler.environmentType.defOfType(compiler.createSymbol(currentClassName));
 
-        if (currentClassDef != null) {
-            // on créer FieldDefinition et on l'ajoute
-            FieldDefinition fieldDef = new FieldDefinition(
-                    fieldType,
-                    getLocation(),
-                    this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
-            );
 
-            try {
-                currentClassDef.getMembers().declare(fieldName, fieldDef);
-            } catch (EnvironmentExp.DoubleDefException e) {
-                throw new ContextualError(e.getMessage(), getLocation());
-            }
+        FieldDefinition fieldDef = new FieldDefinition(
+            fieldType,
+            getLocation(),
+            this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
+        );
+
+        try {
+            localEnv.declare(fieldName, fieldDef);
+        } catch (DoubleDefException e) {
+            throw new ContextualError(e.getMessage(), getLocation());
         }
     }
 //

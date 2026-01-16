@@ -22,10 +22,48 @@ public class DeclMethod extends AbstractDeclMethod {
     }
 
     public void verifyDeclMethodPrototype(DecacCompiler compiler,
-                                         EnvironmentExp superClassEnv)
+                                         EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
         throws ContextualError {
-        // Vérification de la signature passe 2
-        throw new UnsupportedOperationException("not yet implemented");
+        ExpDefinition superDef = superClassEnv.get(name.getName());
+        Signature signature = params.verifyListDeclParam(compiler);
+        Type returnType = type.verifyType(compiler);
+        if (superDef != null) {
+
+            MethodDefinition superMethod = superDef.asMethodDefinition("Le nom existe dans la super-classe mais ce n'est pas une methode", getLocation());
+
+            Signature sigSuper = superMethod.getSignature();
+
+            if (signature.size() != sigSuper.size()) {
+                throw new ContextualError(
+                    "La signature de la methode redefinie doit avoir le meme nombre de parametres",
+                    getLocation()
+                );
+            }
+
+            for (int i = 0; i < signature.size(); i++) {
+                if (!signature.paramNumber(i).sameType(sigSuper.paramNumber(i))) {
+                    throw new ContextualError(
+                        "Les types des parametres doivent correspondre à ceux de la methode heritee",
+                        getLocation()
+                    );
+                }
+            }
+
+            Type typeSuper = superMethod.getType();
+
+            if (!compiler.environmentType.subType(returnType,typeSuper)) {
+                throw new ContextualError(
+                    "Le type de retour de la methode redefinie doit etre un sous-type du type de la super-classe",
+                    getLocation()
+                );
+            }
+        }
+        MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
+        try {
+            localEnv.declare(name.getName(), methodDef);
+        } catch (DoubleDefException e) {
+            throw new ContextualError(e.getMessage(), getLocation());
+        }
     }
 
     public void verifyDeclMethodBody(DecacCompiler compiler) throws ContextualError {
@@ -38,11 +76,16 @@ public class DeclMethod extends AbstractDeclMethod {
     public void decompile(IndentPrintStream s) {
         type.decompile(s);
         s.print(" ");
+
         name.decompile(s);
+
         s.print("(");
         params.decompile(s);
-        s.print(") ");
+        s.print(")");
+
+
         body.decompile(s);
+
     }
 
     @Override
