@@ -13,8 +13,14 @@ public class ListExpr extends TreeList<AbstractExpr> {
 
     @Override
     public void decompile(IndentPrintStream s) {
+        boolean first = true; 
         for(AbstractExpr exp : getList()){
+            if (!first) {
+                s.print(", ");
+            }
             exp.decompile(s);
+
+            first = false;
         }
     }
 }

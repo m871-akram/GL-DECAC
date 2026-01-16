@@ -6,7 +6,12 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
+
+import static org.mockito.Mockito.verify;
+
 import java.io.PrintStream;
+
+import org.apache.commons.lang.Validate;
 
 import fr.ensimag.ima.pseudocode.GPRegister;
 
@@ -17,25 +22,32 @@ import fr.ensimag.ima.pseudocode.GPRegister;
  * @author gl51
  * @date 01/01/2026
  */
-public class thistemp extends AbstractExpr {
+public class This extends AbstractExpr {
     
+    boolean value;
 
-
-    public thistemp() {
+    public This(boolean value) {
+        Validate.notNull(value);
+        this.value=value;
     }
 
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
-        this.setType(compiler.environmentType.VOID);
-        return compiler.environmentType.VOID;
+        if (currentClass == null) {
+            throw new ContextualError(
+                "this interdit dans le programme principal",
+                getLocation()
+            );
+        }
+        
+        setType(currentClass.getType());
+        return currentClass.getType();
     }
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister dest) {
 
-        //  LOAD #12, R2
-        //compiler.addInstruction(new LOAD(new ImmediateInteger(value), dest));
         
     }
 
@@ -43,21 +55,24 @@ public class thistemp extends AbstractExpr {
     protected void codeGenPrint(DecacCompiler compiler) {
 
         
-        //compiler.addInstruction(new LOAD(new ImmediateInteger(value), Register.R1));
-        
-        //compiler.addInstruction(new WINT());
         
     }
 
-
+    @Override
+    boolean isImplicit() {
+        return value;
+    }
     @Override
     String prettyPrintNode() {
-        return "null()";
+        return "This(" + value + ")";
     }
 
     @Override
     public void decompile(IndentPrintStream s) {
-        s.print("null");
+        if(!value){
+
+            s.print("this");
+        }
     }
 
     @Override

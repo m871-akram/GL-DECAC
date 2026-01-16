@@ -224,6 +224,8 @@ public class DecacCompiler {
             LOG.info("Parsing failed");
             return true;
         }
+
+        //gestion des drapeaux -p
         if(compilerOptions.getActionSpecial() == 0){
             prog.decompile(out);
             LOG.info("Decompilation of " + sourceName + " successful.");
@@ -240,7 +242,6 @@ public class DecacCompiler {
         if(compilerOptions.getActionSpecial() == 1){
             return false;
         }
-        //gestion des drapeaux -p
         
         addComment("start main program");
         prog.codeGenProgram(this);

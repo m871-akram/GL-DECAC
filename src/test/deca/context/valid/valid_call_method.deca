@@ -12,7 +12,7 @@
 class A {
     int x;
     void methode(){
-        println("x" + x);
+        println(x);
     }
 }
 
