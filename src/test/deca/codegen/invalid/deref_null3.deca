@@ -1,0 +1,17 @@
+// Description:
+//    Methode null
+//
+// Resultats:
+//    Erreur : ligne 16
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    void methode ();
+}
+
+{
+    A a = null;
+    a.methode();
+}

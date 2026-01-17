@@ -1,0 +1,18 @@
+// Description:
+//    Recursion infinie
+//
+// Resultats:
+//    Erreur : ligne 16
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    void method(){
+        method ();
+    }
+}
+
+{
+   (new A()).methode();
+}

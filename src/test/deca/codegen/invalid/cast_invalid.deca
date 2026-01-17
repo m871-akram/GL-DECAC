@@ -1,0 +1,21 @@
+// Description:
+//    cast invalid
+//
+// Resultats:
+//    erreur : ligne 19 : cast impossible
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {}
+
+class B extends A {}
+class C extends A {}
+
+
+{
+   A a = new B();
+   C c = (C) (a);
+}
+

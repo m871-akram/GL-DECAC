@@ -1,0 +1,26 @@
+// Description:
+//    recursion mutulle infinie
+//
+// Resultats:
+//    Erreur : 25
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    void methodA (B b){
+        b.methodeB(this);
+    }
+}
+class B {
+    void methodB (A a){
+        a.methodeB(this);
+    }
+}
+
+{
+   A a =new A();
+   B b =new B();
+
+   a.methodeA(b);
+}

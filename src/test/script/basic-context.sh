@@ -49,7 +49,7 @@ test_context_invalide () {
 
 echo "=== Tests Contextuels valides ==="
 
-for cas_test in src/test/deca/context/valid/*.deca
+for cas_test in src/test/deca/context/valid/**/*.deca
 do
     test_context_valide "$cas_test"
 done
@@ -60,7 +60,7 @@ done
 
 echo "=== Tests Contextuels invalides ==="
 
-for cas_test in src/test/deca/context/invalid/*.deca
+for cas_test in src/test/deca/context/invalid/**/*.deca
 do
     test_context_invalide "$cas_test"
 done
