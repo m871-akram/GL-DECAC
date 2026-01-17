@@ -1,16 +1,16 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.instructions.WSTR;
-import org.apache.commons.lang.Validate;
-
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * String literal
@@ -41,6 +41,8 @@ public class StringLiteral extends AbstractStringLiteral {
         } else {
             this.value = value;
         }
+
+        // on doit l obliger a faire juste un this.value = value;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class StringLiteral extends AbstractStringLiteral {
 
     @Override
     protected void codeGenPrint(DecacCompiler compiler) {
-        compiler.addInstruction(new WSTR(value));
+        compiler.addInstruction(new WSTR(new ImmediateString(value)));
     }
 
     @Override

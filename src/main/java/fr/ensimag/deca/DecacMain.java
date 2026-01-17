@@ -26,7 +26,7 @@ public class DecacMain {
             System.exit(1);
         }
         if (options.getPrintBanner()) {
-            System.out.println("equipe 51: featuring Thibault marchand");
+            System.out.println("equipe 51: featuring Thibault marchand , akram , ahmad , ikhlass and widad");
 //            throw new UnsupportedOperationException("decac -b not yet implemented");
             System.exit(0);
         }
@@ -51,5 +51,3 @@ public class DecacMain {
         System.exit(error ? 1 : 0);
     }
 }
-
-

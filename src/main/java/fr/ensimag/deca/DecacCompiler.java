@@ -230,7 +230,7 @@ public class DecacCompiler {
             PrintStream out, PrintStream err)
             throws DecacFatalError, LocationException {
         AbstractProgram prog = doLexingAndParsing(sourceName, err);
-        
+
         if (prog == null) {
             LOG.info("Parsing failed");
             return true;
@@ -260,7 +260,6 @@ public class DecacCompiler {
         LOG.debug("Generated assembly code:" + nl + program.display());
         LOG.info("Output file assembly file is: " + destName);
 
-        
         FileOutputStream fstream = null;
         try {
             fstream = new FileOutputStream(destName);
@@ -269,7 +268,6 @@ public class DecacCompiler {
         }
 
         LOG.info("Writing assembler file ...");
-        
 
         program.display(new PrintStream(fstream));
         LOG.info("Compilation of " + sourceName + " successful.");

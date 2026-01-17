@@ -1,7 +1,5 @@
 package fr.ensimag.deca;
 
-import static org.mockito.ArgumentMatchers.refEq;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;

@@ -1,124 +1,178 @@
-# Deca Compiler - AI Agent Guide
+# Deca Compiler AI Assistant Guide
 
 ## Project Overview
-This is a **multi-pass compiler** for Deca (Java-like language) → IMA assembly, developed at Ensimag (gl51 team). The compiler implements a classic 4-phase pipeline: lexing → parsing → contextual analysis → code generation.
+This is a Java-based compiler for Deca (Java-like language) that translates to IMA assembly. Built at Ensimag (GL51) using ANTLR4 for lexing/parsing and following the Interpreter pattern for code generation.
 
-## Critical Architecture
+**Build**: Maven (Java 21, requires Maven 3.6.3+)  
+**Entry point**: `src/main/bin/decac` (wrapper script) → `DecacMain.java`  
+**Pipeline**: Lexical → Syntactic → Contextual → Code Generation
 
-### Compilation Pipeline
-- **Entry Point**: [DecacMain.java](src/main/java/fr/ensimag/deca/DecacMain.java) → `DecacCompiler.compile()`
-- **Flow**: `doLexingAndParsing()` → `verifyProgram()` → `codeGenProgram()`
-- **Orchestrator**: `DecacCompiler` manages symbol tables, type environments, IMA program, and register allocation
+## Key Architecture Patterns
 
-### Core Package Structure
-1. **`fr.ensimag.deca.syntax`**: ANTLR4 grammars ([DecaLexer.g4](src/main/antlr4/fr/ensimag/deca/syntax/DecaLexer.g4), [DecaParser.g4](src/main/antlr4/fr/ensimag/deca/syntax/DecaParser.g4))
-2. **`fr.ensimag.deca.tree`**: AST nodes (inherit from `Tree`). Each implements:
-   - `verify*()` methods for contextual analysis (type-checking, scoping)
-   - `codeGen*()` methods for IMA instruction emission
-   - `decompile()` for source reconstruction
-3. **`fr.ensimag.deca.context`**: Type system (`Type` hierarchy), environment management (`EnvironmentExp` = chained scopes), definitions (`VariableDefinition`, `MethodDefinition`)
-4. **`fr.ensimag.deca.codegen`**: `RegisterManager` (naive stack-based allocation, R2-R15)
-5. **`fr.ensimag.ima.pseudocode`**: IMA instruction representations (`LOAD`, `ADD`, `BEQ`, etc.)
-
-## Key Design Patterns
-
-### Visitor Pattern (Partial)
-- **NOT** pure visitor: AST nodes embed behavior (verify/codegen methods)
-- Each node type implements phase-specific logic directly (e.g., `Plus.codeGenExpr()`)
-
-### Two-Pass Decoration
-1. **Pass 1 (verify)**: Attach `Type` to each expression via `setType()`
-2. **Pass 2 (codegen)**: Read types with `getType()` to emit correct IMA instructions
-
-### Register Allocation Strategy
-- **Naive stack-based**: Allocate R2-R15 sequentially, spill to stack when exhausted
-- **Spill mechanism** (see [AbstractOpArith](src/main/java/fr/ensimag/deca/tree/AbstractOpArith.java)):
-  ```java
-  // Evaluate left → PUSH → Evaluate right → POP → Operate
-  compiler.addInstruction(new PUSH(leftReg));
-  rightExpr.codeGenExpr(compiler, leftReg);
-  compiler.addInstruction(new POP(R0));
-  compiler.addInstruction(new ADD(R0, leftReg));
-  ```
-
-### Label Generation for Control Flow
-- **Unique labels**: Static counters in `IfThenElse`, `While` classes
-- **While loop** structure: Jump to condition first, loop body precedes condition check (avoids code duplication)
-
-## Build & Test Workflows
-
-### Maven Commands
-```bash
-mvn clean compile              # Build compiler (generates ANTLR parsers)
-mvn test                       # Run JUnit tests + shell script tests
-mvn test -Djacoco.skip=false   # Generate code coverage (target/site/jacoco/)
+### 1. Four-Phase Compilation Pipeline
+Each phase is orchestrated by `DecacCompiler`:
+```
+DecaLexer.g4 → DecaParser.g4 → verify*() methods → codeGen*() methods
 ```
 
-### Using the Compiler
-```bash
-./src/main/bin/decac file.deca       # Compile to file.ass
-./src/main/bin/decac -p file.deca    # Parse-only mode
-./src/main/bin/decac -v file.deca    # Stop after contextual analysis
-./src/main/bin/decac -r N file.deca  # Limit to N registers (default 16)
-ima file.ass                         # Run generated IMA assembly
+**Phase methods pattern**:
+- `verifyExpr()/verifyInst()` for contextual analysis (type checking)
+- `codeGenExpr()/codeGenInst()` for IMA assembly generation
+- All AST nodes in `fr.ensimag.deca.tree` follow this pattern
+
+### 2. Register Management (Naïve Allocation)
+`RegisterManager` uses R2-R15 with stack spilling:
+- R0-R1 are **scratch registers** (caller-saved)
+- R2-R15 for computation (must be saved/restored in methods)
+- Track `registreCourant` (next free) and `taillePileMax` (for TSTO)
+
+**Spill strategy in binary operations**:
+1. Evaluate left operand in `register`
+2. If free register exists: evaluate right in new register, operate
+3. Else: PUSH left → evaluate right in same register → POP into R0 → operate with R0
+
+### 3. Context and Type Decoration
+- `EnvironmentExp`: Linked list of scopes (parent chain for variable lookup)
+- `EnvironmentType`: Global type environment (int, float, boolean, Object, classes)
+- Each AST node gets decorated with `Type` during `verify*()` phase via `setType()`
+- `Definition` subclasses: `VariableDefinition`, `MethodDefinition`, `FieldDefinition`, etc.
+
+### 4. Control Flow Code Generation
+**Labels use static counters for uniqueness**: `else.1`, `end_if.1`, `while_start.2`
+
+**IfThenElse pattern**:
+```
+<Code(Condition, false, E_Sinon)>  // Jump if false
+<Code(Then)>
+BRA E_Fin
+E_Sinon:
+<Code(Else)>
+E_Fin:
 ```
 
-### Test Organization
-- **Unit tests** (JUnit 5): [src/test/java/fr/ensimag/deca/](src/test/java/fr/ensimag/deca/)
-  - Use **Mockito** for AST node testing (see [TestPlusPlain.java](src/test/java/fr/ensimag/deca/context/TestPlusPlain.java))
-  - Compare with manual approach in [TestPlusWithoutMock.java](src/test/java/fr/ensimag/deca/context/TestPlusWithoutMock.java)
-- **Shell integration tests**: [src/test/script/](src/test/script/)
-  - [basic-gencode.sh](src/test/script/basic-gencode.sh): Compile & run with ima
-  - [common-tests.sh](src/test/script/common-tests.sh): Smoke tests (hello-world, syntax errors)
-- **Test inputs**: [src/test/deca/](src/test/deca/) (codegen/valid, codegen/invalid, context/valid, etc.)
+**While pattern** (condition evaluated at end):
+```
+BRA E_Cond.n
+E_Debut.n:
+<Code(Body)>
+E_Cond.n:
+<Code(Condition, true, E_Debut.n)>  // Loop if true
+```
 
-### Docker Environment
-- Use `docker/` for Ensimag-like environment (includes ima assembler)
-- Mount project directory: `docker create -v $(pwd):/home/gl/projet_gl --name projetgl ...`
+`codeGenBool(compiler, branchOn, targetLabel)`: Evaluates boolean to register, then CMP/BEQ or BNE
 
-## Project-Specific Conventions
+### 5. OOP Support (Object-Oriented Programming)
+**VTable structure** (generated in first pass before code):
+```
+Offset 0: Pointer to superclass vTable (LEA instruction)
+Offset 1+: Method addresses (code.ClassName.methodName labels)
+```
 
-### Code Style
-- **Package structure mirrors compilation phases**: syntax → tree → context → codegen
-- **Javadoc tags**: `@author gl51`, `@date 01/01/2026`
-- **Error handling**: Throw `ContextualError` during verify, `DecacInternalError` for compiler bugs
+**Object structure in heap**:
+```
+Offset 0: vTable address
+Offset 1+: Fields (inherited first, then class fields)
+```
 
-### AST Node Implementation Pattern
-When adding new AST nodes:
-1. Extend appropriate base class (`AbstractExpr`, `AbstractInst`, etc.)
-2. Implement `verify*()` to type-check and set type
-3. Implement `codeGen*()` to emit IMA instructions via `compiler.addInstruction()`
-4. Implement `decompile()` for pretty-printing
+Classes use `ClassDefinition` with vTable address stored in `addrVTable` field.
 
-### Register Management
-- **Always allocate via RegisterManager**: `registerManager.prendreRegistre()` / `libererRegistre()`
-- **Stack tracking**: Call `empiler()` before PUSH, `depiler()` after POP
-- **Stack overflow protection**: Generated code includes `TSTO #size` + `BOV stack_overflow_error`
+## Build and Test Commands
 
-## Common Pitfalls
+### Build
+```bash
+mvn clean package              # Full build with tests
+mvn compile                    # Compile only (no tests)
+mvn test                       # Run unit tests
+```
 
-1. **ANTLR grammar changes require rebuild**: Run `mvn clean compile` after editing `.g4` files
-2. **Register leaks**: Every `prendreRegistre()` needs matching `libererRegistre()` or explicit spill
-3. **Label collisions**: Always use static counters for unique labels in control flow nodes
-4. **Type decoration missing**: Verify phases must call `setType()` before codegen reads it
-5. **Test file naming**: `.deca` test files must have alphanumeric-only paths (see [common-tests.sh](src/test/script/common-tests.sh) validation)
+### Compiler Usage
+```bash
+src/main/bin/decac file.deca              # Compile to file.ass
+src/main/bin/decac -p file.deca           # Parse only (stop after syntax)
+src/main/bin/decac -v file.deca           # Verify only (stop after context)
+src/main/bin/decac -r X file.deca         # Use X registers (4-16, default 16)
+src/main/bin/decac -n file.deca           # No runtime checks (no overflow/null)
+src/main/bin/decac -b                     # Print banner
+```
 
-## Integration Points
+### Test Scripts (in `src/test/script/`)
+```bash
+./src/test/script/basic-lex.sh            # Lexer tests
+./src/test/script/basic-synt.sh           # Parser tests  
+./src/test/script/basic-context.sh        # Contextual tests
+./src/test/script/basic-gencode.sh        # Code generation tests
+./src/test/script/jacoco-report.sh        # Generate coverage report
+```
 
-- **ANTLR4 Runtime 4.13.2**: Parser generation dependency
-- **IMA Assembler**: External tool (ima) for executing .ass files
-- **Log4j 1.2.17**: Logging via `Logger.getLogger(ClassName.class)`
-- **JaCoCo**: Code coverage agent (instrumented tests when `jacoco.skip=false`)
-- **JUnit 5 + Mockito**: Testing framework (see [pom.xml](pom.xml) dependencies)
+**JaCoCo coverage**: Set `-Djacoco.skip=false` to enable, report in `target/site/jacoco/`
 
-## Documentation References
-- Full architecture doc: [docs/suivi3/architecture.md](docs/suivi3/architecture.md)
-- Example usage: [examples/calc/](examples/calc/) (simple calculator compiler)
-- Test coverage reports: `target/site/jacoco/index.html` (after running with coverage)
+## Critical File Locations
 
-## Quick Start for New Contributors
-1. Build: `mvn clean compile`
-2. Run tests: `mvn test`
-3. Try compiler: `./src/main/bin/decac examples/calc/src/main/deca/hello.deca`
-4. Study example: Start with [TestPlusPlain.java](src/test/java/fr/ensimag/deca/context/TestPlusPlain.java) for testing patterns
-5. Read: [architecture.md](docs/suivi3/architecture.md) sections 2-4 for pipeline details
+### Core Compiler Components
+- `src/main/java/fr/ensimag/deca/DecacCompiler.java` - Orchestrates all phases
+- `src/main/java/fr/ensimag/deca/codegen/RegisterManager.java` - Register/stack tracking
+- `src/main/antlr4/fr/ensimag/deca/syntax/Deca{Lexer,Parser}.g4` - ANTLR grammars
+
+### AST Hierarchy (all in `tree/`)
+- `AbstractProgram` → `Program` (entry point: `verifyProgram()`, `codeGenProgram()`)
+- `AbstractExpr` hierarchy: `AbstractOpArith`, `AbstractOpCmp`, `AbstractOpBool`, literals
+- `AbstractInst` hierarchy: `IfThenElse`, `While`, `Assign`, `Print`, `Return`
+- `AbstractDeclClass` → `DeclClass` (OOP declarations)
+
+### Context/Type System (all in `context/`)
+- `Type` subclasses: `IntType`, `FloatType`, `BooleanType`, `ClassType`
+- `EnvironmentExp` - Variable scope management
+- `Definition` subclasses - Symbol definitions
+
+### IMA Pseudocode (all in `ima/pseudocode/`)
+- `IMAProgram` - Accumulates instructions/labels/comments
+- `Instruction` subclasses - IMA operations (LOAD, STORE, ADD, BEQ, etc.)
+- `Register`, `RegisterOffset`, `DAddr` - Operand representations
+
+## Conventions and Patterns
+
+### Code Generation Delegation
+Use `DecacCompiler` methods instead of accessing `program` directly:
+```java
+compiler.addInstruction(new LOAD(new ImmediateInteger(42), Register.R2));
+compiler.addComment("Initialize counter");
+compiler.addLabel(new Label("loop_start"));
+```
+
+### Stack Management
+**Always** update `RegisterManager` when manipulating stack:
+```java
+compiler.getRegisterManager().empiler();    // Before PUSH
+compiler.getRegisterManager().depiler();    // After POP
+compiler.getRegisterManager().ajouterVariablesLocales(n);  // For local vars
+```
+
+### Error Handling
+- `ContextualError` - Type/scope errors during verification
+- `DecacFatalError` - Compilation failures
+- `DecacInternalError` - Invariant violations (asserts)
+
+Runtime errors use predefined labels: `stack_overflow_error`, `io_error`, etc.
+
+### Testing Patterns
+See `src/test/java/fr/ensimag/deca/codegen/TestBooleanOpsCodeGen.java`:
+1. Create `DecacCompiler` with `CompilerOptions`
+2. Build AST manually (e.g., `new BooleanLiteral(true)`)
+3. Call `verifyProgram()` then `codeGenProgram()`
+4. Assert on `displayIMAProgram()` output
+
+Mock context using Mockito for unit tests.
+
+## Project-Specific Quirks
+
+1. **TSTO/ADDSP inserted in reverse order**: Use `addFirstInstruction()` to prepend header instructions
+2. **Short-circuit evaluation NOT implemented**: `&&` and `||` always evaluate both operands
+3. **No register graph coloring**: Simple stack-based allocation with explicit spill logic
+4. **Label counters are static**: Thread-safe by design (single-threaded compilation)
+5. **R0 is special**: Used as scratch for spills and method return values
+6. **Global variables use GB register**: Indexed from 1, tracked by `nbGlobales` in `RegisterManager`
+
+## Documentation
+- Full architecture: [docs/suivi3/architecture.md](docs/suivi3/architecture.md)
+- OOP implementation plan: [etape_c_objet.md](etape_c_objet.md)
+- Docker environment: [docker/README.md](docker/README.md)

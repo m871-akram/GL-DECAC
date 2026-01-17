@@ -15,16 +15,18 @@ import fr.ensimag.ima.pseudocode.GPRegister;
 
  */
 
-
+/**
+ * Gestionnaire du Banc de Registres Physiques (R2 à R15).
+ * * Rôle : Allouer et libérer les registres de travail.
+ * Note : La gestion du débordement (Spill) et de la pile est déléguée
+ * à la MemoryManagementUnit (MMU).
+ */
 public class RegisterManager {
 
     // Registres
     private int registreCourant = 2;  // R0 et R1 sont scratch
     private  int registreMax; // 15 ,  X-1 si option -r X
-    // TSTO
-    private int taillePileCourante = 0; // spills
-    private int taillePileMax = 0; // taille maximale atteinte dans le bloc courant
-    private int nbGlobales = 0;
+
 
     /**
      * @param numRegisters Le nombre de registres disponibles (valeur de l'option -r, défaut 16).
@@ -63,6 +65,8 @@ public class RegisterManager {
         GPRegister reg = Register.getR(registreCourant);
         registreCourant++;
         return reg;
+
+        // return Register.getR(currentRegisterIndex++);
     }
 
 
@@ -72,87 +76,32 @@ public class RegisterManager {
     public void libererRegistre() {
         if (registreCourant > 2) {
             registreCourant--;
-        }
-    }
-    /**
-     * Pour debug
-     */
-    public int getRegistreCourant() {
-        return registreCourant;
-    }
-    // PILE ET TSTO
-
-
-     /**
-     * Signale un PUSH ou un spill
-     */
-    public void empiler() {
-        taillePileCourante++;
-
-        if (taillePileCourante > taillePileMax) {
-            taillePileMax = taillePileCourante;
+        } else {
+//            throw new DecacInternalError("Bug compilateur : tentative de libération excessive de registres");
         }
     }
 
 
 
-    /**
-     * Signale un POP
-     */
-    public void depiler() {
-        taillePileCourante--;
-
-        if (taillePileCourante < 0) {
-            taillePileCourante = 0;
-        }
-    }
-
-    /**
-     * Ajout de variables locales
-     */
-    public void ajouterVariablesLocales(int nb) {
-        taillePileCourante += nb;
-
-        if (taillePileCourante > taillePileMax) {
-            taillePileMax = taillePileCourante;
-        }
-    }
-
-    public void incrNbGlobales() {
-        nbGlobales++;
-    }
 
 
-    public int getNbGlobales() {
-        return nbGlobales;
-    }
-
-
-    public int getTaillePileMax() {
-        return taillePileMax;
-    }
 
     /**
      * Réinitialise les compteurs pour un.  nouvelle méthode
      */
     public void reset() {
 
-        taillePileCourante = 0;
-        taillePileMax = 0;
+
         registreCourant = 2;
     }
 
-//    public void resetForNewBlock() {
-//        taillePileCourante = 0;
-//        taillePileMax = 0;
-//        // Ne PAS réinitialiser registreCourant (contexte local)
-//    }
-//
-//    public int getTSTOValue() {
-//        return taillePileMax + nbGlobales; // TSTO = max(spills) + locales
-//    }
+    /**
+     * Pour le debug
+     */
+    public int getCurrentIndex() {
+        return registreCourant;
+    }
 
 }
-
 
 

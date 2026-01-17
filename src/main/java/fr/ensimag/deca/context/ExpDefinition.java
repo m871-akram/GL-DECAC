@@ -9,7 +9,7 @@ import fr.ensimag.ima.pseudocode.DAddr;
  * @author gl51
  * @date 01/01/2026
  */
-public class ExpDefinition extends Definition {
+public abstract class ExpDefinition extends Definition {
 
     public void setOperand(DAddr operand) {
         this.operand = operand;

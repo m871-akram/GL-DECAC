@@ -35,7 +35,6 @@ public class IfThenElse extends AbstractInst {
         this.thenBranch = thenBranch;
         this.elseBranch = elseBranch;
     }
- 
 
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
