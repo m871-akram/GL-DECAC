@@ -24,7 +24,7 @@ public class SignalSequencer {
      * Génère un signal unique (ex: pour un IF)
      */
     public Label genSignal(String portName) {
-        return new Label(portName + "@" + (clockCycle++));
+        return new Label(portName + "_" + (clockCycle++));
     }
 
     /**
