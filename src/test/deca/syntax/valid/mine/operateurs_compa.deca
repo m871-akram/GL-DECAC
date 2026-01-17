@@ -1,0 +1,15 @@
+// Description:
+//    Vérifie la reconnaissance syntaxique des 4 opérateurs de comparaison
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    boolean a = (1 > 2);
+    boolean b = (1 >= 2);
+    boolean c = (1 < 2);
+    boolean d = (1 <= 2);
+}
