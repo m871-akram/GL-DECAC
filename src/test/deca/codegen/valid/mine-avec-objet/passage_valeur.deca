@@ -1,0 +1,21 @@
+// Description:
+//    Vérifie que les paramètres sont passés par valeur
+//
+// Resultats:
+//    affiche 5
+//
+// Historique:
+//    cree le 17/01/2026
+
+class Test {
+    void modifier(int a) {
+        a = 10; 
+    }
+}
+
+{
+    Test t = new Test();
+    int x = 5;
+    t.modifier(x);
+    println(x); 
+}
