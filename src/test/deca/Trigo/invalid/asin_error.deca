@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: asin(2.0)
+//
+// Resultats attendus: erreur
+//
+// Historique:
+//    cree le 17/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.asin(2.0));
+}

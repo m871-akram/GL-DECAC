@@ -68,9 +68,9 @@ fichiers_crees=$((fichiers_crees + 1))
         
         cat > "$fichier_ulp" << EOF
 // Description:
-//    Calcul ULP pour: $resultat
+//    Calcul ULP pour: $valeur
 //
-// Resultats attendus: ulp($resultat)
+// Resultats attendus: ulp($valeur)
 //
 // Historique:
 //    cree le $(date +%d/%m/%Y)
@@ -78,7 +78,7 @@ fichiers_crees=$((fichiers_crees + 1))
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp($resultat));
+    println(m.ulp($valeur));
 }
 EOF
 

@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: sin(0.0)/cos(0.0)(0.0)
+//
+// Resultats attendus: 0.0
+//
+// Historique:
+//    cree le 17/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(sin(0.0)/cos(0.0));
+}
