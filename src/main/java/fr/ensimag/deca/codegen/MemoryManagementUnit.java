@@ -1,8 +1,9 @@
 package fr.ensimag.deca.codegen;
 
 
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
 
-import fr.ensimag.ima.pseudocode.*;
 import java.util.Stack;
 
 /**

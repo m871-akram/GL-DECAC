@@ -1,11 +1,10 @@
 
 
 package fr.ensimag.deca.codegen;
+
 import fr.ensimag.deca.tools.DecacInternalError;
-
-import fr.ensimag.ima.pseudocode.Register;
-
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Register;
 
 
 /** gestion des registres et  la pile pour C pour

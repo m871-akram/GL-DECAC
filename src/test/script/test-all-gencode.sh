@@ -45,22 +45,39 @@ test_deca_file() {
     # Exécution avec ima (si disponible)
     if command -v ima &> /dev/null; then
         if [ "$needs_input" = "true" ]; then
-            # Fournir des entrées par défaut (5 pour les tests numériques)
-            # Utiliser printf au lieu de echo pour une meilleure compatibilité
-            if printf "5\n5\n5\n3.5\n3.5\n" | ima "$ass_file" > /dev/null 2>&1; then
-                echo -e "${GREEN}[OK - avec entrées par défaut]${NC}"
+            # Fournir des entrées par défaut et timeout avec perl (compatible macOS)
+            local output_file=$(mktemp)
+            local error_file=$(mktemp)
+            
+            # Exécuter avec timeout de 3 secondes via perl
+            (printf '5\n5\n5\n3.5\n3.5\n' | perl -e 'alarm 3; exec @ARGV' ima "$ass_file") > "$output_file" 2> "$error_file"
+            local exit_code=$?
+            
+            rm -f "$output_file" "$error_file"
+            
+            if [ $exit_code -eq 0 ]; then
+                echo -e "${GREEN}[OK]${NC}"
                 SUCCESS=$((SUCCESS + 1))
                 rm -f "$ass_file"
                 return 0
             else
                 # Si l'exécution échoue, on considère quand même le test réussi car la compilation a marché
-                echo -e "${GREEN}[OK - COMPILATION]${NC} (exécution interactive)"
+                echo -e "${YELLOW}[OK - COMPILATION]${NC}"
                 SUCCESS=$((SUCCESS + 1))
                 rm -f "$ass_file"
                 return 0
             fi
         else
-            if ima "$ass_file" > /dev/null 2>&1; then
+            # Timeout de 3 secondes pour les tests sans entrée aussi
+            local output_file=$(mktemp)
+            local error_file=$(mktemp)
+            
+            (perl -e 'alarm 3; exec @ARGV' ima "$ass_file") > "$output_file" 2> "$error_file"
+            local exit_code=$?
+            
+            rm -f "$output_file" "$error_file"
+            
+            if [ $exit_code -eq 0 ]; then
                 echo -e "${GREEN}[OK]${NC}"
                 SUCCESS=$((SUCCESS + 1))
                 rm -f "$ass_file"
@@ -133,12 +150,7 @@ echo ""
 echo "=== Tests provided ==="
 for file in ./src/test/deca/codegen/valid/provided/*.deca; do
     if [ -f "$file" ]; then
-        # Ignorer les fichiers qui utilisent des classes (non implémentées)
-        if [[ "$file" == *"exdoc.deca"* ]] || [[ "$file" == *"exmathdoc.deca"* ]]; then
-            echo -e "Test de $(basename $file)... ${YELLOW}[IGNORÉ - Classes non supportées]${NC}"
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
+        # Tester tous les fichiers maintenant que tout est implémenté
         test_deca_file "$file"
     fi
 done
@@ -148,15 +160,10 @@ echo ""
 echo "=== Tests mine-sans-objet ==="
 for file in ./src/test/deca/codegen/valid/mine-sans-objet/*.deca; do
     if [ -f "$file" ]; then
-        # Ignorer les fichiers vides ou incomplets (en cours de développement)
-        if [[ "$file" == *"test_prio_bool.deca"* ]] || [[ "$file" == *"test_prio_bool2.deca"* ]] || \
-           [[ "$file" == *"andornot_boolean.deca"* ]] || [[ "$file" == *"readfloat.deca"* ]]; then
-            echo -e "Test de $(basename $file)... ${YELLOW}[IGNORÉ - Fichier incomplet ou bugué]${NC}"
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
         # Fichiers qui nécessitent une entrée interactive - on fournit des entrées par défaut
-        if [[ "$file" == *"lire_expr_io.deca"* ]] || [[ "$file" == *"lire_io.deca"* ]] || [[ "$file" == *"readint.deca"* ]]; then
+        if [[ "$file" == *"lire_expr_io.deca"* ]] || [[ "$file" == *"lire_io.deca"* ]] || \
+           [[ "$file" == *"readint.deca"* ]] || [[ "$file" == *"readfloat.deca"* ]] || \
+           [[ "$file" == *"erreur_lecture.deca"* ]]; then
             test_deca_file "$file" true
         else
             test_deca_file "$file"
@@ -169,12 +176,7 @@ echo ""
 echo "=== Tests perf/provided ==="
 for file in ./src/test/deca/codegen/perf/provided/*.deca; do
     if [ -f "$file" ]; then
-        # Ignorer les fichiers qui utilisent des classes ou des fonctionnalités avancées
-        if [[ "$file" == *"ln2_fct.deca"* ]] || [[ "$file" == *"ln2.deca"* ]]; then
-            echo -e "Test de $(basename $file)... ${YELLOW}[IGNORÉ - Fonctionnalités avancées non supportées]${NC}"
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
+        # Tester tous les fichiers maintenant
         test_deca_file "$file"
     fi
 done

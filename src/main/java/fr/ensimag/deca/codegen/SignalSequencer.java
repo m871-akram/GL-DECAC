@@ -2,6 +2,7 @@ package fr.ensimag.deca.codegen;
 
 
 import fr.ensimag.ima.pseudocode.Label;
+
 import java.util.Stack;
 
 /**
