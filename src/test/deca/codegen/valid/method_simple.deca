@@ -1,0 +1,21 @@
+// Description:
+//    appel methode
+//
+// Resultats:
+//    15
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    void hello(){
+        println("Hello World");
+    }
+}
+
+{
+   A a = new A();
+   a.hello();
+}
+

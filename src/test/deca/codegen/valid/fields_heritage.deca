@@ -1,0 +1,24 @@
+// Description:
+//    override dans l heritage
+//
+// Resultats:
+//    10
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    int i = 8;
+}
+
+class B extends A {
+    int j = 2;
+}
+
+
+{
+   B b=new B();
+   println(b.i + b.j);
+}
+

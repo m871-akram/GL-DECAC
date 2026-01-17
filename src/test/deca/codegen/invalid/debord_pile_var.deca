@@ -1,0 +1,21 @@
+// Description:
+//    utilisation d'un grand nombre de variables locales
+//
+// Resultats:
+//    Erreur : ligne 16
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    void methode(){
+        int i1, i2, i3, i4, i5, i6,...., i1000; //...un grand nombre de var
+        methode();
+    }
+}
+
+
+{
+   A a = new A();
+   a.methode();
+}

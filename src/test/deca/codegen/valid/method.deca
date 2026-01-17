@@ -1,0 +1,23 @@
+// Description:
+//    methode simple et parametres
+//
+// Resultats:
+//    6
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class Totall{
+    int somme(inta, int b , int c){
+        return a+b+c;
+    }
+}
+class B extends A {}
+
+
+{
+    Total t = new Total();
+    println(t.somme(1,2,3));
+}
+

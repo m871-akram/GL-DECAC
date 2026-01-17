@@ -1,0 +1,28 @@
+// Description:
+//    override dans l heritage
+//
+// Resultats:
+//    classe B
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    void methode(){
+        println("classe  A");
+    }
+}
+
+class B extends A {
+    void methode(){
+        println("classe  B");
+    }
+}
+
+
+{
+   A a = new B();
+   a.methode();
+}
+
