@@ -41,7 +41,19 @@ public class Cast extends AbstractExpr {
         // 1. Évaluer l'expression
         expr.codeGenExpr(compiler, register);
 
-        // Si c'est un cast vers Float/Int, gérer ici (ConvFloat)
+        // 2. Conversion float → int
+        if (expr.getType().isFloat() && getType().isInt()) {
+            compiler.addInstruction(new INT(register, register));
+            return;
+        }
+
+        // 3. Conversion int → float (normalement déjà gérée par ConvFloat)
+        if (expr.getType().isInt() && getType().isFloat()) {
+            compiler.addInstruction(new FLOAT(register, register));
+            return;
+        }
+
+        // 4. Si c'est un cast vers Float/Int, gérer ici (ConvFloat)
         // Mais Cast est souvent utilisé pour les objets.
         if (getType().isClass()) {
             ClassDefinition targetClassDef = (ClassDefinition) type.getDefinition();
