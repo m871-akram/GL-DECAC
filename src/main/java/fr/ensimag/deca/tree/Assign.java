@@ -49,6 +49,15 @@ public class Assign extends AbstractBinaryExpr {
         return t1;
     }
 
+    @Override
+    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
+            ClassDefinition currentClass, Type returnType)
+            throws ContextualError {
+        // Une assignation est une instruction valide
+        // On vérifie simplement l'assignation comme expression
+        verifyExpr(compiler, localEnv, currentClass);
+    }
+
 
 
     /**
