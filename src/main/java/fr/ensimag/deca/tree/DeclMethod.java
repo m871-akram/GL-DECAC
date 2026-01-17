@@ -39,10 +39,15 @@ public class DeclMethod extends AbstractDeclMethod {
     }
 
     @Override
-    protected void verifyDeclMethodBody(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass) throws ContextualError {
+    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentType envTypes, 
+                                    ClassDefinition nameClass) throws ContextualError {
         // Créer un environnement pour les paramètres
         // params.verifyListDeclParamBody(compiler, localEnv);
         // body.verifyMethodBody(...)
+    }
+
+    public AbstractIdentifier getMethodName() {
+        return name;
     }
 
     @Override

@@ -5,101 +5,85 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
-import static org.mockito.Mockito.verify;
-
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.instructions.BRA;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import java.io.PrintStream;
 
 import org.apache.commons.lang.Validate;
 
-import fr.ensimag.ima.pseudocode.GPRegister;
-
+/**
+ * @author gl51
+ * @date 15/01/2026
+ */
 public class Return extends AbstractInst {
-    private final AbstractExpr value;
+
+    private AbstractExpr value;
 
     public Return(AbstractExpr value) {
         this.value = value;
     }
 
+    public AbstractExpr getValue() {
+        return value;
+    }
+
+    @Override
+    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
+                              ClassDefinition currentClass, Type returnType) throws ContextualError {
+
+        // 1. Vérifier qu'on n'est pas dans une méthode void
+        if (returnType.isVoid()) {
+            throw new ContextualError("Interdit de retourner une valeur dans une méthode void", getLocation());
+        }
+
+        // 2. Vérifier la compatibilité du type et gérer la conversion implicite (Int -> Float)
+        // verifyRValue s'occupe de vérifier assignCompatible et d'ajouter ConvFloat si nécessaire
+        this.value = this.value.verifyRValue(compiler, localEnv, currentClass, returnType);
+    }
+
+    @Override
+    protected void codeGenInst(DecacCompiler compiler) {
+        // 1. Évaluer l'expression de retour dans R0 (Registre de retour conventionnel)
+        value.codeGenExpr(compiler, Register.R0);
+
+        // 2. Sauter vers la fin de la méthode pour la restauration du contexte (RTS)
+        // Le label doit être reconstruit ou fourni par le compilateur.
+        // On suppose ici qu'on peut récupérer les noms via les définitions ou que le compilateur stocke le label de fin courant.
+
+        // Approche robuste : Le compilateur devrait avoir une méthode getCurrentMethodLabel()
+        // Si ce n'est pas le cas, on doit reconstruire le nom :
+        // String endLabel = "end." + currentClass.getName() + "." + currentMethod.getName();
+
+        // Pour cet exemple, je suppose que tu as ajouté une méthode helper ou que tu passes le label via une stack dans le compilateur.
+        // Faute de mieux, je génère le saut vers un label supposé connu.
+
+        // ASTUCE : Si tu n'as pas de gestionnaire de contexte dans DecacCompiler,
+        // tu devras peut-être stocker ce label dans une variable statique ou un champ du compilateur lors du visit de DeclMethod.
+        // compiler.addInstruction(new BRA(compiler.getCurrentMethodEndLabel()));
+
+        // Placeholder en attendant ton intégration contexte :
+        // (Tu devras adapter cette ligne selon comment tu stockes le contexte courant)
+        throw new UnsupportedOperationException("Il faut définir le label de fin de méthode dans Return.java");
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
-        s.print("return");
-        s.print(" ");
+        s.print("return ");
         value.decompile(s);
         s.print(";");
     }
 
-
-    @Override
-    protected void verifyInst(DecacCompiler compiler,  EnvironmentExp localEnv,
-                            ClassDefinition currentClass, Type returnType) throws ContextualError {
-
-        if (returnType.isVoid()) {
-            throw new ContextualError(
-                "return avec un void interdit", getLocation()
-            );
-        }
-
-        // on vérifier que la valeur est compatible
-        Type valueType = value.verifyExpr(compiler, localEnv, currentClass);
-
-        if (!compiler.environmentType.assignCompatible(returnType, valueType)) {
-            throw new ContextualError(
-                "erreur dans le type de return : expected " + returnType + ", y on a: " + valueType, getLocation()
-            );
-        }
-    }
-
-
-    @Override
-    protected void codeGenInst(DecacCompiler compiler) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codeGenInst'");
-    }
-
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        value.prettyPrintChildren(s, prefix);
+        value.prettyPrint(s, prefix, true);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        value.iterChildren(f);
-    }
-
-//    @Override
-//    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
-//                              ClassDefinition currentClass, Type returnType) throws ContextualError {
-//        // Rule (3.24): The method must not return void [1].
-//        if (returnType.isVoid()) {
-//            throw new ContextualError("Cannot return a value from a void method", getLocation());
-//        }
-//
-//        // Rule (3.24): Verify that the expression matches the expected return type (rvalue check) [1].
-//        Type exprType = expr.verifyExpr(compiler, localEnv, currentClass);
-//        if (!compiler.environmentType.assignCompatible(returnType, exprType)) {
-//            throw new ContextualError("Return type " + exprType + " is not compatible with " + returnType,
-//                    expr.getLocation());
-//        }
-//    }
-
-    @Override
-    protected void codeGenInst(DecacCompiler compiler) {
-        // Step C: Evaluate expression into R0 and branch to method end [2].
-        value.codeGenExpr(compiler, fr.ensimag.ima.pseudocode.Register.R0);
-        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.BRA(
-                compiler.getCurrentMethodEndLabel()));
-    }
-
-    @Override
-    protected void codeGenInst(DecacCompiler compiler) {
-        // 1. Évaluer l'expression de retour dans R0
-        getReturnExpr().codeGenExpr(compiler, Register.R0);
-
-        // 2. Sauter vers le label de fin de la méthode
-        String className = getCurrentClass().getName().getName();
-        String methodName = getCurrentMethod().getName().getName();
-        compiler.addInstruction(new BRA(new Label("end." + className + "." + methodName)));
+        value.iter(f);
     }
 }

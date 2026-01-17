@@ -29,8 +29,9 @@ public class NoInitialization extends AbstractInitialization {
 
     @Override
     protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
-        // Pour une variable locale, "int x;" ne génère rien (valeur indéfinie).
-        // Pas besoin de charger 0 explicitement en Deca Sans Objet.
+        // On ne fait rien.
+        // - Si c'est une variable locale : valeur indéfinie (ou reste de la pile).
+        // - Si c'est un champ : il a déjà été mis à 0/null lors de l'allocation de l'objet.
     }
 
     /**

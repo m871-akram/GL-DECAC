@@ -9,8 +9,6 @@ import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
-import org.apache.commons.lang.Validate;
-import java.io.PrintStream;
 
 /**
  * Declaration of a class (<code>class name extends superClass {members}<code>).
@@ -23,7 +21,8 @@ public class DeclClass extends AbstractDeclClass {
     private final AbstractIdentifier superClass;
     private final ListDeclField fields;
     private final ListDeclMethod methodes;
-    public DeclClass(AbstractIdentifier name, AbstractIdentifier superClass) {
+    public DeclClass(AbstractIdentifier name, AbstractIdentifier superClass, 
+                     ListDeclField fields, ListDeclMethod methodes) {
         this.name = name;
         this.superClass = superClass;
         this.fields = fields;
@@ -142,21 +141,19 @@ public class DeclClass extends AbstractDeclClass {
         compiler.addComment("Table des méthodes de " + className + " à l'adresse " + vTableAddr);
 
         // 2. Gestion du pointeur Super-Classe (Index 0)
-        DAddr superAddr;
         RegisterOffset superVTableAddr = null; // Adresse VTable du père
 
         if (superClassDef == null || "Object".equals(superClassDef.getType().getName().getName())) {
-            // Si c'est Object (ou racine), pas de super VTable
-            superAddr = new NullOperand();
+            // Si c'est Object (ou racine), pas de super VTable - stocker 0
+            compiler.addInstruction(new LOAD(new ImmediateInteger(0), Register.R0));
         } else {
             // Récupérer l'adresse VTable du père (stockée dans son operand)
             superVTableAddr = (RegisterOffset) superClassDef.getOperand();
             // Charger l'adresse effective (LEA pour obtenir l'adresse GB, pas la valeur pointée)
             compiler.addInstruction(new LEA(superVTableAddr, Register.R0));
-            superAddr = Register.R0;
         }
         // Écrire le pointeur super à l'index 0
-        compiler.addInstruction(new STORE(superAddr, vTableAddr));
+        compiler.addInstruction(new STORE(Register.R0, vTableAddr));
 
 
         // 3. Copier les méthodes héritées (Si classe fille)

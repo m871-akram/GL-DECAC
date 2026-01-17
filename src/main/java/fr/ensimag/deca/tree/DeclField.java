@@ -3,20 +3,18 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.deca.tools.SymbolTable;
-import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
-import fr.ensimag.ima.pseudocode.instructions.STORE;
-
+import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * Declaration of a Field
- * @author G51
+ * @author gl51
  * @date 15/01/2026
  */
-
 public class DeclField extends AbstractDeclField {
 
     private final Visibility visibility;
@@ -26,6 +24,9 @@ public class DeclField extends AbstractDeclField {
 
     public DeclField(Visibility visibility, AbstractIdentifier type,
                      AbstractIdentifier fieldName, AbstractInitialization initialization) {
+        Validate.notNull(type);
+        Validate.notNull(fieldName);
+        Validate.notNull(initialization);
         this.visibility = visibility;
         this.type = type;
         this.fieldName = fieldName;
@@ -33,8 +34,73 @@ public class DeclField extends AbstractDeclField {
     }
 
     @Override
+    public void verifyDeclField(DecacCompiler compiler, EnvironmentExp superClassEnv,
+                                EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError {
+
+        // 1. Vérification du type
+        Type fieldType = this.type.verifyType(compiler);
+        if (fieldType.isVoid()) {
+            throw new ContextualError("Un champ ne peut pas être de type void", getLocation());
+        }
+
+        // 2. Vérification héritage (Redéfinition)
+        Symbol nameSym = fieldName.getName();
+        if (superClassEnv != null) {
+            ExpDefinition superDef = superClassEnv.get(nameSym);
+            if (superDef != null && !superDef.isField()) {
+                throw new ContextualError("Le champ " + nameSym + " masque un membre qui n'est pas un champ", getLocation());
+            }
+        }
+
+        // 3. Déclaration
+        // Index = index précédent + 1
+        int index = currentClassDef.getNumberOfFields() + 1; // +1 car on commence à 1 (vtable à 0)
+        currentClassDef.incNumberOfFields(); // Incrémente le compteur de la classe
+
+        FieldDefinition fieldDef = new FieldDefinition(fieldType, getLocation(), visibility, currentClassDef, index);
+
+        try {
+            localEnv.declare(nameSym, fieldDef);
+        } catch (EnvironmentExp.DoubleDefException e) {
+            throw new ContextualError("Champ " + nameSym + " déjà déclaré dans cette classe", getLocation());
+        }
+
+        fieldName.setDefinition(fieldDef);
+        fieldName.setType(fieldType);
+
+        // 4. Vérification Initialisation
+        initialization.verifyInitialization(compiler, fieldType, localEnv, currentClassDef);
+    }
+
+    @Override
+    protected void verifyFieldBody(DecacCompiler compiler, EnvironmentType envTypes, 
+                                    ClassDefinition nameClass) throws ContextualError {
+        // Vérifier l'initialisation du champ
+        Type fieldType = fieldName.getType();
+        initialization.verifyInitialization(compiler, fieldType, nameClass.getMembers(), nameClass);
+    }
+
+    @Override
+    protected void codeGenInitField(DecacCompiler compiler) {
+        // Initialisation explicite : field = expr;
+        // Si Initialization est NoInitialization, codeGenInit ne fera rien, c'est parfait.
+
+        // 1. Récupérer l'adresse de 'this' dans R1 (convention appel init)
+        // 'this' est passé en paramètre implicite (-2(LB))
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
+
+        // 2. Calculer l'adresse du champ : index(R1)
+        FieldDefinition fieldDef = fieldName.getFieldDefinition();
+        RegisterOffset fieldAddr = new RegisterOffset(fieldDef.getIndex(), Register.R1);
+
+        // 3. Générer le code d'initialisation
+        // On passe l'adresse où stocker le résultat
+        initialization.codeGenInit(compiler, fieldAddr, fieldDef.getType());
+    }
+
+    @Override
     public void decompile(IndentPrintStream s) {
-        if (visibility == Visibility.PROTECTED) {//pas besoin si ce n'est pas protected
+        if (visibility == Visibility.PROTECTED) {
             s.print("protected ");
         }
         type.decompile(s);
@@ -43,6 +109,7 @@ public class DeclField extends AbstractDeclField {
         initialization.decompile(s);
         s.print(";");
     }
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         type.prettyPrint(s, prefix, false);
@@ -56,102 +123,4 @@ public class DeclField extends AbstractDeclField {
         fieldName.iter(f);
         initialization.iter(f);
     }
-
-    protected void verifyDeclField(DecacCompiler compiler, Symbol currentClass, Symbol superClass)
-            throws ContextualError {
-        // on vérifier le type du champ
-        Type fieldType = this.type.verifyType(compiler);
-        if (fieldType.isVoid()) {
-            throw new ContextualError("Un champ ne peut pas être de type void", getLocation());
-        }
-
-        // on vérifier si le champ existe déjà dans la super classe
-        Symbol fieldName = this.name.getName();
-        if (superClassEnv != null && superClassEnv.get(fieldName) != null) {
-            // on vérifier que c'est bien un champ (et pas une méthode par exemple)
-            ExpDefinition def = superClassEnv.get(fieldName);
-            if (!def.isField()) {
-                throw new ContextualError(
-                    fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
-                    getLocation()
-                );
-            }
-        }
-
-
-
-        FieldDefinition fieldDef = new FieldDefinition(
-            fieldType,
-            getLocation(),
-            this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
-        );
-
-        try {
-            localEnv.declare(fieldName, fieldDef);
-        } catch (DoubleDefException e) {
-            throw new ContextualError(e.getMessage(), getLocation());
-        }
-        name.setDefinition(fieldDef);
-        name.setType(fieldType);
-    }
-//
-//    @Override
-//    protected void verifyFieldMembers(DecacCompiler compiler, Symbol superClass, Symbol nameClass)
-//            throws ContextualError {
-//        // Règle (2.5) : Vérifier que le type n'est pas void
-//        Type t = type.verifyType(compiler);
-//        if (t.isVoid()) {
-//            throw new ContextualError("Un champ ne peut pas être de type void", type.getLocation());
-//        }
-//
-//        ClassDefinition currentClass = (ClassDefinition) compiler.environmentType.defOfType(nameClass);
-//        // Calcul de l'index du champ (nombre de champs de la superclasse + 1)
-//        int index = currentClass.getSuperClass().getNumberOfFields() + 1;
-//
-//        FieldDefinition fieldDef = new FieldDefinition(t, fieldName.getLocation(), visibility, currentClass, index);
-//
-//        // Tentative de déclaration dans l'environnement de la classe
-//        try {
-//            currentClass.getMembers().declare(fieldName.getName(), fieldDef);
-//        } catch (EnvironmentExp.DoubleDefException e) {
-//            throw new ContextualError("Le champ " + fieldName.getName() + " est déjà défini dans cette classe",
-//                    fieldName.getLocation());
-//        }
-//
-//        fieldName.setDefinition(fieldDef);
-//        fieldName.setType(t);
-//    }
-//
-//    @Override
-//    protected void verifyFieldBody(DecacCompiler compiler, EnvironmentType envTypes, ClassDefinition nameClass)
-//            throws ContextualError {
-//        // Règle (3.7) : Vérifier l'initialisation par rapport au type du champ
-//        Type t = type.getType();
-//        initialization.verifyInitialization(compiler, t, nameClass.getMembers(), nameClass);
-//    }
-
-
-    @Override
-    protected void codeGenInitField(DecacCompiler compiler) {
-        // Étape C (4.3) : Générer le code pour l'initialisation par défaut ou explicite
-        initialization.codeGenInit(compiler, fieldName.getFieldDefinition());
-    }
-
-    protected void codeGenInitField(DecacCompiler compiler) {
-        // Si pas d'initialisation explicite, déjà à 0
-        if (getInitialization().getExpression() == null) return;
-
-        // Calculer la valeur d'initialisation dans R0
-        GPRegister reg = compiler.getRegisterManager().prendreRegistre();
-        getInitialization().getExpression().codeGenExpr(compiler, reg);
-
-        // Stocker dans this.champ
-        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1)); // this
-        int fieldOffset = getFieldName().getFieldDefinition().getIndex();
-        compiler.addInstruction(new STORE(reg, new RegisterOffset(fieldOffset, Register.R1)));
-
-        compiler.getRegisterManager().libererRegistre();
-    }
 }
-
-

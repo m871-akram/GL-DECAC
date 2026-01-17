@@ -4,6 +4,7 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.EnvironmentType;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
@@ -14,15 +15,17 @@ public abstract class AbstractDeclField extends Tree {
      * Passe 2 de la vérification contextuelle.
      * Vérifie la déclaration du champ (type, visibilité) et l'ajoute à l'environnement.
      */
-    protected abstract void verifyFieldMembers(DecacCompiler compiler,
-                                               Symbol superClass, Symbol nameClass) throws ContextualError;
+    protected abstract void verifyDeclField(DecacCompiler compiler,
+                                            EnvironmentExp superClassEnv,
+                                            EnvironmentExp localEnv,
+                                            ClassDefinition currentClassDef) throws ContextualError;
 
-    /**
-     * Passe 3 de la vérification contextuelle.
-     * Vérifie le corps de l'initialisation du champ.
-     */
-    protected abstract void verifyFieldBody(DecacCompiler compiler,
-                                            EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
+//    /**
+//     * Passe 3 de la vérification contextuelle.
+//     * Vérifie le corps de l'initialisation du champ.
+//     */
+//    protected abstract void verifyFieldBody(DecacCompiler compiler,
+//                                            EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
 
     /**
      * Génération de code pour l'initialisation par défaut et explicite du champ.
@@ -30,6 +33,11 @@ public abstract class AbstractDeclField extends Tree {
      */
     protected abstract void codeGenInitField(DecacCompiler compiler);
 
-
+    /**
+     * Passe 3 de la vérification contextuelle.
+     * Vérifie le corps de l'initialisation du champ.
+     */
+    protected abstract void verifyFieldBody(DecacCompiler compiler,
+                                            EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
 }
 

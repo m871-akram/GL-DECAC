@@ -96,7 +96,8 @@ public class Initialization extends AbstractInitialization {
         getExpression().codeGenExpr(compiler, register);
 
         // 3. Stocker le résultat à l'adresse cible (target)
-        compiler.addInstruction(new STORE(register, target));
+        // STORE attend un DAddr, on cast l'Operand
+        compiler.addInstruction(new STORE(register, (fr.ensimag.ima.pseudocode.DAddr) target));
 
         // 4. Libérer le registre
         compiler.getRegisterManager().libererRegistre();

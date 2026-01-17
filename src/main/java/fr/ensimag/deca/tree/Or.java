@@ -20,6 +20,12 @@ public class Or extends AbstractOpBool {
     }
 
     @Override
+    protected void codeGenInst(DecacCompiler compiler, fr.ensimag.ima.pseudocode.DVal opSource, 
+                               fr.ensimag.ima.pseudocode.GPRegister opDest) {
+        throw new UnsupportedOperationException("Or operation not supported in arithmetic context");
+    }
+
+    @Override
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
         if (branchOn) {
             // Sauter à 'target' si (A || B) est Vrai
@@ -47,6 +53,5 @@ public class Or extends AbstractOpBool {
             // 3. Point de sortie si A était Vrai
             compiler.addLabel(endOrLabel);
         }
-
-        
     }
+}

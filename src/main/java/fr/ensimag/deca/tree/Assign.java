@@ -52,57 +52,50 @@ public class Assign extends AbstractBinaryExpr {
 
 
     /**
-     * Génère le code pour l'instruction d'assignation
-     * (Ne retourne pas de registre, stocke juste la valeur)
+     * Génère le code de l'assignation en tant qu'expression.
+     * Le résultat (la valeur assignée) reste dans le registre cible.
+     * Permet le chaînage : x = y = 2;
+     */
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        // 1. Calculer la valeur de droite (RHS) dans le registre cible
+        getRightOperand().codeGenExpr(compiler, register);
+
+        // 2. Identifier la L-Value (Variable ou Champ)
+        AbstractLValue lValue = getLeftOperand();
+
+        // 3. Stocker la valeur à l'adresse de la L-Value
+        if (lValue instanceof Identifier) {
+            ((Identifier) lValue).codeGenStore(compiler, register);
+        } else if (lValue instanceof Selection) {
+            ((Selection) lValue).codeGenStore(compiler, register);
+        } else {
+            throw new UnsupportedOperationException("Type de LValue non supporté pour assignation: " + lValue.getClass().getSimpleName());
+        }
+
+        // Le registre 'register' contient toujours la valeur assignée, prêt pour la suite.
+    }
+
+    /**
+     * Génère le code de l'assignation en tant qu'instruction.
+     * (ex: "x = 3;")
+     * On alloue un registre temporaire pour le calcul, puis on le libère car la valeur de retour est ignorée.
      */
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // 1. Allouer un registre pour le calcul de droite
+        // 1. Allouer un registre temporaire
         GPRegister reg = compiler.getRegisterManager().prendreRegistre();
 
-        // 2. Calculer l'expression de droite dans ce registre
-        getRightOperand().codeGenExpr(compiler, reg);
+        // 2. Générer le code complet (Calcul + Store)
+        codeGenExpr(compiler, reg);
 
-        // 3. Demander à la partie gauche (LValue) de stocker ce registre
-        AbstractLValue lValue = getLeftOperand();
-
-        if (lValue instanceof Identifier) {
-            ((Identifier) lValue).codeGenStore(compiler, reg);
-        }
-        else if (lValue instanceof Selection) {
-            // Pour la partie Objet : ((Selection) lValue).codeGenStore(compiler, reg);
-            // En attendant l'implémentation de Selection :
-            throw new UnsupportedOperationException("Selection assignment not implemented yet");
-        }
-
-        // 4. Libérer le registre
+        // 3. Libérer le registre (la valeur ne sert plus à rien)
         compiler.getRegisterManager().libererRegistre();
     }
 
     /**
-     * Génère le code si l'assignation est utilisée comme expression
-     * (ex: if ((x = 3) > 0) ...)
-     */
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Calculer droite dans le registre cible 'register'
-        getRightOperand().codeGenExpr(compiler, register);
-
-        // 2. Stocker la valeur (effet de bord)
-        AbstractLValue lValue = getLeftOperand();
-
-        if (lValue instanceof Identifier) {
-            ((Identifier) lValue).codeGenStore(compiler, register);
-        } else {
-            // Selection (à faire)
-        }
-
-        // La valeur reste dans 'register', ce qui permet le chaînage
-    }
-
-    /**
-     * Implémentation du contrat AbstractBinaryExpr (ne devrait pas être appelée
-     * car on override codeGenExpr, mais obligatoire pour compiler).
+     * Implémentation vide du contrat AbstractBinaryExpr.
+     * Assign surcharge directement codeGenExpr, donc cette méthode ne sera jamais appelée par la logique standard.
      */
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
@@ -115,3 +108,16 @@ public class Assign extends AbstractBinaryExpr {
     }
 
 }
+
+//@Override
+//public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
+//                       ClassDefinition currentClass) throws ContextualError {
+//    // 1. Vérification des types gauche et droit
+//    Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
+//    // Note: verifyRValue gère déjà la compatibilité ET la conversion implicite (ConvFloat)
+//    AbstractExpr checkedRight = this.getRightOperand().verifyRValue(compiler, localEnv, currentClass, t1);
+//    this.setRightOperand(checkedRight);
+//
+//    setType(t1);
+//    return t1;
+//}

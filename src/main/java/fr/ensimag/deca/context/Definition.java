@@ -44,8 +44,13 @@ public abstract class Definition {
 
     private Location location;
     private Type type;
+    
     public boolean isField() {
         return false;
+    }
+    
+    public fr.ensimag.ima.pseudocode.DAddr getOperand() {
+        return null; // Par défaut, à override dans les sous-classes qui en ont besoin
     }
     
     public boolean isMethod() {
