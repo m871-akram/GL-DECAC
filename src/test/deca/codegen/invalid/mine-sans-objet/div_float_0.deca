@@ -1,0 +1,16 @@
+// Description:
+//    Division par zéro flottante
+//
+// Resultats:
+//    Error: Division by zero
+//
+// Historique:
+//    cree le 15/01/2026
+
+{
+    int x = 10.5;
+    int y = 0.0;
+    println("Ceci va planter :");
+    x = x / y;
+    println("On ne devrait pas voir ce message");
+}

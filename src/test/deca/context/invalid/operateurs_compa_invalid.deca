@@ -1,0 +1,16 @@
+// Description:
+//    Vérifie qu'on ne peut pas utiliser les opérateurs de comparaison sur des booleens.
+//
+// Resultats:
+//    Ligne 13 : Erreur contextuelle
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    boolean b1 = true;
+    boolean b2 = false;
+    if (b1 >= b2) {
+        println("erreur");
+    }
+}

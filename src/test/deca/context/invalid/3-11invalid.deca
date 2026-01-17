@@ -1,0 +1,15 @@
+// Description:
+//    Test de la règle 3.11 avec un type de retour inexistant.
+//
+// Resultats:
+//    Ligne 8 : Type 'TypeLambda' non défini.
+//
+// Historique:
+//    cree le 06/01/2026
+class A {
+    TypeLambda maMethode() {
+    }
+}
+
+{
+}

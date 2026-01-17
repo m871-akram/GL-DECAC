@@ -1,0 +1,6 @@
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float x = m.sin(3.0);
+}

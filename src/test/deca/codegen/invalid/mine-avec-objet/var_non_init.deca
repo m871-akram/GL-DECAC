@@ -1,0 +1,13 @@
+// Description:
+//    Accès à une variable locale non initialisée
+//
+// Resultats:
+//    comportement indéfini
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    int x;
+    println(x);
+}

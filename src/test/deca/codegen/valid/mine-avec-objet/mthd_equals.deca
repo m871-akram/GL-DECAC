@@ -1,0 +1,22 @@
+// Description:
+//    Vérifie que la methode equals compare les adresses
+//
+// Resultats:
+//    false
+//
+// Historique:
+//    cree le 17/01/2026
+
+class Lambda {
+    int valeur = 10;
+}
+
+{
+    Lambda d1 = new Lambda();
+    Lambda d2 = new Lambda();
+    if (d1.equals(d2)) {
+        println("true");
+    } else {
+        println("false"); 
+    }
+}

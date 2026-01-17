@@ -1,0 +1,21 @@
+// Description:
+//    tas plein
+//
+// Resultats:
+//    erreur : ligne 18 : tap plein si ima limité
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    int i;
+}
+
+
+{
+   while (true){
+    new A();
+   }
+}
+

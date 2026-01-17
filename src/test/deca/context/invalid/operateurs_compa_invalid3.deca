@@ -1,0 +1,16 @@
+// Description:
+//    Vérifie qu'on ne peut pas utiliser les opérateurs de comparaison sur float/string
+//
+// Resultats:
+//    Ligne 13 : Erreur contextuelle
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    float b1 = 1.0;
+    string b2 = "jjj";
+    if (b1 >= b2) {
+        println("erreur");
+    }
+}

@@ -1,0 +1,12 @@
+// Description :
+//    Succes (3.33) : Operateur modulo sur des entiers.
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    int x = 10 % 3;
+    print(x);
+}

@@ -1,0 +1,17 @@
+// Description:
+//    Null Call chain
+//
+// Resultats:
+//    Erreur : ligne 16
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    A next;
+}
+
+{
+    A a = new A();
+    a.next.next =  null;
+}

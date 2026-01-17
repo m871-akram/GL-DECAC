@@ -1,0 +1,19 @@
+// Description:
+//    Erreur : débordement Pile
+//
+// Resultats:
+//    Erreur
+//
+// Historique:
+//    cree le 17/01/2026
+//
+
+class Pile {
+    void infini() { infini(); }
+}
+
+{
+    Pile p = new Pile();
+    p.infini();
+}
+

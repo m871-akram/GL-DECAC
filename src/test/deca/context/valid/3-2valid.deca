@@ -1,0 +1,22 @@
+// Description:
+//    Test règle 3.2 : Boucle de traitement des classes.
+//
+// Resultats:
+//    Test ok
+//
+// Historique:
+//    cree le 05/01/2026
+
+class A {
+    void methodeA() { println("A"); }
+}
+
+class B {
+    void methodeB() {
+        A a = new A();
+        a.methodeA();
+    }
+}
+
+{
+}

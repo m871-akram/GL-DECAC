@@ -1,0 +1,20 @@
+// Description:
+//    différence entre printx, printlnx, print, println sur décimaux
+//
+// Resultats:
+//    3.14 en decimal
+//    3.14 en decimal
+//    3.14 en hexadecimal
+//    3.14 en hexadecimal
+//    
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    print(3.14);
+    println(3.14);
+    printlnx(3.14);
+    printx(3.14);
+}
+

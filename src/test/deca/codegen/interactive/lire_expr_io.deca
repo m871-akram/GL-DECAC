@@ -1,0 +1,17 @@
+// Description:
+//    Test de lecture directe dans une expression
+//
+// Resultats:
+//    (Entrer 5)
+//    Le carré est : 25
+//
+// Historique:
+//    cree le 15/01/2026
+
+{
+    int x;
+    println("Entrez un nombre pour le mettre au carré :");
+    // Teste si le compilateur gère bien readInt comme une opérande
+    x = readInt() * readInt();
+    println("Le carré (si vous avez entré le même nombre deux fois) est : ", x);
+}

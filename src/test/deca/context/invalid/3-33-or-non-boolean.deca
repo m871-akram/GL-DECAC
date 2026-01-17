@@ -1,0 +1,12 @@
+// Description :
+//    Erreur (3.33) : Operateur || sur non-booleens.
+//
+// Resultats :
+//    Erreur contextuelle
+//    Ligne 11 : Operateur '||' exige des operandes booleens.
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    3 || 4;
+}

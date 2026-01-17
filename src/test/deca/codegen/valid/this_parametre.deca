@@ -1,0 +1,23 @@
+// Description:
+//    pointeur implicite this
+//
+// Resultats:
+//    5
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    int i = 5;
+    void printI(){
+        println(this.i);
+    }
+}
+
+
+{
+   A a = new A();
+   a.printI();
+}
+

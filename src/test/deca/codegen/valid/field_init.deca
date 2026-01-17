@@ -1,0 +1,21 @@
+// Description:
+//    initialisation par default
+//
+// Resultats:
+//    ok
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    int i;
+    float j;
+}
+{
+   A a = new A();
+   if (a.i == 0 && a.y == 0.0){
+    println("OK");
+   }
+}
+

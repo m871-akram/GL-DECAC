@@ -1,0 +1,12 @@
+// Description :
+//    Succes : Declarations d'identificateurs differents dans le meme bloc.
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 08/01/2026
+{
+    int x;
+    float y;
+}

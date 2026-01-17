@@ -1,0 +1,29 @@
+// Description:
+//    Cast valide entre classes compatibles
+//
+// Resultats:
+//    affiche 1
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    int x = 0;
+}
+
+class B extends A {
+    int y = 1;
+}
+
+class C extends A {
+    int z = 2;
+}
+
+{
+    A a = new B();
+    B b;
+
+    b = (B)(a); 
+
+    println(b.y); 
+}

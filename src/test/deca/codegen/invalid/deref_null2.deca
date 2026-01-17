@@ -1,0 +1,18 @@
+// Description:
+//    Déréférencement de null sur un champ (ecriture)
+//
+// Resultats:
+//    Erreur : ligne 16
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    int x = 42;
+}
+
+{
+    A a = null;
+    println("Accès au champ x...");
+    a.x = 1;
+}

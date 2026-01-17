@@ -1,0 +1,19 @@
+// Description:
+//    initialisation par default
+//
+// Resultats:
+//    15
+// 
+// Historique:
+//    cree le 17/01/2026
+
+
+class A {
+    int i;
+}
+{
+   A a = new A();
+   a.i = 15;
+   println(a.i); 
+}
+

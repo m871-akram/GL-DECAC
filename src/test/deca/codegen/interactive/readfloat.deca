@@ -1,0 +1,14 @@
+// Description:
+//    readFloat
+//
+// Resultats (pour 3.5):
+//    14.00000e+00
+//
+// Historique:
+//    cree le 11/01/2026
+
+{
+    float b;
+    b = readFloat();
+    println(f * 4.0);
+}
