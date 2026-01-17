@@ -31,13 +31,13 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
                 Type leftType = getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
                 Type rightType = getRightOperand().verifyExpr(compiler, localEnv, currentClass);
                 
-                if (leftType != compiler.environmentType.BOOLEAN) {
+                if (!leftType.isBoolean()) {
                     throw new ContextualError(
                         "Op gauche d'une opération booléenne doit être booléen" + leftType,
                         getLeftOperand().getLocation());
                 }
                 
-                if (rightType != compiler.environmentType.BOOLEAN) {
+                if (!rightType.isBoolean()) {
                     throw new ContextualError(
                         "Op droit d'une opération booléenne doit être booléen" + rightType,
                         getRightOperand().getLocation());

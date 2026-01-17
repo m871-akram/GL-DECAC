@@ -114,6 +114,21 @@ public class EnvironmentType {
     
         return false;
     }
+    public boolean aritCompatible(Type T1, Type T2) {
+        if (T1.isFloat() && T2.isInt()) {
+            return true;
+        }
+        if (T2.isFloat() && T1.isInt()) {
+            return true;
+        }
+        if (T2.isInt() && T1.isInt()) {
+            return true;
+        }
+        if (T1.isFloat() && T1.isFloat()) {
+            return true;
+        }
+        return false;
+    }
     public boolean castCompatible(Type T1, Type T2) {
         if (T1.isVoid()) {
             return false;
