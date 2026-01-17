@@ -5,6 +5,7 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Instruction;
 import fr.ensimag.ima.pseudocode.Register;
@@ -55,44 +56,23 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
     }
 
 
-//    @Override
-//    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-//
-//        getLeftOperand().codeGenExpr(compiler, register);
-//
-//
-//        if (compiler.getRegisterManager().registreLibre()) {
-//            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
-//            getRightOperand().codeGenExpr(compiler, rRight);
-//
-//            //  CMP Val, Reg => Codes conditions basés sur (Reg - Val)
-//            compiler.addInstruction(new CMP(rRight, register));
-//
-//            compiler.getRegisterManager().libererRegistre();
-//        } else {
-//            // gestion du Spill
-//            GPRegister rRight = Register.R0;
-//
-//            // sauvegard gauche
-//            compiler.addInstruction(new PUSH(register));
-//
-//
-//            getRightOperand().codeGenExpr(compiler, register);
-//
-//            compiler.addInstruction(new LOAD(register, rRight));
-//            compiler.addInstruction(new POP(register));
-//
-//            //  CMP Droite, Gauche
-//            compiler.addInstruction(new CMP(rRight, register));
-//        }
-//
-//        // si (cc = vrai) alors Rm <- 1 sinon Rm <- 0"
-//
-//        compiler.addInstruction(getSccInstruction(register));
-//    }
-//
-//    // Retourne l'instruction Scc (Set on Condition Code) correspondant à l'opérateur
-//    protected abstract Instruction getSccInstruction(GPRegister register);
+    /**
+     * Implémentation générique de la comparaison.
+     * Cette méthode est appelée par AbstractBinaryExpr après avoir chargé les opérandes.
+     */
+    @Override
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        // 1. Comparaison (opDest - opSource)
+        // Note: CMP op1, op2 fait (op2 - op1) et set les flags.
+        compiler.addInstruction(new CMP(opSource, opDest));
 
+        // 2. Set Condition Code (Transformation en booléen 0/1)
+        // ex: SEQ R2 (Met R2 à 1 si égal, 0 sinon)
+        compiler.addInstruction(getSccInstruction(opDest));
+    }
 
+    /**
+     * Retourne l'instruction de saut conditionnel ou de set (ex: SEQ, SLT)
+     */
+    protected abstract Instruction getSccInstruction(GPRegister register);
 }

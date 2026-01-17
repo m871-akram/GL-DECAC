@@ -30,8 +30,7 @@ public class UnaryMinus extends AbstractUnaryExpr {
     }
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        getOperand().codeGenExpr(compiler, register);
+    protected void codeGenUnary(DecacCompiler compiler, GPRegister register) {
         // Rm <- -Rm
         compiler.addInstruction(new OPP(register, register));
     }

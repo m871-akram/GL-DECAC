@@ -21,8 +21,11 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.log4j.Logger;
 
-
-import fr.ensimag.deca.codegen.RegisterManager; // pour le rendre visible par le compile
+// pour le rendre visible par le compile
+import fr.ensimag.deca.codegen.RegisterManager;
+import fr.ensimag.deca.codegen.MemoryManagementUnit;
+import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.SignalSequencer;
 
 /**
  * Decac compiler instance.
@@ -47,12 +50,21 @@ public class DecacCompiler {
      */
     private static final String nl = System.getProperty("line.separator", "\n");
 
-    private RegisterManager registerManager;
+
+    private final RegisterManager registerManager;
+    private final MemoryManagementUnit mmu;
+    private final InterruptController irqController;
+    private final SignalSequencer sequencer;
 
     public DecacCompiler(CompilerOptions compilerOptions, File source) {
         super();
         this.compilerOptions = compilerOptions;
         this.source = source;
+
+        this.mmu = new MemoryManagementUnit();
+        this.irqController = new InterruptController();
+        this.sequencer = new SignalSequencer();
+
         if(compilerOptions != null){
             this.registerManager = new RegisterManager(compilerOptions.getRegisters());
         } else {
@@ -138,6 +150,9 @@ public class DecacCompiler {
     private final IMAProgram program = new IMAProgram();
 
     public RegisterManager getRegisterManager() { return registerManager; }
+    public MemoryManagementUnit getMMU() { return mmu; }
+    public InterruptController getIrqController() { return irqController; }
+    public SignalSequencer getSequencer() { return sequencer; }
 
 //    // Utilitaire pour générer temporairement dans un autre IMAProgram
 //    public IMAProgram swapProgram(IMAProgram newProg) {
@@ -153,12 +168,12 @@ public class DecacCompiler {
 //    }
 
 
- 
+
 
     /** The global environment for types (and the symbolTable) */
     public final SymbolTable symbolTable = new SymbolTable();
     public final EnvironmentType environmentType = new EnvironmentType(this);
-    
+
 
     public Symbol createSymbol(String name) {
         return symbolTable.create(name);

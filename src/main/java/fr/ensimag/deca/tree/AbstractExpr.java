@@ -13,6 +13,10 @@ import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.BEQ;
 import fr.ensimag.ima.pseudocode.instructions.BNE;
 import fr.ensimag.ima.pseudocode.instructions.CMP;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
+import fr.ensimag.ima.pseudocode.instructions.WINT;
+import fr.ensimag.ima.pseudocode.Register;
 import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
@@ -88,10 +92,27 @@ public abstract class AbstractExpr extends AbstractInst {
             EnvironmentExp localEnv, ClassDefinition currentClass, 
             Type expectedType)
             throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+
+        // 1. Vérification standard
+        Type type = this.verifyExpr(compiler, localEnv, currentClass);
+
+        // 2. Compatibilité d'assignation
+        if (!compiler.environmentType.assignCompatible(expectedType, type)) {
+            throw new ContextualError("Type incompatible pour l'initialisation ou l'affectation. Attendu: "
+                    + expectedType + ", Trouvé: " + type, this.getLocation());
+        }
+
+        // 3. Conversion implicite (ConvFloat)
+        if (expectedType.isFloat() && type.isInt()) {
+            ConvFloat conv = new ConvFloat(this);
+            // On vérifie la conversion (ce qui va définir son type à Float)
+            conv.verifyExpr(compiler, localEnv, currentClass);
+            return conv;
+        }
+
+        return this;
     }
-    
-    
+
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
@@ -112,8 +133,11 @@ public abstract class AbstractExpr extends AbstractInst {
      *            the main program.
      */
     void verifyCondition(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+                         ClassDefinition currentClass) throws ContextualError {
+        Type type = verifyExpr(compiler, localEnv, currentClass);
+        if (!type.isBoolean()) {
+            throw new ContextualError("Condition booléenne attendue, trouvé: " + type, getLocation());
+        }
     }
 
 
@@ -127,64 +151,63 @@ public abstract class AbstractExpr extends AbstractInst {
      * @param compiler
      */
     protected void codeGenPrint(DecacCompiler compiler) {
-        
-        //  Calculer la valeur de l'expression dans un registre temporaire
-        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
-        
-        codeGenExpr(compiler, register); // Évaluation
-        
-        //  Charger le résultat dans R1 pour l'instruction WINT/WFLOAT
-        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.LOAD(register, fr.ensimag.ima.pseudocode.Register.R1));
-        
-        //  Appeler l'instruction d'affichage selon le type
+        // 1. Évaluation dans un registre temporaire
+        // Utilisation de takeRegister (Hardware Architecture)
+        GPRegister register = compiler.getRegisterManager().prendreRegistre();
+
+        codeGenExpr(compiler, register);
+
+        // 2. Charger dans R1 pour WINT/WFLOAT
+        compiler.addInstruction(new LOAD(register, Register.R1));
+
+        // 3. Afficher
         if (getType().isInt()) {
-            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.WINT());
+            compiler.addInstruction(new WINT());
         } else if (getType().isFloat()) {
-            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.WFLOAT());
+            compiler.addInstruction(new WFLOAT());
         }
-        
-        //  Libérer le registre temporaire
-        regMa.libererRegistre();
+
+        // 4. Libérer le registre
+        compiler.getRegisterManager().libererRegistre();
     }
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // throw new UnsupportedOperationException("not yet implemented");
+        // Fallback pour les expressions utilisées comme instructions (ex: Assign hérite de ça)
+        // Mais Assign override cette méthode.
+        // Si on est ici, on calcule juste pour l'effet de bord (rare en sans-objet pur hors Assign)
 
-        //  allouer un registre temporaire pour stocker le résultat 
-        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        fr.ensimag.ima.pseudocode.GPRegister register = regMa.prendreRegistre();
-        
-        //  code de l'expression
+        GPRegister register = compiler.getRegisterManager().prendreRegistre();
         codeGenExpr(compiler, register);
-        
-        regMa.libererRegistre(); 
+        compiler.getRegisterManager().libererRegistre();
     }
 
+    /**
+     * Génère un saut conditionnel basé sur la valeur de l'expression.
+     * Implémentation par défaut pour les expressions non-booléennes pures (ex: variables)
+     */
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
-        
-        fr.ensimag.deca.codegen.RegisterManager regMgr = compiler.getRegisterManager();
-        GPRegister reg = regMgr.prendreRegistre();
 
+        GPRegister reg = compiler.getRegisterManager().prendreRegistre();
+
+        // 1. Calculer la valeur (0 ou 1)
         this.codeGenExpr(compiler, reg);
-        
-    
+
+        // 2. Comparer à 0 (Faux)
         compiler.addInstruction(new CMP(new ImmediateInteger(0), reg));
-        
-        // le saut conditionnel
+
+        // 3. Saut
         if (branchOn) {
-            // si (reg != 0) -> Saut
+            // Si on veut sauter quand c'est Vrai (donc reg != 0)
             compiler.addInstruction(new BNE(target));
         } else {
-            // si (reg == 0) -> Saut
+            // Si on veut sauter quand c'est Faux (donc reg == 0)
             compiler.addInstruction(new BEQ(target));
         }
-        
-   
-        regMgr.libererRegistre();
+
+        compiler.getRegisterManager().libererRegistre();
     }
-    
+
 
     @Override
     protected void decompileInst(IndentPrintStream s) {

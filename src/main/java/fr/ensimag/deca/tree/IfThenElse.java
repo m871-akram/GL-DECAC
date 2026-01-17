@@ -52,29 +52,27 @@ public class IfThenElse extends AbstractInst {
         elseBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
     }
 
-    // if_else.1, if_else.2...
-    private static int c = 0;
-
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        c++;
-        String a = "." + c;
-        
-        Label elseLabel = new Label("else" + a);
-        Label endLabel = new Label("end_if" + a);
-    
-        // <Code(Condition, faux, E_Sinon)>
+        // Utilisation du Sequencer pour obtenir des signaux uniques
+        Label elseLabel = compiler.getSequencer().genSignal("else");
+        Label endLabel = compiler.getSequencer().genSignal("end_if");
+
+        // 1. Génération du saut conditionnel
+        // Si la condition est FAUSSE, on saute au Sinon
         condition.codeGenBool(compiler, false, elseLabel);
 
-        // (Then)
+        // 2. Bloc Alors
         thenBranch.codeGenListInst(compiler);
 
-        // on saute à la fin pour ne pas exécuter le Sinon après le Alors
-       
+        // 3. Saut inconditionnel vers la fin (pour ne pas exécuter le Sinon)
         compiler.addInstruction(new BRA(endLabel));
 
+        // 4. Bloc Sinon
         compiler.addLabel(elseLabel);
         elseBranch.codeGenListInst(compiler);
+
+        // 5. Fin
         compiler.addLabel(endLabel);
     }
 

@@ -24,6 +24,7 @@ import fr.ensimag.ima.pseudocode.instructions.SGE;
             return ">=";
         }
 
-    @Override protected Instruction getSccInstruction(GPRegister register) { return new SGE(register); }
+    @Override
+    protected Instruction getSccInstruction(GPRegister register) { return new SGE(register); }
 
     }

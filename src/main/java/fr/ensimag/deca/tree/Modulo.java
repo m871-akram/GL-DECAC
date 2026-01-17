@@ -1,14 +1,17 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptController;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.instructions.*;
+
 
 /**
  *
@@ -41,34 +44,14 @@ public class Modulo extends AbstractOpArith {
 
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        getLeftOperand().codeGenExpr(compiler, register);
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        compiler.addInstruction(new REM(opSource, opDest));
 
-        if (compiler.getRegisterManager().registreLibre()) {
-            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
-            getRightOperand().codeGenExpr(compiler, rRight);
-
-            compiler.addInstruction(new REM(rRight, register));
-
-            compiler.getRegisterManager().libererRegistre();
-        } else {
-            compiler.addInstruction(new PUSH(register));
-            compiler.getRegisterManager().empiler();
-
-            getRightOperand().codeGenExpr(compiler, register);
-
-            compiler.addInstruction(new LOAD(register, Register.R0));
-            compiler.addInstruction(new POP(register));
-            compiler.getRegisterManager().depiler();
-
-            compiler.addInstruction(new REM(Register.R0, register));
-        }
-
-        // Vérification Erreur
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("division_par_0")));
-        }
+        compiler.getIrqController().triggerInterrupt(compiler,
+                InterruptController.Vector.IRQ_DIV_BY_ZERO);
     }
+}
 
 
     @Override

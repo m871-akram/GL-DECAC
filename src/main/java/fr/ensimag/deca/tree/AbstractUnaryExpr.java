@@ -1,6 +1,8 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.GPRegister;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
@@ -23,7 +25,24 @@ public abstract class AbstractUnaryExpr extends AbstractExpr {
 
 
     protected abstract String getOperatorName();
-  
+
+    /**
+     * Méthode template pour les opérations unaires.
+     * 1. Evalue l'opérande dans le registre.
+     * 2. Applique l'opération (codeGenUnary).
+     */
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        getOperand().codeGenExpr(compiler, register);
+        codeGenUnary(compiler, register);
+    }
+
+    /**
+     * À implémenter par les sous-classes (Not, UnaryMinus, ConvFloat).
+     * Génère juste l'instruction atomique (ex: OPP R2, R2).
+     */
+    protected abstract void codeGenUnary(DecacCompiler compiler, GPRegister register);
+
     @Override
     public void decompile(IndentPrintStream s) {
         s.print(getOperatorName());

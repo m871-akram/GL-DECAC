@@ -56,15 +56,4 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
         return getType();
     }
 
-
-    @Override
-    protected void codeGenPrint(DecacCompiler compiler) {
-        // Calcule l'expression dans R1 et affiche
-        codeGenExpr(compiler, Register.R1);
-        if (getType().isFloat()) {
-            compiler.addInstruction(new WFLOAT());
-        } else {
-            compiler.addInstruction(new WINT());
-        }
-    }
 }

@@ -1,10 +1,10 @@
 package fr.ensimag.deca.tree;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.ima.pseudocode.Label;
 
-
 /**
- *
+ * Operator "||" (ou logique)
  * @author gl51
  * @date 01/01/2026
  */
@@ -47,6 +47,5 @@ public class Or extends AbstractOpBool {
             // 3. Point de sortie si A était Vrai
             compiler.addLabel(endOrLabel);
         }
-
-        
     }
+}

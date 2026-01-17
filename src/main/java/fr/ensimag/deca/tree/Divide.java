@@ -2,6 +2,8 @@ package fr.ensimag.deca.tree;
 
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.Register;
@@ -21,47 +23,16 @@ public class Divide extends AbstractOpArith {
     }
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        getLeftOperand().codeGenExpr(compiler, register);
-
-
-
-        if (compiler.getRegisterManager().registreLibre()) {
-            GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
-            getRightOperand().codeGenExpr(compiler, rRight);
-
-            // Choix de l'instruction
-            if (this.getType().isFloat()) {
-                compiler.addInstruction(new DIV(rRight, register));
-            } else {
-                compiler.addInstruction(new QUO(rRight, register));
-            }
-
-            compiler.getRegisterManager().libererRegistre();
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        if (getType().isInt()) {
+            compiler.addInstruction(new QUO(opSource, opDest));
         } else {
-            // Cas Spill (Pile pleine)
-            compiler.addInstruction(new PUSH(register));
-            compiler.getRegisterManager().empiler();
-
-            getRightOperand().codeGenExpr(compiler, register);
-
-            compiler.addInstruction(new LOAD(register, Register.R0));
-            compiler.addInstruction(new POP(register));
-            compiler.getRegisterManager().depiler();
-
-            if (this.getType().isFloat()) {
-                compiler.addInstruction(new DIV(Register.R0, register));
-            } else {
-                compiler.addInstruction(new QUO(Register.R0, register));
-            }
+            compiler.addInstruction(new DIV(opSource, opDest));
         }
 
-        // Vérification Erreur
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("division_par_0")));
-            if (this.getType().isFloat()) {
-                compiler.addInstruction(new BOV(new Label("erreur de pile_OV")));
-            }
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptController.Vector.IRQ_DIV_BY_ZERO);
         }
     }
     

@@ -48,13 +48,9 @@ public class Identifier extends AbstractIdentifier {
      */
     @Override
     public ClassDefinition getClassDefinition() {
-        try {
-            return (ClassDefinition) definition;
-        } catch (ClassCastException e) {
-            throw new DecacInternalError(
-                    "Identifier "
-                            + getName()
-                            + " is not a class identifier, you can't call getClassDefinition on it");
+        try { return (ClassDefinition) definition; }
+        catch (ClassCastException e) {
+            throw new DecacInternalError("Identifier " + getName() + " is not a class identifier");
         }
     }
 
@@ -211,59 +207,55 @@ public class Identifier extends AbstractIdentifier {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        //  variable locale
-        if (!getDefinition().isField()) {
-            compiler.addInstruction(new LOAD(getExpDefinition().getOperand(), register));
-        }
-        // accès implicite via 'this' x est un champ
-        else {
-            FieldDefinition fieldDef = getFieldDefinition();
-            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
-            compiler.addInstruction(new LOAD(new RegisterOffset(fieldDef.getIndex(), register), register));
-        }
-    }
-
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         Definition def = getDefinition();
 
-        if (def.isParam()) {
-            // Paramètre de méthode
-            compiler.addInstruction(new LOAD(def.getOperand(), register));
-        } else if (!def.isField()) {
-            // Variable locale/globale (déjà implémenté)
-            compiler.addInstruction(new LOAD(getExpDefinition().getOperand(), register));
+        if (def.isField()) {
+            // Accès Champ (implicite sur 'this' (-2(LB)))
+            // 1. Charger 'this' dans le registre
+            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
+
+            // 2. Charger le champ depuis l'objet (Offset par rapport au début de l'objet)
+            FieldDefinition fieldDef = (FieldDefinition) def;
+            // ATTENTION: index champ commence à 1 (après VTable)
+            compiler.addInstruction(new LOAD(new RegisterOffset(fieldDef.getIndex(), register), register));
+
         } else {
-            // Champ (accès implicite via this)
-            compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register)); // this
-            int fieldOffset = getFieldDefinition().getIndex();
-            compiler.addInstruction(new LOAD(new RegisterOffset(fieldOffset, register), register));
+            // Accès Variable Locale / Paramètre / Globale
+            // L'opérande (adresse) a été stockée dans la définition par DeclVar ou DeclParam
+            compiler.addInstruction(new LOAD(def.getOperand(), register));
         }
     }
 
-    @Override
+    /**
+     * Stocke la valeur d'un registre dans l'identifiant (Écriture)
+     * Utile pour Assign (gauche = source)
+     */
     protected void codeGenStore(DecacCompiler compiler, GPRegister source) {
+        Definition def = getDefinition();
 
-        // si variable locale
-        if (!getExpDefinition().isField()) {
-            compiler.addInstruction(new STORE(source, getExpDefinition().getOperand()));
-        }
-        // implicit this.field = ...
-        else {
-            FieldDefinition fieldDef = getFieldDefinition();
+        if (def.isField()) {
+            // Accès Champ (implicite sur 'this')
+            // Il faut un registre temporaire pour calculer l'adresse de 'this'
+            // On utilise R1 (jamais alloué par RegisterManager, toujours dispo comme scratch)
             compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
+
+            FieldDefinition fieldDef = (FieldDefinition) def;
             compiler.addInstruction(new STORE(source, new RegisterOffset(fieldDef.getIndex(), Register.R1)));
+
+        } else {
+            // Variable standard
+            compiler.addInstruction(new STORE(source, def.getOperand()));
         }
     }
 
     @Override
     protected void codeGenPrint(DecacCompiler compiler) {
+        // On charge la valeur dans R1 (convention d'affichage)
+        codeGenExpr(compiler, Register.R1);
 
-        codeGenExpr(compiler, Register.getR(1)); // evaluation dans R1
-
-        if (getType().isInt()) {
+        if (getDefinition().getType().isInt()) {
             compiler.addInstruction(new WINT());
-        } else if (getType().isFloat()) {
+        } else if (getDefinition().getType().isFloat()) {
             compiler.addInstruction(new WFLOAT());
         }
     }

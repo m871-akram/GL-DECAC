@@ -5,13 +5,13 @@ import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
-import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
 import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
 /**
+ * Déclaration de variable ( int x = 3;)
  * @author gl51
  * @date 01/01/2026
  */
@@ -64,16 +64,16 @@ public class DeclVar extends AbstractDeclVar {
 
     @Override
     protected void codeGenDeclVar(DecacCompiler compiler) {
-        //  Gestion de l'adresse dans la pile 
-        compiler.getRegisterManager().incrNbGlobales();
-        int index = compiler.getRegisterManager().getNbGlobales();
-        //  index(GB)
-        RegisterOffset addr = new RegisterOffset(index, Register.GB);
-        
+        // 1. Allocation mémoire via MMU (Pile locale)
+        // La MMU renvoie un RegisterOffset (ex: 3(LB))
+        RegisterOffset addr = compiler.getMMU().allocLocal();
+
+        // 2. Stockage de l'adresse dans la définition pour usage ultérieur (Identifier)
         this.varName.getVariableDefinition().setOperand(addr);
 
-        //  initialisation
-        this.initialization.codeGenInit(compiler, this.varName.getVariableDefinition().getType(), this.varName.getVariableDefinition());
+        // 3. Génération du code d'initialisation
+        // On passe l'adresse directement à l'initialisation pour qu'elle STORE le résultat
+        this.initialization.codeGenInit(compiler, addr, this.varName.getVariableDefinition().getType());
     }
 
 
