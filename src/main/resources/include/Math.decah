@@ -3,8 +3,8 @@
 
 
 
-#include "TableCordic.deca";
-#include "TableSinCos.deca";
+#include "TableCordic.deca"
+#include "TableSinCos.deca"
 
 
 
@@ -45,7 +45,7 @@ class Math {
 
     float sin(float f) {
         //des cas speciaux
-        if (-isNaN(f) || _isInfinite(f)) return 0.0f/0.0f;
+        if (_isNaN(f) || _isInfinite(f)) return 0.0f/0.0f;
 
         if (_abs(f) > 1000) {
             //marche pas en deca ! mais aide beaucoup en java (pour une bonne precision)

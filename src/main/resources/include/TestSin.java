@@ -1,4 +1,4 @@
-void testCos() {
+void testSin() {
     Math m = new Math();
     
     float x = 0.0;
