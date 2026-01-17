@@ -1,0 +1,16 @@
+// Description:
+//    Test des opérateurs de comparaison sur les flottants
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    float a = 1.2;
+    float b = -1.2;
+    if (a > b && b < a && a >= 1.2 && b <= 0.0) {
+        println("ok");
+    }
+}

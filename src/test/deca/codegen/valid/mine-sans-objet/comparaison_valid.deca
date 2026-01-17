@@ -1,0 +1,15 @@
+// Description:
+//    Test des opérateurs de comparaison sur les entiers
+//
+// Resultats:
+//    1 2 3
+//
+// Historique:
+//    cree le 17/01/2026
+
+{
+    if (10 > 5)   { print("1 "); }
+    if (10 >= 10) { print("2 "); }
+    if (5 < 10)   { print("3 "); }
+    if (5 <= 4)   { print("4"); }
+}
