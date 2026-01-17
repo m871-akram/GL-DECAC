@@ -1,0 +1,12 @@
+// Description :
+//    Succes (3.31) : Printx sur types numeriques.
+//
+// Resultats :
+//    ok
+//
+// Historique :
+//    cree le 17/01/2026
+{
+    printx(10);
+    printx(3.14);
+}

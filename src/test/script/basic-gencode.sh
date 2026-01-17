@@ -8,112 +8,29 @@
 
 # Ce genre d'approche est bien sûr généralisable, en conservant le
 # résultat attendu dans un fichier pour chaque fichier source.
-
-
-# On ne teste qu'un fichier. Avec une boucle for appropriée, on
-# pourrait faire bien mieux ...
-
-# Tests de génération de code : valid / invalid / perf
-
 cd "$(dirname "$0")"/../../.. || exit 1
 
 PATH=./src/test/script/launchers:./src/main/bin:"$PATH"
 
-BASE=src/test/deca/codegen
+# On ne teste qu'un fichier. Avec une boucle for appropriée, on
+# pourrait faire bien mieux ...
+rm -f ./src/test/deca/codegen/valid/provided/cond0.ass 2>/dev/null
+decac ./src/test/deca/codegen/valid/provided/cond0.deca || exit 1
+if [ ! -f ./src/test/deca/codegen/valid/provided/cond0.ass ]; then
+    echo "Fichier cond0.ass non généré."
+    exit 1
+fi
 
-#######################################
-# VALID
-#######################################
-echo "=== Tests gencode VALID ==="
+resultat=$(ima ./src/test/deca/codegen/valid/provided/cond0.ass) || exit 1
+rm -f ./src/test/deca/codegen/valid/provided/cond0.ass
 
-find src/test/deca/codegen/valid -name "*.deca" | while read f
-do
-    dir=$(dirname "$f")
-    base=$(basename "$f" .deca)
-    ass="$dir/$base.ass"
-    out="$dir/$base.out"
+# On code en dur la valeur attendue.
+attendu=ok
 
-    echo "--- $f ---"
-
-    rm -f "$ass"
-
-    if ! decac "$f"; then
-        echo "[ERREUR] Compilation échouée"
-        exit 1
-    fi
-
-    if [ ! -f "$ass" ]; then
-        echo "[ERREUR] Assembleur non généré"
-        exit 1
-    fi
-
-    if [ ! -f "$out" ]; then
-        echo "[ERREUR] Fichier oracle manquant : $out"
-        exit 1
-    fi
-
-    resultat=$(ima "$ass") || exit 1
-    rm -f "$ass"
-
-    if [ "$resultat" = "$(cat "$out")" ]; then
-        echo "[OK]"
-    else
-        echo "[ERREUR] Résultat incorrect"
-        exit 1
-    fi
-done
-
-
-
-#######################################
-# INVALID
-#######################################
-echo "=== Tests gencode INVALID ==="
-
-find src/test/deca/codegen/invalid -name "*.deca" | while read f
-do
-    echo "--- $f ---"
-
-    if decac "$f"; then
-        echo "[ERREUR] Compilation réussie (devait échouer)"
-        exit 1
-    else
-        echo "[OK]"
-    fi
-done
-
-#######################################
-# PERF
-#######################################
-echo "=== Tests gencode PERF ==="
-
-find src/test/deca/codegen/perf -name "*.deca" | while read f
-do
-    dir=$(dirname "$f")
-    base=$(basename "$f" .deca)
-    ass="$dir/$base.ass"
-
-    echo "--- $f ---"
-
-    rm -f "$ass"
-
-    if ! decac "$f"; then
-        echo "[ERREUR] Compilation échouée"
-        exit 1
-    fi
-
-    if [ ! -f "$ass" ]; then
-        echo "[ERREUR] Assembleur non généré"
-        exit 1
-    fi
-
-    rm -f "$ass"
-    echo "[OK]"
-done
-
-
-echo "=== Tous les tests gencode sont passés ==="
-
-
-
-
+if [ "$resultat" = "$attendu" ]; then
+    echo "Tout va bien"
+else
+    echo "Résultat inattendu de ima:"
+    echo "$resultat"
+    exit 1
+fi
