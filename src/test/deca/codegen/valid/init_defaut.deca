@@ -1,0 +1,30 @@
+// Description:
+//    Vérification des valeurs par défaut (0, 0.0, false, null) 
+//
+// Resultats:
+//    0
+//    0.00000e+00
+//    false
+//    ok
+//
+// Historique:
+//    cree le 17/01/2026
+//
+
+class Default {
+    int i;        
+    float f;     
+    boolean b;    
+    Default d;   
+}
+
+{
+    Default obj = new Default();
+    println(obj.i);
+    println(obj.f);
+    if (obj.b) { println("erreur"); } else { println("false"); }
+    if (obj.d == null) { println("ok"); }
+}
+
+
+
