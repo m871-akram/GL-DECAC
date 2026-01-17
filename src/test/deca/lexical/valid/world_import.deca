@@ -6,7 +6,7 @@
 //
 // Historique:
 //    cree le 18/12/2025
-#include "hello_import"
+#include "hello_import.import"
 
         "world");
 }
