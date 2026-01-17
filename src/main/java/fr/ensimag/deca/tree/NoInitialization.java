@@ -7,7 +7,7 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
+import fr.ensimag.ima.pseudocode.Operand;
 import java.io.PrintStream;
 
 /**
@@ -28,8 +28,9 @@ public class NoInitialization extends AbstractInitialization {
 
 
     @Override
-    protected void codeGenInit(DecacCompiler compiler, Type t, VariableDefinition varDef) {
-        // on fait rien ( peut etre il va recevoir un 0 !! )
+    protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
+        // Pour une variable locale, "int x;" ne génère rien (valeur indéfinie).
+        // Pas besoin de charger 0 explicitement en Deca Sans Objet.
     }
 
     /**

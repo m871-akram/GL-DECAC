@@ -9,7 +9,8 @@ import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
-
+import org.apache.commons.lang.Validate;
+import java.io.PrintStream;
 
 /**
  * Declaration of a class (<code>class name extends superClass {members}<code>).
@@ -117,123 +118,120 @@ public class DeclClass extends AbstractDeclClass {
          methodes.verifyListMethodBody(compiler, classDef);
     }
 
-//    @Override
-//    protected void verifyClassBody(DecacCompiler compiler) throws ContextualError {
-//                ClassDefinition currentClassDef = this.name.getClassDefinition();
-//        EnvironmentExp classEnv = currentClassDef.getMembers();
-//        fields.verifyDeclFieldPrototype2(compiler, classEnv, currentClassDef);
-//        methodes.verifyDeclMethodPrototype2(compiler, classEnv, currentClassDef);
-//    }
-
-
-
-//    @Override
-//    protected void codeGenDeclClass(DecacCompiler compiler) {
-//        // 1. Génération de la vTable (Passe 1 de l'étape C)
-//        // LOAD #null / LEA super_vtable, R0 ... STORE ... [9]
-//
-//        // 2. Génération du sous-programme d'initialisation init.NomClasse [11]
-//        compiler.addLabel(new Label("init." + name.getName()));
-//        // Code pour init (Test TSTO, initialisation des champs hérités puis propres) [12]
-//
-//        // 3. Génération du code des méthodes [13]
-//        methods.codeGenListDeclMethod(compiler);
-//    }
-
     /**
-     * Génère la vTable (Passe 1)
+     * PASSE 1 : Génération de la VTable
      */
     @Override
     protected void codeGenDeclClass(DecacCompiler compiler) {
-        // Récupération de la définition via le nom
         ClassDefinition classDef = (ClassDefinition) this.name.getDefinition();
+        ClassDefinition superClassDef = (ClassDefinition) this.superClass.getDefinition();
         String className = this.name.getName().getName();
 
-        compiler.addComment("===== Table des méthodes de " + className + " =====");
+        compiler.addComment("--------------------------------------------------");
+        compiler.addComment("Classe " + className);
+        compiler.addComment("--------------------------------------------------");
 
-        // 1. Calcul Adresse vTable (dans GB)
-        int addrVTable = compiler.getRegisterManager().getNbGlobales();
+        // 1. Allouer l'espace pour la VTable dans la zone Statique via MMU
+        // Taille = 1 (ptr super) + Nombre total de méthodes
+        int vTableSize = 1 + classDef.getNumberOfMethods();
+        RegisterOffset vTableAddr = compiler.getMMU().allocGlobal(vTableSize);
 
-        // IMPORTANT: Stocker l'adresse pour les NEW plus tard
-        // classDef.setVTableAddr(addrVTable); // Décommenter quand ClassDefinition aura setVTableAddr
+        // Stocker l'adresse de la VTable dans la définition (champ 'operand' hérité de Definition)
+        classDef.setOperand(vTableAddr);
 
-        compiler.getRegisterManager().incrNbGlobales(); // +1 pour le Pointeur Super
+        compiler.addComment("Table des méthodes de " + className + " à l'adresse " + vTableAddr);
 
-        // 2. Pointeur Super-Classe
-        ClassDefinition superClassDef = classDef.getSuperClass();
+        // 2. Gestion du pointeur Super-Classe (Index 0)
+        DAddr superAddr;
+        RegisterOffset superVTableAddr = null; // Adresse VTable du père
 
         if (superClassDef == null || "Object".equals(superClassDef.getType().getName().getName())) {
-            compiler.addInstruction(new LOAD(new NullOperand(), Register.R0));
+            // Si c'est Object (ou racine), pas de super VTable
+            superAddr = new NullOperand();
         } else {
-            // LEA addrSuper, R0
-            // compiler.addInstruction(new LEA(new RegisterOffset(superClassDef.getVTableAddr(), Register.GB), Register.R0));
-            // Placeholder temporaire :
-            compiler.addInstruction(new LEA(new RegisterOffset(1, Register.GB), Register.R0));
+            // Récupérer l'adresse VTable du père (stockée dans son operand)
+            superVTableAddr = (RegisterOffset) superClassDef.getOperand();
+            // Charger l'adresse effective (LEA pour obtenir l'adresse GB, pas la valeur pointée)
+            compiler.addInstruction(new LEA(superVTableAddr, Register.R0));
+            superAddr = Register.R0;
+        }
+        // Écrire le pointeur super à l'index 0
+        compiler.addInstruction(new STORE(superAddr, vTableAddr));
+
+
+        // 3. Copier les méthodes héritées (Si classe fille)
+        // On copie les entrées de la VTable du père vers la VTable du fils
+        if (superVTableAddr != null) {
+            int nbSuperMethods = superClassDef.getNumberOfMethods();
+            for (int i = 1; i <= nbSuperMethods; i++) {
+                // Lire adresse méthode du père
+                RegisterOffset slotPere = new RegisterOffset(superVTableAddr.getOffset() + i, Register.GB);
+                compiler.addInstruction(new LOAD(slotPere, Register.R0));
+
+                // Ecrire dans slot fils
+                RegisterOffset slotFils = new RegisterOffset(vTableAddr.getOffset() + i, Register.GB);
+                compiler.addInstruction(new STORE(Register.R0, slotFils));
+            }
         }
 
-        compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(addrVTable, Register.GB)));
+        // 4. Installer les méthodes de la classe courante (Nouveautés ou Overrides)
+        // On parcourt la liste AST des méthodes déclarées ici
+        for (AbstractDeclMethod absMethod : methodes.getList()) {
+            DeclMethod method = (DeclMethod) absMethod;
+            // Récupérer l'index calculé lors de la passe 2
+            int methodIndex = method.getMethodName().getMethodDefinition().getIndex();
+            Label methodLabel = method.getMethodName().getMethodDefinition().getLabel();
 
-        // 3. Méthodes (Construction vTable)
-        int nbMethods = classDef.getNumberOfMethods();
-        for (int i = 1; i <= nbMethods; i++) {
-            // MethodDefinition methodDef = classDef.getMethodByIndex(i);
-            MethodDefinition methodDef = null; // Placeholder
+            // Charger l'adresse du code (LOAD #Label, R0)
+            compiler.addInstruction(new LOAD(new LabelOperand(methodLabel), Register.R0));
 
-            if (methodDef == null) continue;
-
-            String methodLabel = "code." + methodDef.getLabel().getName();
-
-            compiler.getRegisterManager().incrNbGlobales();
-            int offset = addrVTable + i;
-
-            compiler.addInstruction(new LOAD(new LabelOperand(new Label(methodLabel)), Register.R0));
-            compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(offset, Register.GB)));
+            // Stocker dans la VTable à la bonne position
+            RegisterOffset slot = new RegisterOffset(vTableAddr.getOffset() + methodIndex, Register.GB);
+            compiler.addInstruction(new STORE(Register.R0, slot));
         }
     }
 
-    protected void codeGenInit(DecacCompiler compiler) {
-        ClassDefinition classDef = getClassSymbol().getClassDefinition();
-        String className = getClassName().getName().getName();
+    /**
+     * PASSE 2 : Initialisation des champs
+     * Appelée par Program.codeGenProgram -> ListDeclClass.codeGenListInit
+     */
+    public void codeGenInit(DecacCompiler compiler) {
+        String className = this.name.getName().getName();
+        ClassDefinition classDef = (ClassDefinition) this.name.getDefinition();
+        ClassDefinition superClassDef = (ClassDefinition) this.superClass.getDefinition();
 
         compiler.addLabel(new Label("init." + className));
-        compiler.addComment("===== Initialisation de " + className + " =====");
+        compiler.addComment("Initialisation des champs de " + className);
 
-        // 1. Sauvegarder les registres utilisés (R2-R15)
-        // NOTE: Pour l'initialisation, on utilise peu de registres, mais par sécurité
-        compiler.addInstruction(new PUSH(Register.R2));
+        // --- Préambule ---
+        // TSTO : On a besoin de empiler R1 et de faire un appel (BSR)
+        // Pas de calcul complexe ici, on peut mettre une petite valeur ou utiliser MMU
+        // compiler.addInstruction(new TSTO(3));
+        // compiler.addInstruction(new BOV(new Label("stack_overflow")));
 
-        // 2. Mettre les NOUVEAUX champs à zéro
-        // (this est à -2(LB) après le BSR)
-        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R2)); // this dans R2
+        compiler.addInstruction(new PUSH(Register.R1)); // Sauvegarde
+        compiler.getMMU().notifyPush(1);
 
-        int firstNewFieldOffset = classDef.getSuperClass().getNumberOfFields() + 1;
-        int nbNewFields = classDef.getNumberOfFields() - classDef.getSuperClass().getNumberOfFields();
+        // --- 1. Initialisation Héritée ---
+        // L'objet courant est passé dans -2(LB) (convention implicite d'appel méthode/init)
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1)); // this -> R1
 
-        for (int i = 0; i < nbNewFields; i++) {
-            compiler.addInstruction(new LOAD(new ImmediateInteger(0), Register.R0));
-            compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(firstNewFieldOffset + i, Register.R2)));
+        // Si on n'est pas Object, on appelle init.Super
+        if (superClassDef != null && !"Object".equals(superClassDef.getType().getName().getName())) {
+            // Empiler 'this' pour l'appel au parent
+            compiler.addInstruction(new PUSH(Register.R1));
+            compiler.addInstruction(new BSR(new Label("init." + superClassDef.getType().getName().getName())));
+            compiler.addInstruction(new SUBSP(1)); // Nettoyage param
         }
 
-        // 3. Appeler init.SuperClasse si pas Object
-        if (!classDef.getSuperClass().getType().isObject()) {
-            compiler.addInstruction(new PUSH(Register.R2)); // Empiler this
-            String superClassName = classDef.getSuperClass().getType().getName().getName();
-            compiler.addInstruction(new BSR(new Label("init." + superClassName)));
-            compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
-        }
+        // --- 2. Initialisation Champs Propres ---
+        // Délégation à la liste des champs
+        fields.codeGenListDeclField(compiler);
 
-        // 4. Générer le code des initialisations explicites
-        getFields().codeGenListDeclField(compiler); // Nouveau dans ListDeclField
-
-        // 5. Restaurer registres et retourner
-        compiler.addInstruction(new POP(Register.R2));
+        // --- Fin ---
+        compiler.addInstruction(new POP(Register.R1));
+        compiler.getMMU().notifyPop(1);
         compiler.addInstruction(new RTS());
-    }
-
-
-    protected void codeGenMethods(DecacCompiler compiler) {
-        compiler.addComment("===== Méthodes de " + getClassName().getName().getName() + " =====");
-        getClassBody().codeGenListDeclMethod(compiler); // NOUVELLE méthode dans ListDeclMethod
     }
 
     @Override

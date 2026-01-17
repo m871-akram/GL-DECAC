@@ -8,19 +8,19 @@ import fr.ensimag.deca.context.Type;
 
 public abstract class AbstractDeclParam extends Tree {
 
+    /**
+     * Vérifie le type du paramètre (Passe 2)
+     */
+    protected abstract Type verifyDeclParam(DecacCompiler compiler) throws ContextualError;
 
     /**
-     * Passe 2 de la vérification contextuelle.
-     * Vérifie le type du paramètre et retourne son type pour construire la signature [10].
+     * Déclare le paramètre dans l'environnement local (Passe 3)
      */
-    protected abstract Type verifyParamMembers(DecacCompiler compiler)
-            throws ContextualError;
+    protected abstract void verifyDeclParamBody(DecacCompiler compiler, EnvironmentExp envExp) throws ContextualError;
 
     /**
-     * Passe 3 de la vérification contextuelle.
-     * Déclare le paramètre dans l'environnement local de la méthode [11].
+     * Génère le code pour lier le paramètre à son adresse mémoire (Pile LB)
      */
-    protected abstract void verifyParamBody(DecacCompiler compiler,
-                                            EnvironmentExp envExp) throws ContextualError;
+    protected abstract void codeGenDeclParam(DecacCompiler compiler, int index);
+
 }
-

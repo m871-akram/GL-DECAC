@@ -3,16 +3,13 @@ package fr.ensimag.deca.tree;
 import java.io.PrintStream;
 
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
-import fr.ensimag.deca.context.ExpDefinition;
-import fr.ensimag.deca.context.Type;
-import fr.ensimag.deca.context.TypeDefinition;
+import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
+import fr.ensimag.deca.tools.SymbolTable.Symbol;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 public class DeclParam extends AbstractDeclParam {
 
@@ -20,10 +17,13 @@ public class DeclParam extends AbstractDeclParam {
     private final AbstractIdentifier name;
 
     public DeclParam(AbstractIdentifier type, AbstractIdentifier name) {
+        Validate.notNull(type);
+        Validate.notNull(name);
         this.type = type;
         this.name = name;
     }
 
+    public AbstractIdentifier getName() { return name; }
 
     @Override
     protected Type verifyDeclParam(DecacCompiler compiler) throws ContextualError {
@@ -50,26 +50,43 @@ public class DeclParam extends AbstractDeclParam {
         this.type.setType(paramType);
         return paramType;
     }
+
+
+//    @Override
+//    protected Type verifyDeclParam(DecacCompiler compiler) throws ContextualError {
+//        // Vérification du type (Passe 2)
+//        Type paramType = this.type.verifyType(compiler);
+//
+//        if (paramType.isVoid()) {
+//            throw new ContextualError("Un paramètre ne peut pas être void", getLocation());
+//        }
+//        return paramType;
+//    }
+
     @Override
-    protected void verifyDeclParam2(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
-        VariableDefinition paramDef = new VariableDefinition(this.type.getType(), getLocation());
-        this.name.setDefinition(paramDef);
-        this.name.setType(this.type.getType());
+    protected void verifyDeclParamBody(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+        // Déclaration dans l'environnement local (Passe 3)
+        ParamDefinition paramDef = new ParamDefinition(this.type.getType(), getLocation());
+
         try {
             localEnv.declare(name.getName(), paramDef);
         } catch (EnvironmentExp.DoubleDefException e) {
-            throw new ContextualError(
-                e.getMessage(),getLocation()
-            );
+            throw new ContextualError("Paramètre " + name.getName() + " déjà déclaré", getLocation());
         }
+
+        this.name.setDefinition(paramDef);
     }
 
-    protected void codeGenParam(DecacCompiler compiler, int paramIndex) {
-        // Les paramètres sont stockés dans la pile à -3(LB), -4(LB), ...
-        // paramIndex = 0 pour le premier paramètre
-        int offset = -3 - paramIndex;
+    @Override
+    protected void codeGenDeclParam(DecacCompiler compiler, int index) {
+        // Calcul de l'adresse relative à LB
+        // index = 0 -> -3(LB)
+        // index = 1 -> -4(LB)
+        int offset = -3 - index;
 
-        ParamDefinition paramDef = getParamName().getParamDefinition();
+        // On lie le symbole à cette adresse physique
+        // ATTENTION: getParamDefinition() doit être défini dans Identifier ou on cast
+        ParamDefinition paramDef = (ParamDefinition) this.name.getDefinition();
         paramDef.setOperand(new RegisterOffset(offset, Register.LB));
     }
 
@@ -85,8 +102,8 @@ public class DeclParam extends AbstractDeclParam {
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        type.prettyPrint(s, prefix, true);
-        name.prettyPrint(s, prefix, false);
+        type.prettyPrint(s, prefix, false);
+        name.prettyPrint(s, prefix, true);
     }
 
     @Override
@@ -94,37 +111,4 @@ public class DeclParam extends AbstractDeclParam {
         type.iter(f);
         name.iter(f);
     }
-
-//    @Override
-//    protected Type verifyParamMembers(DecacCompiler compiler) throws ContextualError {
-//        // Règle (2.9) : Le type d'un paramètre ne peut pas être void [10]
-//        Type t = type.verifyType(compiler);
-//        if (t.isVoid()) {
-//            throw new ContextualError("Un paramètre ne peut pas être de type void", type.getLocation());
-//        }
-//        paramName.setType(t);
-//        return t;
-//    }
-//
-//    @Override
-//    protected void verifyParamBody(DecacCompiler compiler, EnvironmentExp localEnv)
-//            throws ContextualError {
-//        // Passe 3 : Déclarer le paramètre dans l'environnement local de la méthode [6]
-//        ParamDefinition paramDef = new ParamDefinition(type.getType(), getLocation());
-//        try {
-//            localEnv.declare(paramName.getName(), paramDef);
-//        } catch (EnvironmentExp.DoubleDefException e) {
-//            throw new ContextualError("Paramètre " + paramName.getName() + " déjà défini", getLocation());
-//        }
-//        paramName.setDefinition(paramDef);
-//
-//        // Convention de liaison : Adressage à partir de -3(LB) [8, 9]
-//        // (this est à -2(LB), les paramètres commencent à -3(LB))
-//        int index = - (compiler.getParamCounter() + 3);
-//        paramDef.setOperand(new RegisterOffset(index, Register.LB));
-//        compiler.incrementParamCounter();
-//    }
 }
-
-
-

@@ -11,12 +11,6 @@ import fr.ensimag.deca.tools.SymbolTable.Symbol;
 
 public abstract class AbstractDeclMethod extends Tree {
 
-    /**
-     * Passe 2 de la vérification contextuelle.
-     * Vérifie la signature de la méthode et gère la redéfinition [7].
-     */
-    protected abstract void verifyMethodMembers(DecacCompiler compiler,
-                                                Symbol superClass) throws ContextualError;
 
     /**
      * Passe 3 de la vérification contextuelle.
@@ -25,14 +19,14 @@ public abstract class AbstractDeclMethod extends Tree {
     protected abstract void verifyMethodBody(DecacCompiler compiler,
                                              EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
 
-    /**
-     * Génération de code pour le corps de la méthode (étiquette code.A.m) [8].
-     */
-    protected abstract void codeGenDeclMethod(DecacCompiler compiler);
 
     protected abstract void verifyDeclMethodPrototype(DecacCompiler compiler,
                                                       EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
             throws ContextualError;
 
-    protected abstract void verifyDeclMethodBody(DecacCompiler compiler,EnvironmentExp localEnv, ClassDefinition currentClass) throws ContextualError ;
+
+    /**
+     * Génération du code assembleur de la méthode
+     */
+    protected abstract void codeGenDeclMethod(DecacCompiler compiler);
 }

@@ -3,17 +3,21 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.context.VariableDefinition;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.*;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Operand;
 import fr.ensimag.ima.pseudocode.instructions.STORE;
 import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * @author gl51
@@ -63,6 +67,18 @@ public class Initialization extends AbstractInitialization {
 
     }
 
+//    @Override
+//    protected void verifyInitialization(DecacCompiler compiler, Type t,
+//                                        EnvironmentExp localEnv, ClassDefinition currentClass)
+//            throws ContextualError {
+//
+//        // Utilisation de verifyRValue pour gérer la compatibilité ET la conversion implicite Float
+//        AbstractExpr verifiedExpr = this.expression.verifyRValue(compiler, localEnv, currentClass, t);
+//
+//        // Mise à jour de l'expression (au cas où un ConvFloat a été ajouté)
+//        this.setExpression(verifiedExpr);
+//    }
+
 
     @Override
     public void decompile(IndentPrintStream s) {
@@ -72,19 +88,18 @@ public class Initialization extends AbstractInitialization {
 
 
     @Override
-    protected void codeGenInit(DecacCompiler compiler, Type type, VariableDefinition varDef) {
+    protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
+        // 1. Allouer un registre temporaire
+        GPRegister register = compiler.getRegisterManager().prendreRegistre();
 
-        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        GPRegister register = regMa.prendreRegistre();
-
-        // code de  expression dans ce registre
+        // 2. Calculer l'expression dans ce registre
         getExpression().codeGenExpr(compiler, register);
 
-        // stocker la valeur à l'adresse de la variable
-        compiler.addInstruction(new STORE(register, varDef.getOperand()));
+        // 3. Stocker le résultat à l'adresse cible (target)
+        compiler.addInstruction(new STORE(register, target));
 
-   
-        regMa.libererRegistre();
+        // 4. Libérer le registre
+        compiler.getRegisterManager().libererRegistre();
     }
 
     @Override

@@ -5,9 +5,7 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-
-
-import fr.ensimag.deca.context.VariableDefinition;
+import fr.ensimag.ima.pseudocode.Operand;
 
 /**
  * Initialization (of variable, field, ...)
@@ -29,6 +27,10 @@ public abstract class AbstractInitialization extends Tree {
             Type t, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError;
 
-    protected abstract void codeGenInit(DecacCompiler compiler, Type t, VariableDefinition varDef);
-
+    /**
+     * Génère le code de l'initialisation.
+     * @param target L'adresse mémoire où stocker la valeur (fournie par DeclVar)
+     * @param type Le type attendu
+     */
+    protected abstract void codeGenInit(DecacCompiler compiler, Operand target, Type type);
 }

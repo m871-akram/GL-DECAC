@@ -12,11 +12,26 @@ public class ListDeclField extends TreeList<AbstractDeclField>{
             method.verifyDeclField(compiler, superClassEnv,localEnv,currentClassDef);
         }
     }
-    public void verifyDeclFieldPrototype2(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError{
-        for (AbstractDeclField method : getList()) {
-            method.verifyDeclField2(compiler, currentClassDef, localEnv);
+
+    /**
+     * Initialisation des champs (Passe 3)
+     */
+    public void verifyDeclFieldBody(DecacCompiler compiler, EnvironmentExp localEnv,
+                                    ClassDefinition currentClassDef) throws ContextualError {
+        for (AbstractDeclField field : getList()) {
+            // field.verifyDeclFieldBody(compiler, localEnv, currentClassDef); // À implémenter
         }
     }
+
+    /**
+     * Génération du code d'initialisation des champs (appelée par DeclClass.codeGenInit)
+     */
+    public void codeGenListDeclField(DecacCompiler compiler) {
+        for (AbstractDeclField field : getList()) {
+            field.codeGenInitField(compiler);
+        }
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclField field : getList()) {
@@ -24,32 +39,4 @@ public class ListDeclField extends TreeList<AbstractDeclField>{
                 s.println();
         }
     }
-
-//    /**
-//     * Pass 2: Verify field signatures and add them to the class environment [8, 9].
-//     */
-//    void verifyListDeclField(DecacCompiler compiler, Symbol superClass, Symbol nameClass)
-//            throws ContextualError {
-//        for (AbstractDeclField f : getList()) {
-//            f.verifyFieldMembers(compiler, superClass, nameClass);
-//        }
-//    }
-//
-//    /**
-//     * Pass 3: Verify field initializations within the class body [10, 11].
-//     */
-//    void verifyListDeclFieldBody(DecacCompiler compiler, EnvironmentType envTypes, ClassDefinition nameClass)
-//            throws ContextualError {
-//        for (AbstractDeclField f : getList()) {
-//            f.verifyFieldBody(compiler, envTypes, nameClass);
-//        }
-//    }
-
-    public void codeGenListDeclField(DecacCompiler compiler) {
-        for (AbstractDeclField field : getList()) {
-            field.codeGenInitField(compiler);
-        }
-    }
-
 }
-

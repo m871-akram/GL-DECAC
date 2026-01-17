@@ -15,12 +15,34 @@ import fr.ensimag.deca.context.*;
 
 public class MethodBody extends AbstractMethodBody {
 
-    private ListDeclVar locals;
-    private ListInst insts;
+    private final ListDeclVar locals;
+    private final ListInst insts;
 
     public MethodBody(ListDeclVar locals, ListInst insts) {
         this.locals = locals;
         this.insts = insts;
+    }
+
+    @Override
+    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentExp localEnv,
+                                    ClassDefinition currentClass, Type returnType) throws ContextualError {
+        // Vérification des variables locales
+        locals.verifyListDeclVariable(compiler, localEnv, currentClass);
+
+        // Vérification des instructions
+        insts.verifyListInst(compiler, localEnv, currentClass, returnType);
+    }
+
+    @Override
+    protected void codeGenMethodBody(DecacCompiler compiler) {
+        // Génération des variables locales (allocation pile)
+        locals.codeGenListDeclVar(compiler);
+
+        // On notifie la MMU de la taille des locales pour le TSTO
+        compiler.getMMU().notifyLocalBlockAllocation(locals.size());
+
+        // Génération des instructions
+        insts.codeGenListInst(compiler);
     }
 
     @Override
@@ -43,20 +65,5 @@ public class MethodBody extends AbstractMethodBody {
     protected void iterChildren(TreeFunction f) {
         locals.iter(f);
         insts.iter(f);
-    }
-
-    @Override
-    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentExp localEnv,
-                                    ClassDefinition currentClass, Type returnType) throws ContextualError {
-        // Rule (3.14): Verify local variables and then instructions in the local environment [5, 6].
-        locals.verifyListDeclVariable(compiler, localEnv, currentClass);
-        insts.verifyListInst(compiler, localEnv, currentClass, returnType);
-    }
-
-    @Override
-    protected void codeGenMethodBody(DecacCompiler compiler) {
-        // Step C: Generate code for locals and instructions [7].
-        locals.codeGenListDeclVar(compiler);
-        insts.codeGenListInst(compiler);
     }
 }
