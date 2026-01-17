@@ -34,7 +34,7 @@ public class Cast extends AbstractExpr {
         Type exprType = expr.verifyExpr(compiler, localEnv, currentClass);
         Type classType = cast.verifyType(compiler);
     
-        if (!compiler.environmentType.assignCompatible(classType, exprType)) {
+        if (!compiler.environmentType.assignCompatible(exprType, classType)) {
             throw new ContextualError(
                 "cast est incompatible entre :" + classType.getName()+ " et " + exprType.getName(),
                 expr.getLocation());

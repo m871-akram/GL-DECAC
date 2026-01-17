@@ -48,7 +48,7 @@ public class DeclParam extends AbstractDeclParam {
         return paramType;
     }
     @Override
-    protected void verifyDeclParam2(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+    protected void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
         VariableDefinition paramDef = new VariableDefinition(this.type.getType(), getLocation());
         this.name.setDefinition(paramDef);  
         this.name.setType(this.type.getType());

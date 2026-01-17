@@ -14,9 +14,9 @@ public class ListDeclParam extends TreeList<AbstractDeclParam>{
         }
         return sign;
     }
-    protected void verifyListDeclParam2(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+    protected void verifyListDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
         for(AbstractDeclParam param : getList()){
-            param.verifyDeclParam2(compiler, localEnv);
+            param.verifyDeclParamEnv(compiler, localEnv);
         }
     }
 

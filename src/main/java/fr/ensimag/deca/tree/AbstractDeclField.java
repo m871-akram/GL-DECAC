@@ -20,7 +20,7 @@ public abstract class AbstractDeclField extends Tree {
 
     protected abstract void codeGenDeclVar(DecacCompiler compiler);
 
-    protected abstract void verifyDeclField2(DecacCompiler compiler, ClassDefinition currentClassDef,
+    protected abstract void verifyDeclFieldInit(DecacCompiler compiler, ClassDefinition currentClassDef,
             EnvironmentExp localEnv) throws ContextualError;
     
 

@@ -11,5 +11,5 @@ public abstract class AbstractDeclParam extends Tree{
 
     protected abstract void codeGenDeclVar(DecacCompiler compiler);
 
-    protected abstract void verifyDeclParam2(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError;
+    protected abstract void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError;
 }

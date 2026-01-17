@@ -131,7 +131,7 @@ public class DeclField extends AbstractDeclField{
 
 
     @Override
-    protected void verifyDeclField2(DecacCompiler compiler, ClassDefinition currentClassDef, EnvironmentExp localEnv)
+    protected void verifyDeclFieldInit(DecacCompiler compiler, ClassDefinition currentClassDef, EnvironmentExp localEnv)
             throws ContextualError {
         Type fieldType = type.getType(); 
         initialization.verifyInitialization(compiler, fieldType, localEnv, currentClassDef);

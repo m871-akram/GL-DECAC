@@ -116,16 +116,16 @@ public class DeclMethod extends AbstractDeclMethod {
     protected void verifyDeclMethodBody(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
         EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
-        params.verifyListDeclParam2(compiler,methodEnv);
+        params.verifyListDeclParamEnv(compiler,methodEnv);
         body.verifyMethodBody(compiler, methodEnv, currentClass, type.getType());
     }
 
     @Override
-    protected void verifyDeclMethodPrototype2(DecacCompiler compiler, ClassDefinition currentClassDef,
+    protected void verifyDeclMethodContent(DecacCompiler compiler, ClassDefinition currentClassDef,
             EnvironmentExp localEnv) throws ContextualError {
         EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
 
-        this.params.verifyListDeclParam2(compiler, methodEnv);
+        this.params.verifyListDeclParamEnv(compiler, methodEnv);
         this.body.verifyMethodBody(compiler, methodEnv, currentClassDef, type.getType());
         MethodDefinition methodDef = (MethodDefinition) localEnv.get(name.getName()); // récupérée en passe 2
         this.name.setDefinition(methodDef);
