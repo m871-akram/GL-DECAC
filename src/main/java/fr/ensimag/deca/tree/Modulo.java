@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -47,7 +48,7 @@ public class Modulo extends AbstractOpArith {
 
         if (!compiler.getCompilerOptions().getNoCheck()) {
         compiler.getIrqController().triggerInterrupt(compiler,
-                InterruptController.Vector.IRQ_DIV_BY_ZERO);
+                InterruptVector.IRQ_DIV_BY_ZERO);
     }
 }
 

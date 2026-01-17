@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
@@ -87,7 +88,7 @@ public class MethodCall extends AbstractExpr {
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.addInstruction(new CMP(new NullOperand(), register));
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptController.Vector.IRQ_NULL_PTR);
+                    InterruptVector.IRQ_NULL_PTR);
         }
 
         // 3. Empiler les paramètres (Convention : empiler le résultat de l'évaluation)

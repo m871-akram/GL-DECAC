@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -92,7 +93,7 @@ public class Cast extends AbstractExpr {
             // Erreur Cast
             if (!compiler.getCompilerOptions().getNoCheck()) {
                 compiler.getIrqController().triggerInterrupt(compiler,
-                        InterruptController.Vector.IRQ_CAST_ERROR);
+                        InterruptVector.IRQ_CAST_ERROR);
             }
 
             compiler.addLabel(endLabel);

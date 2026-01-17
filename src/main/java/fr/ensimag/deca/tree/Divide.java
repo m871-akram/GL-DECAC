@@ -3,6 +3,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.instructions.DIV;
@@ -31,7 +32,7 @@ public class Divide extends AbstractOpArith {
 
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptController.Vector.IRQ_DIV_BY_ZERO);
+                    InterruptVector.IRQ_DIV_BY_ZERO);
         }
     }
     

@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -35,7 +36,7 @@ public class ReadInt extends AbstractReadExpr {
         // 2. Gestion Erreur IO via InterruptController
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptController.Vector.IRQ_IO_ERROR); // Ajoute ce vecteur s'il manque
+                    InterruptVector.IRQ_IO_ERROR); // Ajoute ce vecteur s'il manque
         }
 
         // 3. Charger le résultat dans le registre cible

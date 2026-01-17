@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -45,7 +46,7 @@ public class ReadFloat extends AbstractReadExpr {
         // Utilisation de l'architecture Hardware
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptController.Vector.IRQ_IO_ERROR);
+                    InterruptVector.IRQ_IO_ERROR);
         }
 
         // 3. Déplacer R1 vers le registre cible

@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
@@ -65,7 +66,7 @@ public class Main extends AbstractMain {
 
         // B. BOV : Vérification Stack Overflow
         compiler.getIrqController().triggerInterrupt(compiler,
-                InterruptController.Vector.IRQ_STACK_OVERFLOW);
+                InterruptVector.IRQ_STACK_OVERFLOW);
 
         // C. ADDSP : Réservation pour les variables locales
         compiler.addInstruction(new ADDSP(nbLocales));

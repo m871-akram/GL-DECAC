@@ -2,6 +2,7 @@ package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.*;
@@ -79,7 +80,7 @@ public class New extends AbstractExpr {
         // 2. Vérification débordement tas
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptController.Vector.IRQ_HEAP_FULL);
+                    InterruptVector.IRQ_HEAP_FULL);
         }
 
         // 3. Initialisation du pointeur VTable (offset 0 de l'objet)

@@ -16,31 +16,16 @@ import java.util.Set;
  */
 public class InterruptController {
 
-    // Vecteurs d'interruption possibles
-    public enum Vector {
-        IRQ_STACK_OVERFLOW("stack_overflow_isr", "Erreur : Pile pleine"),
-        IRQ_HEAP_FULL("heap_full_isr", "Erreur : Tas plein"),
-        IRQ_DIV_BY_ZERO("div_zero_isr", "Erreur : Division par zero"),
-        IRQ_NULL_PTR("null_ptr_isr", "Erreur : Dereferencement null"),
-        IRQ_IO_ERROR("io_error_isr", "Erreur : IO"),
-        IRQ_CAST_ERROR("cast_error_isr", "Erreur : Cast invalide");
-
-        final String labelName;
-        final String message;
-
-        Vector(String l, String m) { this.labelName = l; this.message = m; }
-    }
-
-    private final Set<Vector> armedInterrupts = new HashSet<>();
+    private final Set<InterruptVector> armedInterrupts = new HashSet<>();
 
     /**
      * Déclenche une interruption (génère le branchement vers l'ISR)
      */
-    public void triggerInterrupt(DecacCompiler compiler, Vector vector) {
+    public void triggerInterrupt(DecacCompiler compiler, InterruptVector vector) {
         // Marque l'interruption comme nécessaire
         armedInterrupts.add(vector);
         // Génère le saut vers la routine
-        compiler.addInstruction(new BOV(new Label(vector.labelName)));
+        compiler.addInstruction(new BOV(new Label(vector.getLabelName())));
     }
 
     /**
@@ -52,9 +37,9 @@ public class InterruptController {
 
         compiler.addComment("--- Interrupt Service Routines (ISR) ---");
 
-        for (Vector vec : armedInterrupts) {
-            compiler.addLabel(new Label(vec.labelName));
-            compiler.addInstruction(new WSTR(vec.message));
+        for (InterruptVector vec : armedInterrupts) {
+            compiler.addLabel(new Label(vec.getLabelName()));
+            compiler.addInstruction(new WSTR(vec.getMessage()));
             compiler.addInstruction(new WNL());
             compiler.addInstruction(new ERROR());
         }
