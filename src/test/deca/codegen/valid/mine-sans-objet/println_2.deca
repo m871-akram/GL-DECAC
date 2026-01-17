@@ -1,17 +1,23 @@
 // Description:
-//    bcp println et print et de println sans arguments
+//    println et print avec plusieurs arguments, println et print sans arguments
 //
 // Resultats:
 //    Un quatre singe
 //
 //    on doit voir une ligne vide en haut
+//    Singe1, Singe2, Singe3, Singe4
+//
+//    et encore une ligne vide en haut.
 //
 // Historique:
-//    cree le 09/01/2026
+//    cree le 15/01/2026
 
 {
     print("Un ", "quatre ");
     println("singe");
+    print();
     println();
     println("on doit voir une ligne vide en haut");
+    println("Singe1","Singe2", "Singe3", "Singe4");
+    println("et encore une ligne vide en haut.");
 }

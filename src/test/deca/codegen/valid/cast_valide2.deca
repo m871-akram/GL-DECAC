@@ -1,0 +1,30 @@
+// Description:
+//    Cast d'une classe fille (B) vers une classe mère (A)
+//
+// Resultats:
+//    affiche 10
+//
+// Historique:
+//    cree le 17/01/2026
+
+class A {
+    int x = 10;
+}
+
+class B extends A {
+    int y = 20;
+}
+
+class C extends A {
+    int z = 30;
+}
+
+{
+    B b = new B();
+    A a;
+
+    a = (A)(b); 
+
+    println(a.x); 
+}
+
