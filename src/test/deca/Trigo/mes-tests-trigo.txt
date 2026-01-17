@@ -1,0 +1,5 @@
+# Format: nom;fonction;valeur;résultat
+sin_zero;sin;0.0;0.0
+cos_zero;cos;0.0;1.0
+asin_error;asin;2.0;erreur
+tan_test;sin(0.0)/cos(0.0);0.0;0.0
