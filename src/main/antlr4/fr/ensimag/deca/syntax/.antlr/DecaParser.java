@@ -2469,7 +2469,7 @@ public class DecaParser extends AbstractDecaParser {
 				setState(456);
 				((LiteralContext)_localctx).NULL = match(NULL);
 
-				        ((LiteralContext)_localctx).tree =  new nullLiteral();
+				        ((LiteralContext)_localctx).tree =  new Null();
 				        setLocation(_localctx.tree, ((LiteralContext)_localctx).NULL);
 				    
 				}

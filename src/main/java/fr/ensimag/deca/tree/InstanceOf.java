@@ -6,7 +6,8 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
 import java.io.PrintStream;
 
 
@@ -14,6 +15,73 @@ public class InstanceOf extends AbstractExpr {
 
     private AbstractExpr expr;
     private AbstractIdentifier type;
+
+    public InstanceOf(AbstractExpr expr, AbstractIdentifier type) {
+        this.expr = expr;
+        this.type = type;
+    }
+
+    @Override
+    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
+            throws ContextualError {
+        Type exprType = expr.verifyExpr(compiler, localEnv, currentClass);
+        Type typeType = type.verifyType(compiler);
+
+        if (!exprType.isClassOrNull()) {
+            throw new ContextualError("instanceof attend un objet à gauche", getLocation());
+        }
+        if (!typeType.isClass()) {
+            throw new ContextualError("instanceof attend une classe à droite", getLocation());
+        }
+
+        setType(compiler.environmentType.BOOLEAN);
+        return compiler.environmentType.BOOLEAN;
+    }
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        ClassDefinition targetClassDef = (ClassDefinition) type.getDefinition();
+
+        Label endLabel = compiler.getSequencer().genSignal("instanceof_end");
+        Label loopLabel = compiler.getSequencer().genSignal("instanceof_loop");
+        Label trueLabel = compiler.getSequencer().genSignal("instanceof_true");
+
+        // 1. Evaluer l'objet
+        expr.codeGenExpr(compiler, register);
+
+        // 2. Si null -> False
+        compiler.addInstruction(new CMP(new NullOperand(), register));
+        compiler.addInstruction(new BEQ(endLabel)); // Sauter avec 0 (déjà chargé si null, ou charger 0 avant ?)
+        // Attention : si register contient null (0), c'est bon, on a déjà 0 (False).
+        // Mais pour être sûr, on devrait charger 0 explicitement si on saute.
+        // Ici on suppose que null est représenté par 0.
+
+        // 3. Charger VTable objet
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), Register.R0)); // R0 = VTable courante
+
+        // Charger VTable cible
+        RegisterOffset targetVTableAddr = (RegisterOffset) targetClassDef.getOperand();
+        compiler.addInstruction(new LEA(targetVTableAddr, Register.R1)); // R1 = VTable Cible
+
+        compiler.addLabel(loopLabel);
+        compiler.addInstruction(new CMP(Register.R1, Register.R0));
+        compiler.addInstruction(new BEQ(trueLabel));
+
+        // Remonter au parent
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, Register.R0), Register.R0));
+        compiler.addInstruction(new CMP(new NullOperand(), Register.R0));
+        compiler.addInstruction(new BNE(loopLabel));
+
+        // Pas trouvé -> False (0)
+        compiler.addInstruction(new LOAD(0, register));
+        compiler.addInstruction(new BRA(endLabel));
+
+        // Trouvé -> True (1)
+        compiler.addLabel(trueLabel);
+        compiler.addInstruction(new LOAD(1, register));
+
+        compiler.addLabel(endLabel);
+    }
 
     @Override
     public void decompile(IndentPrintStream s) {
@@ -35,77 +103,4 @@ public class InstanceOf extends AbstractExpr {
         expr.iter(f);
         type.iter(f);
     }
-
-    @Override
-    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
-            throws ContextualError {
-        Type exprType = leftOperand.verifyExpr(compiler, localEnv, currentClass);
-        Type classType = rightOperand.verifyType(compiler);
-
-        if (!exprType.isClassOrNull()) {
-            throw new ContextualError(
-                "instanceof ne s'applique qu'à un objet",
-                leftOperand.getLocation());
-        }
-
-        if (!classType.isClass()) {
-            throw new ContextualError(
-                "instanceof attend un type classe",
-                rightOperand.getLocation());
-        }
-
-        setType(compiler.environmentType.BOOLEAN);
-        return compiler.environmentType.BOOLEAN;
-    }
-
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        ClassType targetType = getTargetType().getType().asClassType("Not a class", getLocation());
-        ClassDefinition targetClassDef = targetType.getDefinition();
-
-        // 1. Évaluer l'objet
-        getObject().codeGenExpr(compiler, register);
-
-        // 2. Si null, retourner false
-        compiler.addInstruction(new CMP(new NullOperand(), register));
-        Label notNull = new Label("instanceof_not_null_" + getInstanceOfCounter()); // Compteur statique
-        compiler.addInstruction(new BNE(notNull));
-        compiler.addInstruction(new LOAD(new ImmediateInteger(0), register)); // false
-        Label end = new Label("instanceof_end_" + getInstanceOfCounter());
-        compiler.addInstruction(new BRA(end));
-
-        // 3. Remonter la chaîne des vTables
-        compiler.addLabel(notNull);
-        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register)); // vTable actuelle
-
-        int targetVTableAddr = targetClassDef.getVTableAddr();
-        Label loop = new Label("instanceof_loop_" + getInstanceOfCounter());
-        Label found = new Label("instanceof_found_" + getInstanceOfCounter());
-
-        compiler.addLabel(loop);
-        // Comparer vTable actuelle avec vTable cible
-        compiler.addInstruction(new LOAD(new RegisterOffset(targetVTableAddr, Register.GB), Register.R0));
-        compiler.addInstruction(new CMP(Register.R0, register));
-        compiler.addInstruction(new BEQ(found));
-
-        // Remonter à la super-classe
-        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register)); // vTable[0] = super
-        compiler.addInstruction(new CMP(new NullOperand(), register));
-        compiler.addInstruction(new BNE(loop)); // Si pas null, continuer
-
-        // Pas trouvé : retourner false
-        compiler.addInstruction(new LOAD(new ImmediateInteger(0), register));
-        compiler.addInstruction(new BRA(end));
-
-        // Trouvé : retourner true
-        compiler.addLabel(found);
-        compiler.addInstruction(new LOAD(new ImmediateInteger(1), register));
-
-        compiler.addLabel(end);
-    }
-
-    // Compteur statique pour labels uniques
-    private static int instanceOfCounter = 0;
-    private static int getInstanceOfCounter() { return instanceOfCounter++; }
-
 }

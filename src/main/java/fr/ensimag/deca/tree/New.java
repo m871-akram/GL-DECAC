@@ -3,6 +3,7 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.context.TypeDefinition;
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptController;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -73,36 +74,43 @@ public class New extends AbstractExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        ClassDefinition classDef = getType().asClassType("Not a class", getLocation()).getDefinition();
-        int nbFields = classDef.getNumberOfFields();
-        int objectSize = 1 + nbFields; // 1 pour vTable + champs
+        ClassDefinition classDef = (ClassDefinition) className.getDefinition();
 
-        // NEW #objectSize, register
+        // 1. Allocation dans le tas
+        int objectSize = 1 + classDef.getNumberOfFields(); // 1 pour vTable + champs
         compiler.addInstruction(new NEW(new ImmediateInteger(objectSize), register));
 
-        // Vérification débordement tas
+        // 2. Vérification débordement tas
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("tas_plein")));
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptController.Vector.IRQ_HEAP_FULL);
         }
 
-        // Stocker l'adresse de la vTable à l'offset 0 de l'objet
-        int vTableAddr = classDef.getVTableAddr();
-        compiler.addInstruction(new LEA(new RegisterOffset(vTableAddr, Register.GB), Register.R0));
+        // 3. Initialisation du pointeur VTable (offset 0 de l'objet)
+        // Récupérer l'adresse VTable stockée dans l'opérande de la définition de classe
+        RegisterOffset vTableAddr = (RegisterOffset) classDef.getOperand(); // getVTableAddress() si implémenté
+
+        // On utilise R0 pour charger l'adresse de la VTable
+        compiler.addInstruction(new LEA(vTableAddr, Register.R0));
         compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
 
-        // Appeler init.Classe(this)
-        // PUSH this (dans register)
+        // 4. Appel du constructeur init.Classe
+        // Empiler 'this' (l'objet nouvellement créé qui est dans register)
         compiler.addInstruction(new PUSH(register));
-        compiler.getRegisterManager().empiler();
+        compiler.getMMU().notifyPush(1);
 
-        // BSR init.Classe
-        String className = classDef.getType().getName().getName();
-        compiler.addInstruction(new BSR(new Label("init." + className)));
+        String initLabel = "init." + classDef.getType().getName().getName();
+        compiler.addInstruction(new BSR(new Label(initLabel)));
 
-        // POP (nettoyer la pile, mais résultat déjà dans register)
-        compiler.addInstruction(new SUBSP(new ImmediateInteger(1))); // Enlever le paramètre this
-        compiler.getRegisterManager().depiler();
+        // Nettoyage param 'this'
+        compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
+        compiler.getMMU().notifyPop(1);
+
+        // Le résultat (l'adresse de l'objet) est toujours dans 'register' car init ne le modifie pas
+        // (ou init restaure les registres callee-saved)
     }
+
+
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
@@ -113,20 +121,4 @@ public class New extends AbstractExpr {
     protected void iterChildren(TreeFunction f) {
         className.iter(f);
     }
-
-//    @Override
-//    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
-//            throws ContextualError {
-//        // Rule (3.42): Verify that the identifier represents a valid class type [2].
-//        Type type = className.verifyType(compiler);
-//
-//        if (!type.isClass()) {
-//            throw new ContextualError("The 'new' operator can only be applied to class types.",
-//                    className.getLocation());
-//        }
-//
-//        this.setType(type);
-//        return type;
-//    }
 }
-

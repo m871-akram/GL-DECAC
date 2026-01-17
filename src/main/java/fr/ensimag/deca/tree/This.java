@@ -51,25 +51,9 @@ public class This extends AbstractExpr {
     }
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister dest) {
-
-
-    }
-
-    @Override
-    protected void codeGenPrint(DecacCompiler compiler) {
-
-
-
-    }
-
-    @Override
-    boolean isImplicit() {
-        return value;
-    }
-    @Override
-    String prettyPrintNode() {
-        return "This(" + value + ")";
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        // 'this' est toujours passé en paramètre caché à l'adresse -2(LB)
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
     }
 
     @Override
@@ -87,22 +71,12 @@ public class This extends AbstractExpr {
 
 
     @Override
-    public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-                           ClassDefinition currentClass) throws ContextualError {
-        if (currentClass == null) {
-            throw new ContextualError(
-                    "this interdit dans le programme principal",
-                    getLocation()
-            );
-        }
-
-        setType(currentClass.getType());
-        return currentClass.getType();
+    protected void prettyPrintChildren(PrintStream s, String prefix) {
+        // leaf node
     }
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // this est toujours à -2(LB) dans les méthodes
-        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
+    String prettyPrintNode() {
+        return "This (" + implicit + ")";
     }
 }
