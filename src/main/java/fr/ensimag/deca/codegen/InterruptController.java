@@ -17,9 +17,9 @@ public class InterruptController {
         IRQ_STACK_OVERFLOW("stack_overflow_isr", "Erreur : Pile pleine"),
         IRQ_HEAP_FULL("heap_full_isr", "Erreur : Tas plein"),
         IRQ_DIV_BY_ZERO("div_zero_isr", "Erreur : Division par zero"),
-        IRQ_NULL_PTR("null_ptr_isr", "Erreur : Dereferencement null");
-        IRQ_IO_ERROR("io_error_isr", "Erreur : IO")
-        IRQ_CAST_ERROR
+        IRQ_NULL_PTR("null_ptr_isr", "Erreur : Dereferencement null"),
+        IRQ_IO_ERROR("io_error_isr", "Erreur : IO"),
+        IRQ_CAST_ERROR("cast_error_isr", "Erreur : Cast invalide");
 
         final String labelName;
         final String message;

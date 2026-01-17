@@ -1,9 +1,8 @@
 package fr.ensimag.deca.codegen;
 
-package fr.ensimag.deca.codegen;
+
 
 import fr.ensimag.ima.pseudocode.*;
-import fr.ensimag.deca.tools.DecacInternalError;
 import java.util.Stack;
 
 /**
