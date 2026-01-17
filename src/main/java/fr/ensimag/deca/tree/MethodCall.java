@@ -71,26 +71,7 @@ public class MethodCall extends AbstractExpr {
             "Ce n'est pas une méthode",
             getLocation()
         );
-        if (args.size() != methodDef.getSignature().size()) {
-            throw new ContextualError(
-                "Nombre d'arguments incorrect pour la méthode '" + methode.getName().getName() + "'",
-                getLocation()
-            );
-        }
-        int i =0;
-        for (AbstractExpr arg : args.getList()) {
-            Type argType = arg.verifyExpr(compiler, localEnv, currentClass);
-            Type paramType = methodDef.getSignature().paramNumber(i);
-    
-            if (!argType.sameType(paramType)) {
-                throw new ContextualError(
-                    "Type de l'argument " + arg.prettyPrint() + " incorrect : attendu " 
-                    + paramType + ", trouvé " + argType,
-                    arg.getLocation()
-                );
-            }
-            i++;
-        }
+        args.verifyRValue(compiler, localEnv, currentClass, methodDef.getSignature(), getLocation());
     
         methode.setDefinition(methodDef);
     

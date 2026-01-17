@@ -23,9 +23,13 @@ import fr.ensimag.ima.pseudocode.GPRegister;
  * @date 16/01/2026
  */
 public class Return extends AbstractInst {
-    private final AbstractExpr value;
+    private AbstractExpr value;
     
     public Return(AbstractExpr value) {
+        setOperand(value);
+    }
+    protected void setOperand(AbstractExpr value) {
+        Validate.notNull(value);
         this.value = value;
     }
 
@@ -46,16 +50,9 @@ public class Return extends AbstractInst {
             throw new ContextualError(
                 "return avec un void interdit", getLocation()
             );
-        } 
-        
-        // on vérifier que la valeur est compatible
-        Type valueType = value.verifyExpr(compiler, localEnv, currentClass);
-        
-        if (!compiler.environmentType.assignCompatible(returnType, valueType)) {
-            throw new ContextualError(
-                "erreur dans le type de return : expected " + returnType + ", y on a: " + valueType, getLocation()
-            );
         }
+        AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass,returnType);
+        setOperand(convValue);
     }
 
 

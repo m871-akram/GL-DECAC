@@ -88,7 +88,21 @@ public abstract class AbstractExpr extends AbstractInst {
             EnvironmentExp localEnv, ClassDefinition currentClass, 
             Type expectedType)
             throws ContextualError {
-        throw new UnsupportedOperationException("not yet implemented");
+        Type t2 = this.verifyExpr(compiler, localEnv, currentClass);
+        if (expectedType.isFloat() && t2.isInt()) {
+            ConvFloat conv = new ConvFloat(this);
+            conv.verifyExpr(compiler, localEnv, currentClass);
+            t2 = conv.getType(); // t2 devient float
+
+            return conv;
+        }
+
+        if(!compiler.environmentType.assignCompatible(expectedType, t2)){
+            throw new ContextualError(
+                "Assignment entre des types invalides: expect" + expectedType + " is " + t2,
+                this.getLocation());
+        }
+        return this;
     }
     
     
