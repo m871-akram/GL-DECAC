@@ -1,6 +1,7 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptController;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -30,15 +31,16 @@ public class ReadInt extends AbstractReadExpr {
     }
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // R1 <- entier lu.
+        // 1. Lire entier (Résultat dans R1)
         compiler.addInstruction(new RINT());
 
-        // cela dpd de l option -n nocheck si elle est active ou non a revoir dans le compiler options
-
+        // 2. Gestion Erreur IO via InterruptController
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("erreur_io")));
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptController.Vector.IRQ_IO_ERROR); // Ajoute ce vecteur s'il manque
         }
 
+        // 3. Charger le résultat dans le registre cible
         compiler.addInstruction(new LOAD(Register.R1, register));
     }
 

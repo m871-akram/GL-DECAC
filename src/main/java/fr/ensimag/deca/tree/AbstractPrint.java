@@ -53,6 +53,7 @@ public abstract class AbstractPrint extends AbstractInst {
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
         for (AbstractExpr a : getArguments().getList()) {
+            // Chaque expression sait comment s'imprimer (WINT, WFLOAT, WSTR)
             a.codeGenPrint(compiler);
         }
     }
@@ -63,12 +64,10 @@ public abstract class AbstractPrint extends AbstractInst {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        s.print("print");
-        s.print(getSuffix());
+        s.print("print" + getSuffix());
         if (printHex) {
             s.print("x");
         }
-        s.print(getSuffix());
         s.print("(");
         getArguments().decompile(s);
         s.print(");");

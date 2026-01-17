@@ -1,5 +1,6 @@
 package fr.ensimag.deca.codegen;
 
+import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.ima.pseudocode.*;
 import fr.ensimag.ima.pseudocode.instructions.*;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ public class InterruptController {
         IRQ_HEAP_FULL("heap_full_isr", "Erreur : Tas plein"),
         IRQ_DIV_BY_ZERO("div_zero_isr", "Erreur : Division par zero"),
         IRQ_NULL_PTR("null_ptr_isr", "Erreur : Dereferencement null");
+        IRQ_IO_ERROR("io_error_isr", "Erreur : IO")
 
         final String labelName;
         final String message;
