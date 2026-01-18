@@ -1,0 +1,21 @@
+// Description:
+//    Fils appelle méthode parent
+//
+// Resultats :
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+
+class A {
+    mParent(); 
+
+} 
+
+
+class B extends A { 
+    void m() { 
+        mParent(); 
+   } 
+}

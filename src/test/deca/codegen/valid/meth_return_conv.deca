@@ -1,22 +1,20 @@
 // Description:
-//    Retour de valeur
+//    Retour int dans un float
 //
 // Resultats :
-//    90
+//    1
 //
 // Historique:
 //    cree le 18/01/2026
 
-
-
 class A {
-    int get() { 
-        return 90;  
+    float get() { 
+        return 1;   // int retourné comme float
     }
 }  
 
 {
     A a = new A();
-    int x = a.get();
+    float x = a.get();
     println(x);
 }

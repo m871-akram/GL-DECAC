@@ -1,0 +1,31 @@
+// Description:
+//    Héritage A -> B -> C
+//
+// Resultats:
+//    classe C
+// 
+// Historique:
+//    cree le 18/01/2026
+
+class A {
+    void m() {
+        println("classe A");
+    }
+}
+
+class B extends A {
+    void m() {
+        println("classe B");
+    }
+}
+
+class C extends B {
+    void m() {
+        println("classe C");
+    }
+}
+
+{
+    A obj = new C();
+    obj.m();   
+}
