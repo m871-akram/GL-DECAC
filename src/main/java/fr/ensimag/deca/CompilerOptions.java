@@ -85,6 +85,16 @@ public class CompilerOptions {
                 }
                 printBanner = true;
                 return;
+            
+            case "-dddd":
+                debug++;
+            case "-ddd":
+                debug++;
+            case "-dd":
+                debug++;
+            case "-d":
+                debug++;
+                break;
     
             case "-p":
                 if(actionSpecial != -1){
@@ -103,7 +113,9 @@ public class CompilerOptions {
             case "-n":
                 noCheck = true;
                 break;
-            
+            case "-P":
+                parallel=true;
+                break;
             case "-r":
                 if (i + 1 >= args.length) {
                     throw new CLIException("Option -r requiert un argument");
