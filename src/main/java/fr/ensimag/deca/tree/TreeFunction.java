@@ -1,5 +1,7 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.ContextualError;
+
 /**
  * Function that takes a tree as argument.
  * 
