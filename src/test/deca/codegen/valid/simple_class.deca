@@ -8,6 +8,6 @@
 //    cree le 17/01/2026
 
 class A{
-    prontln ("l'objet est créé)
+    println ("l'objet est créé)
 }
 

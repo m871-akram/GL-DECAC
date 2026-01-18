@@ -1,0 +1,19 @@
+// Description:
+//    Appel d'une méthode avec 1 paramètre
+//
+// Resultats :
+//    5.0
+//
+// Historique:
+//    cree le 18/01/2026
+
+class A { 
+    void m(float f) { 
+        println(f); 
+    } 
+}
+
+{
+    A a  = new A();
+    a.m(5.0);  
+}

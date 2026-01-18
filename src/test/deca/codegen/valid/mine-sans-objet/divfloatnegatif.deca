@@ -1,0 +1,17 @@
+//
+// Description: 
+// Division flottants negatifs, resultat division entiere
+// un float
+//
+// Resultat: 
+// -2.50000e+00
+//  2.00000e+00
+//
+// Historique: 
+// cree le 18/01/2026
+//
+{
+    float f = 5/2;
+    println(-5.0/2.0);
+    println(f);
+}

@@ -1,0 +1,13 @@
+// Description:
+//    Mélange && et ||
+//
+// Resultats :
+//    true
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    boolean b = true && false || true;
+    println(b);
+}

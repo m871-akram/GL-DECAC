@@ -32,6 +32,10 @@ public class DeclMethod extends AbstractDeclMethod {
         this.body=body;
     }
 
+    public AbstractIdentifier getName() {
+        return name;
+    }
+
     public void verifyDeclMethodPrototype(DecacCompiler compiler,
                                          EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
         throws ContextualError {
@@ -70,10 +74,13 @@ public class DeclMethod extends AbstractDeclMethod {
             }
         }
         MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
+        // Create and set the label for this method
+        Label methodLabel = new Label("code." + currentClassDef.getType().getName().getName() + "." + name.getName().getName());
+        methodDef.setLabel(methodLabel);
         try {
             localEnv.declare(name.getName(), methodDef);
-        } catch (DoubleDefException e) {
-            throw new ContextualError(e.getMessage(), getLocation());
+        } catch (EnvironmentExp.DoubleDefException e) {
+            throw new ContextualError("Méthode " + name.getName() + " déjà définie dans cette classe", getLocation());
         }
     }
 
@@ -102,20 +109,28 @@ public class DeclMethod extends AbstractDeclMethod {
         // 6. Restaurer le programme original
         compiler.swapProgram(originalProgram);
         
-        // 7. Maintenant on connaît le maxStack, générer le prologue
-        int nbLocales = ((MethodBody) body).getLocalVarsCount();
-        int maxStack = compiler.getMMU().getStackRequirements();
-        
-        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.TSTO(maxStack));
-        compiler.getIrqController().triggerInterrupt(compiler,
-                fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
-        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
-        
-        // 8. Ajouter le corps après le prologue
-        compiler.appendProgram(bodyProgram);
+        // 7. Vérifier le type de corps de méthode
+        if (body instanceof MethodAsmBody) {
+            // Corps assembleur inline - pas de prologue/épilogue, le code ASM est directement injecté
+            compiler.appendProgram(bodyProgram);
+        } else if (body instanceof MethodBody) {
+            // Corps Java normal - générer le prologue
+            int nbLocales = ((MethodBody) body).getLocalVarsCount();
+            int maxStack = compiler.getMMU().getStackRequirements();
 
-        // 9. Retour par défaut (RTS) si pas de return explicite
-        compiler.addInstruction(new RTS());
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.TSTO(maxStack));
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
+
+            // 8. Ajouter le corps après le prologue
+            compiler.appendProgram(bodyProgram);
+
+            // 9. Retour par défaut (RTS) si pas de return explicite
+            compiler.addInstruction(new RTS());
+        } else {
+            throw new UnsupportedOperationException("Type de corps de méthode non supporté: " + body.getClass());
+        }
     }
 
     @Override

@@ -195,8 +195,8 @@ public class DeclClass extends AbstractDeclClass {
         for (AbstractDeclMethod absMethod : methodes.getList()) {
             DeclMethod method = (DeclMethod) absMethod;
             // Récupérer l'index calculé lors de la passe 2
-            int methodIndex = method.getMethodName().getMethodDefinition().getIndex();
-            Label methodLabel = method.getMethodName().getMethodDefinition().getLabel();
+            int methodIndex = method.getName().getMethodDefinition().getIndex();
+            Label methodLabel = method.getName().getMethodDefinition().getLabel();
 
             // Charger l'adresse du code (LOAD #Label, R0)
             compiler.addInstruction(new LOAD(new LabelOperand(methodLabel), Register.R0));

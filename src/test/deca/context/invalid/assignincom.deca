@@ -1,0 +1,15 @@
+// Description:
+//    Programme   incompatibilité type.
+//
+// Resultats:
+//    ligne 12 : erreur : op comp e dois etre type int ou float
+//
+// Historique:
+//    cree le 18/12/2025
+
+
+{
+   if ("aodo"<"da,,"){
+      println("mince");
+   }
+}

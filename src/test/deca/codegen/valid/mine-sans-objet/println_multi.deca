@@ -1,0 +1,12 @@
+// Description:
+//    Print de types mélangés
+//
+// Resultats :
+//    Valeur : 5 2.5
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    println("Valeur : ", 5, " ", 2.5);
+}

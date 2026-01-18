@@ -36,7 +36,7 @@ public class Return extends AbstractInst {
             );
         }
         AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass,returnType);
-        setOperand(convValue);
+        this.value = convValue;
     }
 
 

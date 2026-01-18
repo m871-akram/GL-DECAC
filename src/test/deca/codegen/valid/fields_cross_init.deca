@@ -1,0 +1,13 @@
+// Description:
+//    Init d'un champ par un autre
+//
+// Resultats:
+//    ok
+// 
+// Historique:
+//    cree le 18/01/2026
+
+
+class A { 
+    int i = 1; 
+    int j = i + 1; }

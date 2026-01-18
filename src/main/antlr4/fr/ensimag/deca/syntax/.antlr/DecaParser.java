@@ -2205,9 +2205,14 @@ public class DecaParser extends AbstractDecaParser {
 				setState(405);
 				match(CPARENT);
 
-				            assert(((Primary_exprContext)_localctx).args.tree != null);
+				        assert(((Primary_exprContext)_localctx).args.tree != null);
 				            assert(((Primary_exprContext)_localctx).m.tree != null);
-				            ((Primary_exprContext)_localctx).tree =  new MethodCall(new This(true),((Primary_exprContext)_localctx).m.tree,((Primary_exprContext)_localctx).args.tree);
+				            This implicitThis = new This(true);
+				            implicitThis.setLocation((((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getLine(),
+				            (((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getCharPositionInLine(),
+				            (((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getInputStream().getSourceName());
+
+				            ((Primary_exprContext)_localctx).tree =  new MethodCall(implicitThis, ((Primary_exprContext)_localctx).m.tree, ((Primary_exprContext)_localctx).args.tree);
 				            _localctx.tree.setLocation(((Primary_exprContext)_localctx).m.tree.getLocation());
 				        
 				}
@@ -3125,7 +3130,9 @@ public class DecaParser extends AbstractDecaParser {
 				setState(541);
 				match(SEMI);
 
-				            body = new MethodAsmBody(new StringLiteral(((Decl_methodContext)_localctx).code.text));
+				            StringLiteral asmLiteral = new StringLiteral(((Decl_methodContext)_localctx).code.text);
+				            asmLiteral.setLocation(((Decl_methodContext)_localctx).code.location);
+				            body = new MethodAsmBody(asmLiteral);
 				            setLocation(body, ((Decl_methodContext)_localctx).ASM);
 				        
 				}

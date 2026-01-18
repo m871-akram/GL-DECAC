@@ -1,0 +1,13 @@
+// Description:
+//    multi declaration et affectation en une seule ligne
+//
+// Resultats :
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int i, j, k = 1;
+
+}

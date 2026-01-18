@@ -423,9 +423,14 @@ primary_expr returns[AbstractExpr tree]
             $tree = $ident.tree;
         }
     | m=ident OPARENT args=list_expr CPARENT {
-            assert($args.tree != null);
+        assert($args.tree != null);
             assert($m.tree != null);
-            $tree = new MethodCall(new This(true),$m.tree,$args.tree);
+            This implicitThis = new This(true);
+            implicitThis.setLocation($m.start.getLine(),
+            $m.start.getCharPositionInLine(),
+            $m.start.getInputStream().getSourceName());
+
+            $tree = new MethodCall(implicitThis, $m.tree, $args.tree);
             $tree.setLocation($m.tree.getLocation());
         }
     | OPARENT expr CPARENT {
@@ -629,7 +634,9 @@ decl_method returns[AbstractDeclMethod tree]
             body.setLocation($block.location);
         }
       | ASM OPARENT code=multi_line_string CPARENT SEMI {
-            body = new MethodAsmBody(new StringLiteral($code.text));
+            StringLiteral asmLiteral = new StringLiteral($code.text);
+            asmLiteral.setLocation($code.location);
+            body = new MethodAsmBody(asmLiteral);
             setLocation(body, $ASM);
         }
       ) {

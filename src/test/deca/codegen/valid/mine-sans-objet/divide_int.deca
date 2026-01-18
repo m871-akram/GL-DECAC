@@ -1,0 +1,13 @@
+//
+//  Description: 
+//  Division entiere simple
+//
+//  Resultat:
+//  5
+//
+//  Historique
+//  cree le 18/01/2026
+//
+{
+    println(10/2);
+}

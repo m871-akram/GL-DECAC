@@ -50,7 +50,7 @@ public class ListExpr extends TreeList<AbstractExpr> {
                 sig.paramNumber(i)
             );
 
-            getList().set(i, convArg);
+            set(i, convArg);
         }
     }
     @Override

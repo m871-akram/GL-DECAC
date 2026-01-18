@@ -1,0 +1,14 @@
+// Description:
+//    Boucle avec corps vide
+//
+// Resultats :
+//    OK
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    while (false) ;
+
+}
+

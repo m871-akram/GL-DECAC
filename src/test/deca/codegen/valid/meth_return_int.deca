@@ -1,0 +1,17 @@
+// Description:
+//    Retour de valeur
+//
+// Resultats :
+//    90
+//
+// Historique:
+//    cree le 18/01/2026
+
+int get() { 
+    return 90; 
+}
+
+{
+    int x = get();
+    println(x);
+}

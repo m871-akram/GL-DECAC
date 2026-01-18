@@ -1,0 +1,13 @@
+//
+// Description:
+// Conversion a gauche (int/float)
+//
+// Résultat:
+// 2.50000e+00
+//
+// Historique:
+// cree le 18/01/2026
+//
+{
+    println(5/2.0);
+}
