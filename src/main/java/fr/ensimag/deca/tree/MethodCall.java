@@ -107,8 +107,8 @@ public class MethodCall extends AbstractExpr {
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        object.iter(f);
-        methode.iter(f);
+        object.iterChildren(f);
+        methode.iterChildren(f);
         args.iterChildren(f);
     }
     

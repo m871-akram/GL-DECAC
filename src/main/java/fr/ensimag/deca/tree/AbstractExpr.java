@@ -131,7 +131,7 @@ public abstract class AbstractExpr extends AbstractInst {
         if (!condType.isBoolean()) {
             throw new ContextualError(
                 "La condition d'un if ou else doit être de type booléen: " + condType,
-                getLocation());
+                this.getLocation());
         }
 }
 
