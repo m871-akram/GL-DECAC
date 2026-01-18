@@ -4,7 +4,10 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
-import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.LabelOperand;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.log4j.Logger;
 
@@ -153,7 +156,7 @@ public class DeclClass extends AbstractDeclClass {
 
         if (superClassDef == null || "Object".equals(superClassDef.getType().getName().getName())) {
             // Si c'est Object (ou racine), pas de super VTable - stocker 0
-            compiler.addInstruction(new LOAD(new ImmediateInteger(0), Register.R0));
+            compiler.addInstruction(new LOAD(0, Register.R0));
         } else {
             // Récupérer l'adresse VTable du père (stockée dans son operand)
             superVTableAddr = (RegisterOffset) superClassDef.getOperand();

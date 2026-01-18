@@ -6,7 +6,6 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.CMP;
 import fr.ensimag.ima.pseudocode.instructions.SEQ;
@@ -45,7 +44,7 @@ public class Not extends AbstractUnaryExpr {
     protected void codeGenUnary(DecacCompiler compiler, GPRegister register) {
         // Si register contient 0 (Faux), SEQ le met à 1 (Vrai)
         // Si register contient 1 (Vrai), SEQ le met à 0 (Faux)
-        compiler.addInstruction(new CMP(new ImmediateInteger(0), register));
+        compiler.addInstruction(new CMP(0, register));
         compiler.addInstruction(new SEQ(register));
     }
 

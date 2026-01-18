@@ -94,8 +94,9 @@ public class DeclMethod extends AbstractDeclMethod {
     @Override
     protected void verifyMethodBody(DecacCompiler compiler, EnvironmentType envTypes, 
                                     ClassDefinition nameClass) throws ContextualError {
-        // Créer un environnement local pour cette méthode
-        EnvironmentExp localEnv = new EnvironmentExp(null);
+        // Créer un environnement local pour cette méthode avec les membres de la classe comme parent
+        // Cela permet d'accéder aux champs de la classe depuis le corps de la méthode
+        EnvironmentExp localEnv = new EnvironmentExp(nameClass.getMembers());
         
         // Déclarer les paramètres dans l'environnement local
         params.verifyListDeclParamBody(compiler, localEnv);

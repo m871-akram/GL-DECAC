@@ -36,7 +36,7 @@ public class ManualTestContext {
         } catch (LocationException e) {
             e.display(System.err);
             System.exit(1);
-        } 
+        }
         prog.prettyPrint(System.out);
     }
 }

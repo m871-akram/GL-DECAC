@@ -6,7 +6,6 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.BRA;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
@@ -65,12 +64,12 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
         this.codeGenBool(compiler, true, trueLabel);
 
         // (On n'a pas sauté) -> On charge 0
-        compiler.addInstruction(new LOAD(new ImmediateInteger(0), register));
+        compiler.addInstruction(new LOAD(0, register));
         compiler.addInstruction(new BRA(endLabel));
 
         //  (On a sauté ici) -> On charge 1
         compiler.addLabel(trueLabel);
-        compiler.addInstruction(new LOAD(new ImmediateInteger(1), register));
+        compiler.addInstruction(new LOAD(1, register));
 
         compiler.addLabel(endLabel);
     }

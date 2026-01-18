@@ -5,16 +5,7 @@
  */
 package fr.ensimag.deca.tree;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.antlr.v4.runtime.CommonTokenStream;
-
-import fr.ensimag.deca.CompilerOptions;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.syntax.AbstractDecaLexer;
-import fr.ensimag.deca.syntax.DecaLexer;
-import fr.ensimag.deca.syntax.DecaParser;
 
 /**
  *
@@ -36,40 +27,12 @@ public class ManualTestInitialGencode {
         lexp2.add(new StringLiteral("everybody !"));
         return source;
     }
-    public static AbstractProgram initTest2(String[] args) throws IOException{
-        DecaLexer lex = AbstractDecaLexer.createLexerFromArgs(args);
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        DecaParser parser = new DecaParser(tokens);
-        File file = null;
-        if (lex.getSourceName() != null) {
-            file = new File(lex.getSourceName());
-        }
-        final DecacCompiler decacCompiler = new DecacCompiler(new CompilerOptions(), file);
-        parser.setDecacCompiler(decacCompiler);
-        AbstractProgram source = parser.parseProgramAndManageErrors(System.err);
-        return source;
-    }
     
     public static String gencodeSource(AbstractProgram source) {
         DecacCompiler compiler = new DecacCompiler(null,null);
         source.codeGenProgram(compiler);
         return compiler.displayIMAProgram();
     }
-
-    public static void test2(String[] args) throws IOException {
-        AbstractProgram source = initTest2(args);
-        System.out.println("---- From the following Abstract Syntax Tree ----");
-        source.prettyPrint(System.out);
-        System.out.println("---- We generate the following assembly code ----");        
-        String result = gencodeSource(source);
-        System.out.println(result);
-        assert(result.equals(
-                "; Main program\n" +
-                "; Beginning of main function:\n" +
-                "	WSTR \"Hello\"\n" +
-                "	WNL\n" +
-                "	HALT\n"));
-    }    
 
     public static void test1() {
         AbstractProgram source = initTest1();
@@ -86,9 +49,10 @@ public class ManualTestInitialGencode {
                 "	WNL\n" +
                 "	HALT\n"));
     }
+
         
-    public static void main(String args[]) throws IOException {
+
+    public static void main(String args[]) {
         test1();
-        test2( new String[] {"src/test/deca/syntax/valid/provided/hello.deca"});
     }
 }

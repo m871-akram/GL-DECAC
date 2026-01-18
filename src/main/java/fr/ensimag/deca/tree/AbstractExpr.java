@@ -8,7 +8,6 @@ import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.DecacInternalError;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.instructions.*;
@@ -189,7 +188,7 @@ public abstract class AbstractExpr extends AbstractInst {
         this.codeGenExpr(compiler, reg);
 
         // 2. Comparer à 0 (Faux)
-        compiler.addInstruction(new CMP(new ImmediateInteger(0), reg));
+        compiler.addInstruction(new CMP(0, reg));
 
         // 3. Saut
         if (branchOn) {

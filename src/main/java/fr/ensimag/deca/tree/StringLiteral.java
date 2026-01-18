@@ -7,7 +7,6 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.instructions.WSTR;
 import org.apache.commons.lang.Validate;
 
@@ -60,7 +59,7 @@ public class StringLiteral extends AbstractStringLiteral {
 
     @Override
     protected void codeGenPrint(DecacCompiler compiler) {
-        compiler.addInstruction(new WSTR(new ImmediateString(value)));
+        compiler.addInstruction(new WSTR(value));
     }
 
     @Override

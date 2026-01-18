@@ -1,7 +1,6 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.codegen.InterruptController;
 import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
@@ -75,7 +74,7 @@ public class New extends AbstractExpr {
 
         // 1. Allocation dans le tas
         int objectSize = 1 + classDef.getNumberOfFields(); // 1 pour vTable + champs
-        compiler.addInstruction(new NEW(new ImmediateInteger(objectSize), register));
+        compiler.addInstruction(new NEW(objectSize, register));
 
         // 2. Vérification débordement tas
         if (!compiler.getCompilerOptions().getNoCheck()) {
