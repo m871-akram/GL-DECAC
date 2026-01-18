@@ -28,20 +28,8 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
 
-                Type leftType = getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-                Type rightType = getRightOperand().verifyExpr(compiler, localEnv, currentClass);
-                
-                if (!leftType.isBoolean()) {
-                    throw new ContextualError(
-                        "Op gauche d'une opération booléenne doit être booléen" + leftType,
-                        getLeftOperand().getLocation());
-                }
-                
-                if (!rightType.isBoolean()) {
-                    throw new ContextualError(
-                        "Op droit d'une opération booléenne doit être booléen" + rightType,
-                        getRightOperand().getLocation());
-                }
+                getLeftOperand().verifyCondition(compiler, localEnv, currentClass);
+                getRightOperand().verifyCondition(compiler, localEnv, currentClass);
                 
                 Type resultType = compiler.environmentType.BOOLEAN;
                 setType(resultType);

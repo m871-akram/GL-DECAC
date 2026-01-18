@@ -37,12 +37,7 @@ public class IfThenElse extends AbstractInst {
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-        Type condType = condition.verifyExpr(compiler, localEnv, currentClass);
-        if (!condType.isBoolean()) {
-            throw new ContextualError(
-                "La condition d'un if ou else doit être de type booléen: " + condType,
-                condition.getLocation());
-        }
+        condition.verifyCondition(compiler, localEnv, currentClass);
         
         thenBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
         
