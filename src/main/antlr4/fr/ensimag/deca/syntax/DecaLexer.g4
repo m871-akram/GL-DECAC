@@ -13,6 +13,13 @@ options {
 
 // Deca lexer rules.
 
+// Comments and whitespace - must be defined BEFORE operators to take precedence
+// Note: in lexer rules, . does not match newlines. We use a character set that includes everything.
+fragment COMMENT_CHAR : ~'*' | '*' ~'/' ;
+COMMENT : '/*' COMMENT_CHAR* '*/' -> skip ;
+COMMENT_MONO : '//' ~[\r\n]* -> skip ;
+WS  :   [ \t\r\n]+ -> skip ;
+
 fragment LETTER : 'a'  ..  'z' | 'A'  ..  'Z';
 fragment DIGIT : '0'  ..  '9';
 ASM : 'asm';
@@ -86,32 +93,8 @@ fragment STRING_CAR : '\\' ('"' | '\\' | 'n' | 'r' | 't') ;
 STRING : '"' (~["\\\n] | STRING_CAR)* '"' ;
 MULTI_LINE_STRING : '"' (~["\\] | '\n' | STRING_CAR)* '"' ;
 
-
-COMMENT : '/*' .*? '*/' { skip(); };
-
-COMMENT_MONO : '//' (~('\r' | '\n'))* { skip(); };
-
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
-        ) { skip(); };
 fragment FILENAME : (LETTER | DIGIT | '.' | '-' | '_')+;
-INCLUDE : '#include' (' ')* '"' FILENAME '"' {
-   doInclude(getText());
-   skip();}
-   ;
-UNCLOSED_COMMENT
-    : '/*' .*? EOF
-      { LexerNoViableAltException e =
-            new LexerNoViableAltException(
-                this,
-                _input,
-                _tokenStartCharIndex,
-                null
-            );
-        notifyListeners(e); } 
-      ;
+INCLUDE : '#include' (' ')* '"' FILENAME '"' { doInclude(getText()); } -> skip ;
 DEFAULT : . { LexerNoViableAltException e =
             new LexerNoViableAltException(
                 this,
