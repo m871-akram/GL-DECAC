@@ -2,6 +2,8 @@ package fr.ensimag.deca.tree;
 
 import java.io.PrintStream;
 
+import org.apache.commons.lang.Validate;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
@@ -17,6 +19,8 @@ public class DeclParam extends AbstractDeclParam {
     
 
     public DeclParam(AbstractIdentifier type, AbstractIdentifier name) {
+        Validate.notNull(type);
+        Validate.notNull(name);
         this.type = type;
         this.name = name;
     }
@@ -79,7 +83,7 @@ public class DeclParam extends AbstractDeclParam {
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         type.prettyPrint(s, prefix, true);
-        name.prettyPrint(s, prefix, false); 
+        name.prettyPrint(s, prefix, true); 
     }
 
     @Override

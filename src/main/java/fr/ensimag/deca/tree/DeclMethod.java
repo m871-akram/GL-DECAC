@@ -127,7 +127,7 @@ public class DeclMethod extends AbstractDeclMethod {
 
         this.params.verifyListDeclParamEnv(compiler, methodEnv);
         this.body.verifyMethodBody(compiler, methodEnv, currentClassDef, type.getType());
-        MethodDefinition methodDef = (MethodDefinition) localEnv.get(name.getName()); // récupérée en passe 2
+        MethodDefinition methodDef = localEnv.get(name.getName()).asMethodDefinition("la methode n'est pas definit dans la passe 2", getLocation()); // récupérée en passe 2
         this.name.setDefinition(methodDef);
         this.name.setType(type.getType());
     }
