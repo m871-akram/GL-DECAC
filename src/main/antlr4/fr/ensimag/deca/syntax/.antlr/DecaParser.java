@@ -2205,14 +2205,11 @@ public class DecaParser extends AbstractDecaParser {
 				setState(405);
 				match(CPARENT);
 
-				        assert(((Primary_exprContext)_localctx).args.tree != null);
+				            assert(((Primary_exprContext)_localctx).args.tree != null);
 				            assert(((Primary_exprContext)_localctx).m.tree != null);
-				            This implicitThis = new This(true);
-				            implicitThis.setLocation((((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getLine(),
-				            (((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getCharPositionInLine(),
-				            (((Primary_exprContext)_localctx).m!=null?(((Primary_exprContext)_localctx).m.start):null).getInputStream().getSourceName());
-
-				            ((Primary_exprContext)_localctx).tree =  new MethodCall(implicitThis, ((Primary_exprContext)_localctx).m.tree, ((Primary_exprContext)_localctx).args.tree);
+				            This thistemp = new This(true);
+				            thistemp.setLocation(((Primary_exprContext)_localctx).m.tree.getLocation());
+				            ((Primary_exprContext)_localctx).tree =  new MethodCall(thistemp,((Primary_exprContext)_localctx).m.tree,((Primary_exprContext)_localctx).args.tree);
 				            _localctx.tree.setLocation(((Primary_exprContext)_localctx).m.tree.getLocation());
 				        
 				}

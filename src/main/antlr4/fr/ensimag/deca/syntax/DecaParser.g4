@@ -423,14 +423,11 @@ primary_expr returns[AbstractExpr tree]
             $tree = $ident.tree;
         }
     | m=ident OPARENT args=list_expr CPARENT {
-        assert($args.tree != null);
+            assert($args.tree != null);
             assert($m.tree != null);
-            This implicitThis = new This(true);
-            implicitThis.setLocation($m.start.getLine(),
-            $m.start.getCharPositionInLine(),
-            $m.start.getInputStream().getSourceName());
-
-            $tree = new MethodCall(implicitThis, $m.tree, $args.tree);
+            This thistemp = new This(true);
+            thistemp.setLocation($m.tree.getLocation());
+            $tree = new MethodCall(thistemp,$m.tree,$args.tree);
             $tree.setLocation($m.tree.getLocation());
         }
     | OPARENT expr CPARENT {

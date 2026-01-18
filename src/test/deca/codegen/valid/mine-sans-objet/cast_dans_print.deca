@@ -1,0 +1,13 @@
+//
+// Description: 
+// Cast d'un resultat de calcul dans println
+//
+// Resultat: 
+// 2
+//
+// Historique: 
+// cree le 18/01/2026
+//
+{
+    println((int)(5.5/2.0));
+}
