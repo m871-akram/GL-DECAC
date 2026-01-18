@@ -6,25 +6,17 @@ import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Signature;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
-public class ListDeclParam extends TreeList<AbstractDeclParam> {
-
-    /**
-     * Passe 2 : Construit la signature de la méthode
-     */
+public class ListDeclParam extends TreeList<AbstractDeclParam>{
     protected Signature verifyListDeclParam(DecacCompiler compiler) throws ContextualError {
         Signature sign = new Signature();
-        for (AbstractDeclParam param : getList()) {
+        for(AbstractDeclParam param : getList()){
             sign.add(param.verifyDeclParam(compiler));
         }
         return sign;
     }
-
-    /**
-     * Passe 3 : Vérifie et déclare les paramètres dans le corps
-     */
-    protected void verifyListDeclParamBody(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
-        for (AbstractDeclParam param : getList()) {
-            param.verifyDeclParamBody(compiler, localEnv);
+    protected void verifyListDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+        for(AbstractDeclParam param : getList()){
+            param.verifyDeclParamEnv(compiler, localEnv);
         }
     }
 
@@ -52,4 +44,5 @@ public class ListDeclParam extends TreeList<AbstractDeclParam> {
             first = false;
         }
     }
+
 }

@@ -12,14 +12,9 @@ public class ListDeclField extends TreeList<AbstractDeclField>{
             method.verifyDeclField(compiler, superClassEnv,localEnv,currentClassDef);
         }
     }
-
-    /**
-     * Initialisation des champs (Passe 3)
-     */
-    public void verifyDeclFieldBody(DecacCompiler compiler, EnvironmentExp localEnv,
-                                    ClassDefinition currentClassDef) throws ContextualError {
-        for (AbstractDeclField field : getList()) {
-            // field.verifyDeclFieldBody(compiler, localEnv, currentClassDef); // À implémenter
+    public void verifyListDeclFieldInit(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError{
+        for (AbstractDeclField method : getList()) {
+            method.verifyDeclFieldInit(compiler, currentClassDef, localEnv);
         }
     }
 

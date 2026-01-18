@@ -1,16 +1,15 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.BRA;
-import org.apache.commons.lang.Validate;
-
-import java.io.PrintStream;
 
 /**
  * Full if/else if/else statement.
@@ -33,16 +32,12 @@ public class IfThenElse extends AbstractInst {
         this.elseBranch = elseBranch;
     }
 
+
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-        Type condType = condition.verifyExpr(compiler, localEnv, currentClass);
-        if (!condType.isBoolean()) {
-            throw new ContextualError(
-                "La condition d'un if ou else doit être de type booléen: " + condType,
-                condition.getLocation());
-        }
+        condition.verifyCondition(compiler, localEnv, currentClass);
         
         thenBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
         

@@ -12,9 +12,9 @@ import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import fr.ensimag.ima.pseudocode.instructions.STORE;
 import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
 import fr.ensimag.ima.pseudocode.instructions.WINT;
-import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * Deca Identifier
@@ -48,9 +48,13 @@ public class Identifier extends AbstractIdentifier {
      */
     @Override
     public ClassDefinition getClassDefinition() {
-        try { return (ClassDefinition) definition; }
-        catch (ClassCastException e) {
-            throw new DecacInternalError("Identifier " + getName() + " is not a class identifier");
+        try {
+            return (ClassDefinition) definition;
+        } catch (ClassCastException e) {
+            throw new DecacInternalError(
+                    "Identifier "
+                            + getName()
+                            + " is not a class identifier, you can't call getClassDefinition on it");
         }
     }
 

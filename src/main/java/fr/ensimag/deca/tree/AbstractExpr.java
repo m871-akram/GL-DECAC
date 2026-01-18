@@ -14,6 +14,7 @@ import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * Expression, i.e. anything that has a value.
@@ -86,26 +87,23 @@ public abstract class AbstractExpr extends AbstractInst {
             EnvironmentExp localEnv, ClassDefinition currentClass, 
             Type expectedType)
             throws ContextualError {
-
-        // 1. Vérification standard
-        Type type = this.verifyExpr(compiler, localEnv, currentClass);
-
-        // 2. Compatibilité d'assignation
-        if (!compiler.environmentType.assignCompatible(expectedType, type)) {
-            throw new ContextualError("Type incompatible pour l'initialisation ou l'affectation. Attendu: "
-                    + expectedType + ", Trouvé: " + type, this.getLocation());
-        }
-
-        // 3. Conversion implicite (ConvFloat)
-        if (expectedType.isFloat() && type.isInt()) {
+        Type t2 = this.verifyExpr(compiler, localEnv, currentClass);
+        if (expectedType.isFloat() && t2.isInt()) {
             ConvFloat conv = new ConvFloat(this);
-            // On vérifie la conversion (ce qui va définir son type à Float)
             conv.verifyExpr(compiler, localEnv, currentClass);
+            t2 = conv.getType(); // t2 devient float
+
             return conv;
         }
 
+        if(!compiler.environmentType.assignCompatible(expectedType, t2)){
+            throw new ContextualError(
+                "Assignment entre des types invalides: expect" + expectedType + " is " + t2,
+                this.getLocation());
+        }
         return this;
     }
+
 
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
@@ -127,12 +125,14 @@ public abstract class AbstractExpr extends AbstractInst {
      *            the main program.
      */
     void verifyCondition(DecacCompiler compiler, EnvironmentExp localEnv,
-                         ClassDefinition currentClass) throws ContextualError {
-        Type type = verifyExpr(compiler, localEnv, currentClass);
-        if (!type.isBoolean()) {
-            throw new ContextualError("Condition booléenne attendue, trouvé: " + type, getLocation());
+            ClassDefinition currentClass) throws ContextualError {
+        Type condType = this.verifyExpr(compiler, localEnv, currentClass);
+        if (!condType.isBoolean()) {
+            throw new ContextualError(
+                "La condition d'un if ou else doit être de type booléen: " + condType,
+                getLocation());
         }
-    }
+}
 
 
     protected abstract void codeGenExpr(DecacCompiler compiler, GPRegister register);

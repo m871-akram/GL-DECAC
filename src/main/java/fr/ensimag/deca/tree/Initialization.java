@@ -39,39 +39,9 @@ public class Initialization extends AbstractInitialization {
     protected void verifyInitialization(DecacCompiler compiler, Type t,
             EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
-        Type t2 = getExpression().verifyExpr(compiler, localEnv, currentClass);
-
-
-        // ConvFloat
-        if (t.isFloat() && t2.isInt()) {
-            ConvFloat conv = new ConvFloat(getExpression());
-            conv.verifyExpr(compiler, localEnv, currentClass); //  noeud ConvFloat
-            this.setExpression(conv);
-            t2 = conv.getType(); // mettre a jour t2
-        }
-
-
-
-        if (!compiler.environmentType.assignCompatible(t, t2)) {
-            throw new ContextualError(
-                "Initialization dois etre compatible " + 
-                t + " et " + t2,
-                this.getLocation());
-        }
-
+        AbstractExpr t2 = getExpression().verifyRValue(compiler, localEnv, currentClass,t);
+        setExpression(t2);
     }
-
-//    @Override
-//    protected void verifyInitialization(DecacCompiler compiler, Type t,
-//                                        EnvironmentExp localEnv, ClassDefinition currentClass)
-//            throws ContextualError {
-//
-//        // Utilisation de verifyRValue pour gérer la compatibilité ET la conversion implicite Float
-//        AbstractExpr verifiedExpr = this.expression.verifyRValue(compiler, localEnv, currentClass, t);
-//
-//        // Mise à jour de l'expression (au cas où un ConvFloat a été ajouté)
-//        this.setExpression(verifiedExpr);
-//    }
 
 
     @Override

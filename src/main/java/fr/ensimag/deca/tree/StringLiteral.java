@@ -1,16 +1,15 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.instructions.WSTR;
-import org.apache.commons.lang.Validate;
-
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
+import fr.ensimag.ima.pseudocode.GPRegister;
 
 /**
  * String literal
@@ -27,16 +26,20 @@ public class StringLiteral extends AbstractStringLiteral {
 
     private String value;
 
+
+
+     @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) { throw new UnsupportedOperationException("on evalue pas un stringliteral dans un registre "); }
+
+
+
     public StringLiteral(String value) {
         Validate.notNull(value);
-        // Suppression des guillemets si présents
         if (value.startsWith("\"") && value.endsWith("\"")) {
             this.value = value.substring(1, value.length() - 1);
         } else {
             this.value = value;
         }
-
-        // on doit l obliger a faire juste un this.value = value;
     }
 
     @Override
@@ -44,17 +47,6 @@ public class StringLiteral extends AbstractStringLiteral {
             ClassDefinition currentClass) throws ContextualError {
         this.setType(compiler.environmentType.STRING);
         return compiler.environmentType.STRING;
-    }
-
-    /**
-     * On ne peut pas évaluer une string dans un registre (pas de calcul).
-     * Les chaînes ne servent qu'à l'affichage en Deca.
-     */
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // En Deca, les chaînes ne sont pas des objets manipulables, juste affichables.
-        // Si on essaie de faire "x = "abc"", le verifyExpr bloquera avant.
-        throw new UnsupportedOperationException("StringLiteral cannot be evaluated to a register");
     }
 
     @Override

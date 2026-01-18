@@ -1,7 +1,10 @@
 package fr.ensimag.deca.tree;
 
+import java.io.PrintStream;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
+import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.ima.pseudocode.Register;
@@ -9,76 +12,70 @@ import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import org.apache.commons.lang.Validate;
 
-import java.io.PrintStream;
 
 /**
  * Declaration of a Field
- * @author gl51
+ * @author G51
  * @date 15/01/2026
  */
 public class DeclField extends AbstractDeclField {
 
     private final Visibility visibility;
     private final AbstractIdentifier type;
-    private final AbstractIdentifier fieldName;
+    private final AbstractIdentifier name;
     private final AbstractInitialization initialization;
 
     public DeclField(Visibility visibility, AbstractIdentifier type,
-                     AbstractIdentifier fieldName, AbstractInitialization initialization) {
-        Validate.notNull(type);
-        Validate.notNull(fieldName);
-        Validate.notNull(initialization);
+                    AbstractIdentifier name, AbstractInitialization initialization) {
         this.visibility = visibility;
         this.type = type;
-        this.fieldName = fieldName;
+        this.name = name;
         this.initialization = initialization;
     }
 
-    @Override
-    public void verifyDeclField(DecacCompiler compiler, EnvironmentExp superClassEnv,
-                                EnvironmentExp localEnv, ClassDefinition currentClassDef) throws ContextualError {
 
-        // 1. Vérification du type
+
+
+    @Override
+    public void verifyDeclField(DecacCompiler compiler,
+                               EnvironmentExp superClassEnv,
+                               EnvironmentExp localEnv,
+                               ClassDefinition currentClassDef) throws ContextualError {
+
+        // on vérifier le type du champ
         Type fieldType = this.type.verifyType(compiler);
         if (fieldType.isVoid()) {
             throw new ContextualError("Un champ ne peut pas être de type void", getLocation());
         }
 
-        // 2. Vérification héritage (Redéfinition)
-        Symbol nameSym = fieldName.getName();
-        if (superClassEnv != null) {
-            ExpDefinition superDef = superClassEnv.get(nameSym);
-            if (superDef != null && !superDef.isField()) {
-                throw new ContextualError("Le champ " + nameSym + " masque un membre qui n'est pas un champ", getLocation());
+        // on vérifier si le champ existe déjà dans la super classe
+        Symbol fieldName = this.name.getName();
+        if (superClassEnv != null && superClassEnv.get(fieldName) != null) {
+            // on vérifier que c'est bien un champ (et pas une méthode par exemple)
+            ExpDefinition def = superClassEnv.get(fieldName);
+            if (!def.isField()) {
+                throw new ContextualError(
+                    fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
+                    getLocation()
+                );
             }
         }
 
-        // 3. Déclaration
-        // Index = index précédent + 1
-        int index = currentClassDef.getNumberOfFields() + 1; // +1 car on commence à 1 (vtable à 0)
-        currentClassDef.incNumberOfFields(); // Incrémente le compteur de la classe
 
-        FieldDefinition fieldDef = new FieldDefinition(fieldType, getLocation(), visibility, currentClassDef, index);
+
+        FieldDefinition fieldDef = new FieldDefinition(
+            fieldType,
+            getLocation(),
+            this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
+        );
 
         try {
-            localEnv.declare(nameSym, fieldDef);
-        } catch (EnvironmentExp.DoubleDefException e) {
-            throw new ContextualError("Champ " + nameSym + " déjà déclaré dans cette classe", getLocation());
+            localEnv.declare(fieldName, fieldDef);
+        } catch (DoubleDefException e) {
+            throw new ContextualError(e.getMessage(), getLocation());
         }
-
-        fieldName.setDefinition(fieldDef);
-        fieldName.setType(fieldType);
-
-        // 4. Vérification Initialisation
-        initialization.verifyInitialization(compiler, fieldType, localEnv, currentClassDef);
-    }
-
-    @Override
-    protected void verifyFieldBody(DecacCompiler compiler, EnvironmentType envTypes, 
-                                    ClassDefinition nameClass) throws ContextualError {
-        // Vérifier l'initialisation du champ
-        Type fieldType = fieldName.getType();
-        initialization.verifyInitialization(compiler, fieldType, nameClass.getMembers(), nameClass);
+        name.setDefinition(fieldDef);
+        name.setType(fieldType);
     }
 
     @Override
@@ -91,7 +88,7 @@ public class DeclField extends AbstractDeclField {
         compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
 
         // 2. Calculer l'adresse du champ : index(R1)
-        FieldDefinition fieldDef = fieldName.getFieldDefinition();
+        FieldDefinition fieldDef = name.getFieldDefinition();
         RegisterOffset fieldAddr = new RegisterOffset(fieldDef.getIndex(), Register.R1);
 
         // 3. Générer le code d'initialisation
@@ -101,27 +98,55 @@ public class DeclField extends AbstractDeclField {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        if (visibility == Visibility.PROTECTED) {
+        if (visibility == Visibility.PROTECTED) {//pas besoin si ce n'est pas protected
             s.print("protected ");
         }
         type.decompile(s);
         s.print(" ");
-        fieldName.decompile(s);
+        name.decompile(s);
         initialization.decompile(s);
         s.print(";");
     }
 
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public AbstractIdentifier getType() {
+        return type;
+    }
+
+    public AbstractIdentifier getName() {
+        return name;
+    }
+
+    public AbstractInitialization getInitialization() {
+        return initialization;
+    }
+
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         type.prettyPrint(s, prefix, false);
-        fieldName.prettyPrint(s, prefix, false);
+        name.prettyPrint(s, prefix, false);
         initialization.prettyPrint(s, prefix, true);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
         type.iter(f);
-        fieldName.iter(f);
+        name.iter(f);
         initialization.iter(f);
+    }
+
+
+
+
+    @Override
+    protected void verifyDeclFieldInit(DecacCompiler compiler, ClassDefinition currentClassDef, EnvironmentExp localEnv)
+            throws ContextualError {
+        Type fieldType = type.getType();
+        initialization.verifyInitialization(compiler, fieldType, localEnv, currentClassDef);
+
     }
 }

@@ -16,6 +16,11 @@ import fr.ensimag.ima.pseudocode.AbstractLine;
 import fr.ensimag.ima.pseudocode.IMAProgram;
 import fr.ensimag.ima.pseudocode.Instruction;
 import fr.ensimag.ima.pseudocode.Label;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.log4j.Logger;
@@ -114,13 +119,6 @@ public class DecacCompiler {
     }
 
     /**
-     * Ajoute une instruction au début du programme pour TSTO/ADDSP
-     */
-    public void addFirstInstruction(Instruction instruction) {
-        program.addFirst(instruction);
-    }
-
-    /**
      * @see
      * fr.ensimag.ima.pseudocode.IMAProgram#addInstruction(fr.ensimag.ima.pseudocode.Instruction,
      * java.lang.String)
@@ -170,9 +168,8 @@ public class DecacCompiler {
 
 
     /** The global environment for types (and the symbolTable) */
-    public final SymbolTable symbolTable = new SymbolTable();
     public final EnvironmentType environmentType = new EnvironmentType(this);
-
+    public final SymbolTable symbolTable = new SymbolTable();
 
     public Symbol createSymbol(String name) {
         return symbolTable.create(name);
@@ -274,6 +271,7 @@ public class DecacCompiler {
         LOG.debug("Generated assembly code:" + nl + program.display());
         LOG.info("Output file assembly file is: " + destName);
 
+
         FileOutputStream fstream = null;
         try {
             fstream = new FileOutputStream(destName);
@@ -282,6 +280,7 @@ public class DecacCompiler {
         }
 
         LOG.info("Writing assembler file ...");
+
 
         program.display(new PrintStream(fstream));
         LOG.info("Compilation of " + sourceName + " successful.");

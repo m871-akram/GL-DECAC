@@ -27,18 +27,18 @@ public class Return extends AbstractInst {
     }
 
     @Override
-    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
-                              ClassDefinition currentClass, Type returnType) throws ContextualError {
+    protected void verifyInst(DecacCompiler compiler,  EnvironmentExp localEnv,
+                            ClassDefinition currentClass, Type returnType) throws ContextualError {
 
-        // 1. Vérifier qu'on n'est pas dans une méthode void
         if (returnType.isVoid()) {
-            throw new ContextualError("Interdit de retourner une valeur dans une méthode void", getLocation());
+            throw new ContextualError(
+                "return avec un void interdit", getLocation()
+            );
         }
-
-        // 2. Vérifier la compatibilité du type et gérer la conversion implicite (Int -> Float)
-        // verifyRValue s'occupe de vérifier assignCompatible et d'ajouter ConvFloat si nécessaire
-        this.value = this.value.verifyRValue(compiler, localEnv, currentClass, returnType);
+        AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass,returnType);
+        setOperand(convValue);
     }
+
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
@@ -59,11 +59,13 @@ public class Return extends AbstractInst {
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        value.prettyPrint(s, prefix, true);
+        value.prettyPrintChildren(s, prefix);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        value.iter(f);
+        value.iterChildren(f);
     }
 }
+
+

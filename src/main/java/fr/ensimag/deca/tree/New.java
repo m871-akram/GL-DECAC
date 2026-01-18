@@ -6,6 +6,7 @@ import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.*;
 import fr.ensimag.ima.pseudocode.instructions.*;
+import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
@@ -18,10 +19,10 @@ import java.io.PrintStream;
  * @date 16/01/2026
  */
 public class New extends AbstractExpr {
-
     private final AbstractIdentifier className;
 
     public New(AbstractIdentifier className) {
+        Validate.notNull(className);
         this.className = className;
     }
 
@@ -66,8 +67,6 @@ public class New extends AbstractExpr {
 
 
 
-
-
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         ClassDefinition classDef = (ClassDefinition) className.getDefinition();
@@ -106,8 +105,6 @@ public class New extends AbstractExpr {
         // (ou init restaure les registres callee-saved)
     }
 
-
-
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         className.prettyPrint(s, prefix, true);
@@ -118,3 +115,5 @@ public class New extends AbstractExpr {
         className.iter(f);
     }
 }
+
+

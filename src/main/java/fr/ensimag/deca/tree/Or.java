@@ -53,5 +53,15 @@ public class Or extends AbstractOpBool {
             // 3. Point de sortie si A était Vrai
             compiler.addLabel(endOrLabel);
         }
+
+
     }
+
+
+
+
+
+
 }
+
+

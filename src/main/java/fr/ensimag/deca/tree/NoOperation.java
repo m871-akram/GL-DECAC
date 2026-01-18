@@ -1,10 +1,10 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
 import java.io.PrintStream;
@@ -20,8 +20,8 @@ public class NoOperation extends AbstractInst {
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
-//        throw new UnsupportedOperationException("not yet implemented");
-
+        //throw new UnsupportedOperationException("not yet implemented");
+        //rien a faire ici
     }
 
     @Override

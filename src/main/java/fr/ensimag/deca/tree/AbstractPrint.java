@@ -1,14 +1,14 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
+import org.apache.commons.lang.Validate;
 
 /**
  * Print statement (print, println, ...).
@@ -53,7 +53,6 @@ public abstract class AbstractPrint extends AbstractInst {
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
         for (AbstractExpr a : getArguments().getList()) {
-            // Chaque expression sait comment s'imprimer (WINT, WFLOAT, WSTR)
             a.codeGenPrint(compiler);
         }
     }
@@ -64,7 +63,8 @@ public abstract class AbstractPrint extends AbstractInst {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        s.print("print" + getSuffix());
+        s.print("print");
+        s.print(getSuffix());
         if (printHex) {
             s.print("x");
         }

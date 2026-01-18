@@ -1,13 +1,16 @@
 package fr.ensimag.deca.tree;
 
-
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.EnvironmentType;
 
-
+/**
+ * Class abstarite Field.
+ *
+ * @author G51
+ * @date 15/01/2026
+ */
 public abstract class AbstractDeclField extends Tree {
 
     /**
@@ -19,12 +22,6 @@ public abstract class AbstractDeclField extends Tree {
                                             EnvironmentExp localEnv,
                                             ClassDefinition currentClassDef) throws ContextualError;
 
-//    /**
-//     * Passe 3 de la vérification contextuelle.
-//     * Vérifie le corps de l'initialisation du champ.
-//     */
-//    protected abstract void verifyFieldBody(DecacCompiler compiler,
-//                                            EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
 
     /**
      * Génération de code pour l'initialisation par défaut et explicite du champ.
@@ -32,11 +29,7 @@ public abstract class AbstractDeclField extends Tree {
      */
     protected abstract void codeGenInitField(DecacCompiler compiler);
 
-    /**
-     * Passe 3 de la vérification contextuelle.
-     * Vérifie le corps de l'initialisation du champ.
-     */
-    protected abstract void verifyFieldBody(DecacCompiler compiler,
-                                            EnvironmentType envTypes, ClassDefinition nameClass) throws ContextualError;
-}
+    protected abstract void verifyDeclFieldInit(DecacCompiler compiler, ClassDefinition currentClassDef,
+                                                EnvironmentExp localEnv) throws ContextualError;
 
+}

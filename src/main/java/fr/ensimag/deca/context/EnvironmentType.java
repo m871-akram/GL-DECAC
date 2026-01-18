@@ -2,11 +2,11 @@ package fr.ensimag.deca.context;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
-import fr.ensimag.deca.tools.SymbolTable.Symbol;
-import fr.ensimag.deca.tree.Location;
 
 import java.util.HashMap;
 import java.util.Map;
+import fr.ensimag.deca.tools.SymbolTable.Symbol;
+import fr.ensimag.deca.tree.Location;
 // A FAIRE: étendre cette classe pour traiter la partie "avec objet" de Déca
 /**
  * Environment containing types. Initially contains predefined identifiers, more
@@ -115,6 +115,21 @@ public class EnvironmentType {
         }
 
 
+        return false;
+    }
+    public boolean aritCompatible(Type T1, Type T2) {
+        if (T1.isFloat() && T2.isInt()) {
+            return true;
+        }
+        if (T2.isFloat() && T1.isInt()) {
+            return true;
+        }
+        if (T2.isInt() && T1.isInt()) {
+            return true;
+        }
+        if (T1.isFloat() && T1.isFloat()) {
+            return true;
+        }
         return false;
     }
     public boolean castCompatible(Type T1, Type T2) {

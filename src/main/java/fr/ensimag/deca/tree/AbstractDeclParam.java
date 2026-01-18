@@ -16,7 +16,7 @@ public abstract class AbstractDeclParam extends Tree {
     /**
      * Déclare le paramètre dans l'environnement local (Passe 3)
      */
-    protected abstract void verifyDeclParamBody(DecacCompiler compiler, EnvironmentExp envExp) throws ContextualError;
+    protected abstract void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp envExp) throws ContextualError;
 
     /**
      * Génère le code pour lier le paramètre à son adresse mémoire (Pile LB)

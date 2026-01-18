@@ -1,12 +1,15 @@
 package fr.ensimag.deca;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import static org.mockito.ArgumentMatchers.refEq;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * User-specified options influencing the compilation.
@@ -82,7 +85,17 @@ public class CompilerOptions {
                 }
                 printBanner = true;
                 return;
-    
+
+            case "-dddd":
+                debug++;
+            case "-ddd":
+                debug++;
+            case "-dd":
+                debug++;
+            case "-d":
+                debug++;
+                break;
+
             case "-p":
                 if(actionSpecial != -1){
                     throw new CLIException("-v et -p ne sont pas compatible");
@@ -100,7 +113,9 @@ public class CompilerOptions {
             case "-n":
                 noCheck = true;
                 break;
-            
+            case "-P":
+                parallel=true;
+                break;
             case "-r":
                 if (i + 1 >= args.length) {
                     throw new CLIException("Option -r requiert un argument");

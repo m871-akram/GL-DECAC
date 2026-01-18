@@ -1,8 +1,15 @@
 package fr.ensimag.deca;
 
-import org.apache.log4j.Logger;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.apache.log4j.Logger;
 
 /**
  * Main class for the command-line Deca compiler.
@@ -36,11 +43,31 @@ public class DecacMain {
             System.exit(0);
         }
         if (options.getParallel()) {
-            // A FAIRE : instancier DecacCompiler pour chaque fichier à
-            // compiler, et lancer l'exécution des méthodes compile() de chaque
-            // instance en parallèle. Il est conseillé d'utiliser
-            // java.util.concurrent de la bibliothèque standard Java.
-            throw new UnsupportedOperationException("Parallel build not yet implemented");
+            int nbThreads = Runtime.getRuntime().availableProcessors();
+            ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+
+            List<Future<Boolean>> results = new ArrayList<>();
+
+            for (File source : options.getSourceFiles()) {
+                Callable<Boolean> task = () -> {
+                    DecacCompiler compiler = new DecacCompiler(options, source);
+                    return compiler.compile(); // true = erreur
+                };
+                results.add(executor.submit(task));
+            }
+
+            executor.shutdown();
+
+            for (Future<Boolean> result : results) {
+                try {
+                    if (result.get()) {
+                        error = true;
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    error = true;
+                    e.printStackTrace();
+                }
+    }
         } else {
             for (File source : options.getSourceFiles()) {
                 DecacCompiler compiler = new DecacCompiler(options, source);
@@ -52,3 +79,5 @@ public class DecacMain {
         System.exit(error ? 1 : 0);
     }
 }
+
+

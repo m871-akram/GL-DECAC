@@ -1,14 +1,15 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
+
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Label;
-import fr.ensimag.ima.pseudocode.instructions.BRA;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import fr.ensimag.ima.pseudocode.instructions.BRA;
 
 /**
  *
@@ -26,20 +27,8 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
 
-                Type leftType = getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-                Type rightType = getRightOperand().verifyExpr(compiler, localEnv, currentClass);
-                
-                if (leftType != compiler.environmentType.BOOLEAN) {
-                    throw new ContextualError(
-                        "Op gauche d'une opération booléenne doit être booléen" + leftType,
-                        getLeftOperand().getLocation());
-                }
-                
-                if (rightType != compiler.environmentType.BOOLEAN) {
-                    throw new ContextualError(
-                        "Op droit d'une opération booléenne doit être booléen" + rightType,
-                        getRightOperand().getLocation());
-                }
+                getLeftOperand().verifyCondition(compiler, localEnv, currentClass);
+                getRightOperand().verifyCondition(compiler, localEnv, currentClass);
                 
                 Type resultType = compiler.environmentType.BOOLEAN;
                 setType(resultType);

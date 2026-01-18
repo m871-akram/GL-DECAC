@@ -1,7 +1,11 @@
 package fr.ensimag.deca.tools;
 
+import static org.mockito.ArgumentMatchers.refEq;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.ObjectUtils.Null;
 
 /**
  * Manage unique symbols.

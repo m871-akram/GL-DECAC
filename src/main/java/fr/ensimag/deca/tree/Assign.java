@@ -31,31 +31,16 @@ public class Assign extends AbstractBinaryExpr {
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass) throws ContextualError {
         Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-        Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
-
-        if (t1.isFloat() && t2.isInt()) {
-            ConvFloat conv = new ConvFloat(getRightOperand());
-            conv.verifyExpr(compiler, localEnv, currentClass); // ConvFloat
-            this.setRightOperand(conv);
-            t2 = conv.getType(); // t2 devient float
-        }
-
-        if(!compiler.environmentType.assignCompatible(t1, t2)){
-            throw new ContextualError(
-                "Assignment entre des types invalides: " + t1 + " et " + t2,
-                this.getLocation());
-        }
+        AbstractExpr t2 = this.getRightOperand().verifyRValue(compiler, localEnv, currentClass,t1);
+        setRightOperand(t2);
         setType(t1);
         return t1;
     }
 
     @Override
-    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass, Type returnType)
-            throws ContextualError {
-        // Une assignation est une instruction valide
-        // On vérifie simplement l'assignation comme expression
-        verifyExpr(compiler, localEnv, currentClass);
+    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition classCourante, Type returnType)
+            throws ContextualError {Type exprType = this.verifyExpr(compiler, localEnv, classCourante);
+            this.setType(exprType);
     }
 
 
@@ -117,16 +102,3 @@ public class Assign extends AbstractBinaryExpr {
     }
 
 }
-
-//@Override
-//public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-//                       ClassDefinition currentClass) throws ContextualError {
-//    // 1. Vérification des types gauche et droit
-//    Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-//    // Note: verifyRValue gère déjà la compatibilité ET la conversion implicite (ConvFloat)
-//    AbstractExpr checkedRight = this.getRightOperand().verifyRValue(compiler, localEnv, currentClass, t1);
-//    this.setRightOperand(checkedRight);
-//
-//    setType(t1);
-//    return t1;
-//}

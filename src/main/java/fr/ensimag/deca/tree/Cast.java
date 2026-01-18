@@ -1,5 +1,9 @@
 package fr.ensimag.deca.tree;
 
+import java.io.PrintStream;
+
+import org.apache.commons.lang.Validate;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
@@ -9,31 +13,38 @@ import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.*;
 import fr.ensimag.ima.pseudocode.instructions.*;
+import org.apache.commons.lang.Validate;
 
-import java.io.PrintStream;
 
+/**
+ *
+ * @author gl51
+ * @date 15/01/2026
+ */
 public class Cast extends AbstractExpr {
-
-    private final AbstractIdentifier type;
-    private final AbstractExpr expr;
-
-    public Cast(AbstractIdentifier type, AbstractExpr expr) {
-        this.type = type;
+    private AbstractExpr expr;
+    private AbstractIdentifier cast;
+    public Cast(AbstractIdentifier ident, AbstractExpr expr) {
+        Validate.notNull(expr, "left operand cannot be null");
+        Validate.notNull(ident, "right operand cannot be null");
         this.expr = expr;
+        this.cast = ident;
     }
 
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
         Type exprType = expr.verifyExpr(compiler, localEnv, currentClass);
-        Type castType = type.verifyType(compiler);
+        Type classType = cast.verifyType(compiler);
 
-        if (!compiler.environmentType.castCompatible(exprType, castType)) {
-            throw new ContextualError("Cast incompatible de " + exprType + " vers " + castType, getLocation());
+        if (!compiler.environmentType.assignCompatible(exprType, classType)) {
+            throw new ContextualError(
+                "cast est incompatible entre :" + classType.getName()+ " et " + exprType.getName(),
+                expr.getLocation());
         }
 
-        setType(castType);
-        return castType;
+        setType(classType);
+        return classType;
     }
 
     @Override
@@ -56,7 +67,7 @@ public class Cast extends AbstractExpr {
         // 4. Si c'est un cast vers Float/Int, gérer ici (ConvFloat)
         // Mais Cast est souvent utilisé pour les objets.
         if (getType().isClass()) {
-            ClassDefinition targetClassDef = (ClassDefinition) type.getDefinition();
+            ClassDefinition targetClassDef = (ClassDefinition) cast.getDefinition();
 
             Label endLabel = compiler.getSequencer().genSignal("cast_end");
             Label loopLabel = compiler.getSequencer().genSignal("cast_loop");
@@ -102,21 +113,26 @@ public class Cast extends AbstractExpr {
     @Override
     public void decompile(IndentPrintStream s) {
         s.print("(");
-        type.decompile(s);
-        s.print(") (");
+        cast.decompile(s);
+        s.print(")");
+        s.print("(");
         expr.decompile(s);
         s.print(")");
     }
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        type.prettyPrint(s, prefix, false);
-        expr.prettyPrint(s, prefix, true);
+        expr.prettyPrint(s, prefix, false);
+        cast.prettyPrint(s, prefix, true);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        type.iter(f);
         expr.iter(f);
+        cast.iter(f);
     }
+
 }
+
+
+

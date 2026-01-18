@@ -1,5 +1,10 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.context.ClassDefinition;
+import fr.ensimag.deca.context.ContextualError;
+import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Signature;
 import fr.ensimag.deca.tools.IndentPrintStream;
 
 /**
@@ -10,7 +15,44 @@ import fr.ensimag.deca.tools.IndentPrintStream;
  */
 public class ListExpr extends TreeList<AbstractExpr> {
 
+    public void verifyRValue(
+            DecacCompiler compiler,
+            EnvironmentExp localEnv,
+            ClassDefinition currentClass,
+            Signature sig, Location loc)
+            throws ContextualError {
 
+        if (sig.size() == 0) {
+            if (!getList().isEmpty()) {
+                throw new ContextualError(
+                    "Nombre d'arguments incorrect : aucun attendu",
+                    loc
+                );
+            }
+            return;
+        }
+
+        if (getList().size() != sig.size()) {
+            throw new ContextualError(
+                "Nombre d'arguments incorrect : attendu "
+                    + sig.size() + ", trouvé " + getList().size(),
+                    loc
+            );
+        }
+
+        for (int i = 0; i < sig.size(); i++) {
+            AbstractExpr arg = getList().get(i);
+
+            AbstractExpr convArg = arg.verifyRValue(
+                compiler,
+                localEnv,
+                currentClass,
+                sig.paramNumber(i)
+            );
+
+            getList().set(i, convArg);
+        }
+    }
     @Override
     public void decompile(IndentPrintStream s) {
         boolean first = true;

@@ -11,13 +11,11 @@ import org.apache.commons.lang.Validate;
 import java.io.PrintStream;
 
 public class DeclParam extends AbstractDeclParam {
-
     private final AbstractIdentifier type;
     private final AbstractIdentifier name;
 
+
     public DeclParam(AbstractIdentifier type, AbstractIdentifier name) {
-        Validate.notNull(type);
-        Validate.notNull(name);
         this.type = type;
         this.name = name;
     }
@@ -49,32 +47,20 @@ public class DeclParam extends AbstractDeclParam {
         this.type.setType(paramType);
         return paramType;
     }
-
-
-//    @Override
-//    protected Type verifyDeclParam(DecacCompiler compiler) throws ContextualError {
-//        // Vérification du type (Passe 2)
-//        Type paramType = this.type.verifyType(compiler);
-//
-//        if (paramType.isVoid()) {
-//            throw new ContextualError("Un paramètre ne peut pas être void", getLocation());
-//        }
-//        return paramType;
-//    }
-
     @Override
-    protected void verifyDeclParamBody(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
-        // Déclaration dans l'environnement local (Passe 3)
-        ParamDefinition paramDef = new ParamDefinition(this.type.getType(), getLocation());
-
+    protected void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
+        VariableDefinition paramDef = new VariableDefinition(this.type.getType(), getLocation());
+        this.name.setDefinition(paramDef);
+        this.name.setType(this.type.getType());
         try {
             localEnv.declare(name.getName(), paramDef);
         } catch (EnvironmentExp.DoubleDefException e) {
-            throw new ContextualError("Paramètre " + name.getName() + " déjà déclaré", getLocation());
+            throw new ContextualError(
+                e.getMessage(),getLocation()
+            );
         }
-
-        this.name.setDefinition(paramDef);
     }
+
 
     @Override
     protected void codeGenDeclParam(DecacCompiler compiler, int index) {
@@ -101,8 +87,8 @@ public class DeclParam extends AbstractDeclParam {
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        type.prettyPrint(s, prefix, false);
-        name.prettyPrint(s, prefix, true);
+        type.prettyPrint(s, prefix, true);
+        name.prettyPrint(s, prefix, false);
     }
 
     @Override
@@ -110,4 +96,5 @@ public class DeclParam extends AbstractDeclParam {
         type.iter(f);
         name.iter(f);
     }
+
 }

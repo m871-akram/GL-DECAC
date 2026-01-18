@@ -1,5 +1,9 @@
 package fr.ensimag.deca.tree;
 
+import java.io.PrintStream;
+
+import org.apache.commons.lang.Validate;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
@@ -9,105 +13,68 @@ import fr.ensimag.ima.pseudocode.instructions.RTS;
 import java.io.PrintStream;
 
 public class DeclMethod extends AbstractDeclMethod {
-
-
     private final AbstractIdentifier type;
     private final AbstractIdentifier name;
     private final ListDeclParam params;
     private final AbstractMethodBody body;
 
+
+
     public DeclMethod(AbstractIdentifier type, AbstractIdentifier name,
-                      ListDeclParam params, AbstractMethodBody body) {
+                    ListDeclParam params, AbstractMethodBody body) {
+        Validate.notNull(type);
+        Validate.notNull(name);
+        Validate.notNull(params);
+        Validate.notNull(body);
         this.type = type;
         this.name = name;
         this.params = params;
-        this.body = body;
+        this.body=body;
     }
 
-    @Override
-    protected void verifyDeclMethodPrototype(DecacCompiler compiler, EnvironmentExp superClassEnv,
-                                             ClassDefinition currentClassDef, EnvironmentExp localEnv) throws ContextualError {
-        // 1. Vérifier le type de retour
-        Type returnType = type.verifyType(compiler);
-        
-        // 2. Créer la signature de la méthode
+    public void verifyDeclMethodPrototype(DecacCompiler compiler,
+                                         EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
+        throws ContextualError {
+        ExpDefinition superDef = superClassEnv.get(name.getName());
         Signature signature = params.verifyListDeclParam(compiler);
-        
-        // 3. Vérifier si la méthode est une redéfinition (override)
-        int methodIndex;
-        if (superClassEnv != null) {
-            ExpDefinition superMethodDef = superClassEnv.get(name.getName());
-            if (superMethodDef != null && superMethodDef.isMethod()) {
-                // C'est une redéfinition
-                MethodDefinition superMethod = (MethodDefinition) superMethodDef;
-                
-                // Vérifier que la signature est compatible
-                if (!returnType.sameType(superMethod.getType())) {
-                    throw new ContextualError("Le type de retour de la méthode redéfinie doit être identique", getLocation());
-                }
-                
-                Signature superSig = superMethod.getSignature();
-                if (signature.size() != superSig.size()) {
-                    throw new ContextualError("Le nombre de paramètres doit être identique lors de la redéfinition", getLocation());
-                }
-                
-                for (int i = 0; i < signature.size(); i++) {
-                    if (!signature.paramNumber(i).sameType(superSig.paramNumber(i))) {
-                        throw new ContextualError("Les types des paramètres doivent être identiques lors de la redéfinition", getLocation());
-                    }
-                }
-                
-                // Utiliser le même index que la méthode parente
-                methodIndex = superMethod.getIndex();
-            } else {
-                // Nouvelle méthode
-                methodIndex = currentClassDef.getNumberOfMethods();
-                currentClassDef.incNumberOfMethods();
+        Type returnType = type.verifyType(compiler);
+        if (superDef != null) {
+
+            MethodDefinition superMethod = superDef.asMethodDefinition("Le nom existe dans la super-classe mais ce n'est pas une methode", getLocation());
+
+            Signature sigSuper = superMethod.getSignature();
+
+            if (signature.size() != sigSuper.size()) {
+                throw new ContextualError(
+                    "La signature de la methode redefinie doit avoir le meme nombre de parametres",
+                    getLocation()
+                );
             }
-        } else {
-            // Pas de super-classe (Object) - nouvelle méthode
-            methodIndex = currentClassDef.getNumberOfMethods();
-            currentClassDef.incNumberOfMethods();
+
+            for (int i = 0; i < signature.size(); i++) {
+                if (!signature.paramNumber(i).sameType(sigSuper.paramNumber(i))) {
+                    throw new ContextualError(
+                        "Les types des parametres doivent correspondre à ceux de la methode heritee",
+                        getLocation()
+                    );
+                }
+            }
+
+            Type typeSuper = superMethod.getType();
+
+            if (!compiler.environmentType.subType(returnType,typeSuper)) {
+                throw new ContextualError(
+                    "Le type de retour de la methode redefinie doit etre un sous-type du type de la super-classe",
+                    getLocation()
+                );
+            }
         }
-        
-        // 4. Créer la définition de la méthode
-        MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, methodIndex);
-        
-        // 5. Créer et assigner le label de la méthode (code.ClassName.methodName)
-        String className = currentClassDef.getType().getName().getName();
-        String methodName = name.getName().getName();
-        Label methodLabel = new Label("code." + className + "." + methodName);
-        methodDef.setLabel(methodLabel);
-        
-        // 6. Déclarer la méthode dans l'environnement de la classe
+        MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
         try {
             localEnv.declare(name.getName(), methodDef);
-        } catch (EnvironmentExp.DoubleDefException e) {
-            throw new ContextualError("Méthode " + name.getName() + " déjà définie dans cette classe", getLocation());
+        } catch (DoubleDefException e) {
+            throw new ContextualError(e.getMessage(), getLocation());
         }
-        
-        // 7. Lier l'identifiant à sa définition
-        name.setDefinition(methodDef);
-        name.setType(returnType);
-    }
-
-    @Override
-    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentType envTypes, 
-                                    ClassDefinition nameClass) throws ContextualError {
-        // Créer un environnement local pour cette méthode avec les membres de la classe comme parent
-        // Cela permet d'accéder aux champs de la classe depuis le corps de la méthode
-        EnvironmentExp localEnv = new EnvironmentExp(nameClass.getMembers());
-        
-        // Déclarer les paramètres dans l'environnement local
-        params.verifyListDeclParamBody(compiler, localEnv);
-        
-        // Vérifier le corps de la méthode
-        Type returnType = type.getType();
-        body.verifyMethodBody(compiler, localEnv, nameClass, returnType);
-    }
-
-    public AbstractIdentifier getMethodName() {
-        return name;
     }
 
     @Override
@@ -164,21 +131,43 @@ public class DeclMethod extends AbstractDeclMethod {
 
 
         body.decompile(s);
+
+    }
+
+    @Override
+    protected void prettyPrintChildren(PrintStream s, String prefix) {
+        type.prettyPrint(s, prefix, true);
+        name.prettyPrint(s, prefix, true);
+        params.prettyPrint(s, prefix, true);
+        body.prettyPrint(s, prefix, false);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
         type.iter(f);
         name.iter(f);
-        params.iter(f);
+        params.iterChildren(f);
         body.iter(f);
     }
 
     @Override
-    protected void prettyPrintChildren(PrintStream s, String prefix) {
-        type.prettyPrint(s, prefix, false);
-        name.prettyPrint(s, prefix, false);
-        params.prettyPrint(s, prefix, false);
-        body.prettyPrint(s, prefix, true);
+    protected void verifyDeclMethodBody(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
+            throws ContextualError {
+        EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
+        params.verifyListDeclParamEnv(compiler,methodEnv);
+        body.verifyMethodBody(compiler, methodEnv, currentClass, type.getType());
     }
+
+    @Override
+    protected void verifyDeclMethodContent(DecacCompiler compiler, ClassDefinition currentClassDef,
+            EnvironmentExp localEnv) throws ContextualError {
+        EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
+
+        this.params.verifyListDeclParamEnv(compiler, methodEnv);
+        this.body.verifyMethodBody(compiler, methodEnv, currentClassDef, type.getType());
+        MethodDefinition methodDef = (MethodDefinition) localEnv.get(name.getName()); // récupérée en passe 2
+        this.name.setDefinition(methodDef);
+        this.name.setType(type.getType());
+    }
+
 }

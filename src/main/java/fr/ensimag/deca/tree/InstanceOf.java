@@ -1,38 +1,50 @@
 package fr.ensimag.deca.tree;
 
+import java.io.PrintStream;
+
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
+import org.apache.commons.lang.Validate;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.*;
-import fr.ensimag.ima.pseudocode.instructions.*;
-
-import java.io.PrintStream;
 
 
+/**
+ *
+ * @author gl51
+ * @date 15/01/2026
+ */
 public class InstanceOf extends AbstractExpr {
-
-    private AbstractExpr expr;
-    private AbstractIdentifier type;
-
-    public InstanceOf(AbstractExpr expr, AbstractIdentifier type) {
-        this.expr = expr;
-        this.type = type;
+    private AbstractExpr leftOperand;
+    private AbstractIdentifier rightOperand;
+    public InstanceOf(AbstractExpr leftOperand, AbstractIdentifier rightOperand) {
+        Validate.notNull(leftOperand, "left operand cannot be null");
+        Validate.notNull(rightOperand, "right operand cannot be null");
+        this.leftOperand = leftOperand;
+        this.rightOperand = rightOperand;
     }
 
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
-        Type exprType = expr.verifyExpr(compiler, localEnv, currentClass);
-        Type typeType = type.verifyType(compiler);
+        Type exprType = leftOperand.verifyExpr(compiler, localEnv, currentClass);
+        Type classType = rightOperand.verifyType(compiler);
 
         if (!exprType.isClassOrNull()) {
-            throw new ContextualError("instanceof attend un objet à gauche", getLocation());
+            throw new ContextualError(
+                "instanceof ne s'applique qu'à un objet",
+                leftOperand.getLocation());
         }
-        if (!typeType.isClass()) {
-            throw new ContextualError("instanceof attend une classe à droite", getLocation());
+
+        if (!classType.isClass()) {
+            throw new ContextualError(
+                "instanceof attend un type classe",
+                rightOperand.getLocation());
         }
 
         setType(compiler.environmentType.BOOLEAN);
@@ -41,14 +53,14 @@ public class InstanceOf extends AbstractExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        ClassDefinition targetClassDef = (ClassDefinition) type.getDefinition();
+        ClassDefinition targetClassDef = (ClassDefinition) rightOperand.getDefinition();
 
         Label endLabel = compiler.getSequencer().genSignal("instanceof_end");
         Label loopLabel = compiler.getSequencer().genSignal("instanceof_loop");
         Label trueLabel = compiler.getSequencer().genSignal("instanceof_true");
 
         // 1. Evaluer l'objet
-        expr.codeGenExpr(compiler, register);
+        leftOperand.codeGenExpr(compiler, register);
 
         // 2. Si null -> False
         compiler.addInstruction(new CMP(new NullOperand(), register));
@@ -87,21 +99,21 @@ public class InstanceOf extends AbstractExpr {
     @Override
     public void decompile(IndentPrintStream s) {
         s.print("(");
-        expr.decompile(s);
+        leftOperand.decompile(s);
         s.print(" instanceof ");
-        type.decompile(s);
+        rightOperand.decompile(s);
         s.print(")");
     }
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
-        expr.prettyPrint(s, prefix, false);
-        type.prettyPrint(s, prefix, true);
+        leftOperand.prettyPrint(s, prefix, false);
+        rightOperand.prettyPrint(s, prefix, true);
     }
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        expr.iter(f);
-        type.iter(f);
+        leftOperand.iter(f);
+        rightOperand.iter(f);
     }
 }

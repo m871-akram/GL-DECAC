@@ -1,10 +1,10 @@
 package fr.ensimag.deca.tree;
 
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
 
 /**
  * Arithmetic binary operations (+, -, /, ...)
@@ -25,7 +25,7 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
         // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string) 
-        if (!compiler.environmentType.castCompatible(t1, t2)) {
+        if (!compiler.environmentType.aritCompatible(t1, t2)) {
             throw new ContextualError(
                 "Opérandes arithmétiques doivent être int ou float, pas " + 
                 t1 + " et " + t2,
@@ -52,5 +52,4 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
         
         return getType();
     }
-
 }
