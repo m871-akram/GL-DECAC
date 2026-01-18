@@ -142,25 +142,29 @@ public class DecacCompiler {
     /**
      * The main program. Every instruction generated will eventually end up here.
      */
-    private final IMAProgram program = new IMAProgram();
+    private IMAProgram program = new IMAProgram();
 
     public RegisterManager getRegisterManager() { return registerManager; }
     public MemoryManagementUnit getMMU() { return mmu; }
     public InterruptController getIrqController() { return irqController; }
     public SignalSequencer getSequencer() { return sequencer; }
 
-//    // Utilitaire pour générer temporairement dans un autre IMAProgram
-//    public IMAProgram swapProgram(IMAProgram newProg) {
-//        IMAProgram old = this.program;
-//        this.program = newProg;
-//        return old;
-//    }
-//
-//    public void appendProgram(IMAProgram prog) {
-//        for (AbstractLine line : prog.getLines()) {
-//            this.program.add(line);
-//        }
-//    }
+    /**
+     * Swap the current program with a new one, returning the old program.
+     * Useful for generating code into a temporary buffer.
+     */
+    public IMAProgram swapProgram(IMAProgram newProg) {
+        IMAProgram old = this.program;
+        this.program = newProg;
+        return old;
+    }
+
+    /**
+     * Append all lines from another program to the current program.
+     */
+    public void appendProgram(IMAProgram prog) {
+        this.program.append(prog);
+    }
 
 
 

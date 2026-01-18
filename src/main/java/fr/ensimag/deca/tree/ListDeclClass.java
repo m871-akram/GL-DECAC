@@ -86,7 +86,7 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         for (AbstractDeclClass classe : getList()) {
             // Idem, on cast ou on modifie l'abstrait
             if (classe instanceof DeclClass) {
-                // ((DeclClass) classe).codeGenMethods(compiler); // À implémenter dans DeclClass si absent
+                ((DeclClass) classe).codeGenMethods(compiler);
             }
         }
     }

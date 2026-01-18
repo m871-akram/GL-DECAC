@@ -79,6 +79,17 @@ public class MethodCall extends AbstractExpr {
     }
 
     @Override
+    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
+            ClassDefinition currentClass, Type returnType)
+            throws ContextualError {
+        // Un appel de méthode peut être utilisé comme instruction (statement)
+        // C'est valide uniquement si la méthode retourne void
+        verifyExpr(compiler, localEnv, currentClass);
+        // Pas besoin de vérifier si c'est void - un appel de méthode peut être une instruction
+        // même s'il retourne une valeur (la valeur est simplement ignorée)
+    }
+
+    @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         // 1. Calculer l'adresse de l'objet (this)
         // On utilise 'register' pour stocker l'adresse de l'objet
@@ -137,6 +148,15 @@ public class MethodCall extends AbstractExpr {
         if (getType() != compiler.environmentType.VOID) {
             compiler.addInstruction(new LOAD(Register.R0, register));
         }
+    }
+
+    @Override
+    protected void codeGenInst(DecacCompiler compiler) {
+        // Pour un appel de méthode utilisé comme instruction,
+        // on alloue un registre temporaire et on appelle codeGenExpr
+        GPRegister reg = compiler.getRegisterManager().prendreRegistre();
+        codeGenExpr(compiler, reg);
+        compiler.getRegisterManager().libererRegistre();
     }
 
     @Override

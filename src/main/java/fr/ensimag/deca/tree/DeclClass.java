@@ -81,6 +81,14 @@ public class DeclClass extends AbstractDeclClass {
         ClassDefinition classDef = classType.getDefinition();
 
         compiler.environmentType.declareClass(name, classDef);
+        
+        // Lier l'identifiant à sa définition
+        this.name.setDefinition(classDef);
+        this.name.setType(classType);
+        
+        // Lier également l'identifiant de la super-classe
+        this.superClass.setDefinition(superClassDef);
+        this.superClass.setType(superClassDef.getType());
 
         Logger.getLogger(DeclClass.class).debug("Classe :" + name.getName() + "ajoutée, super = " + superName.getName() + "'");
     }
@@ -229,6 +237,21 @@ public class DeclClass extends AbstractDeclClass {
         compiler.addInstruction(new POP(Register.R1));
         compiler.getMMU().notifyPop(1);
         compiler.addInstruction(new RTS());
+    }
+
+    /**
+     * PASSE 3 : Génération du code des méthodes
+     */
+    public void codeGenMethods(DecacCompiler compiler) {
+        String className = this.name.getName().getName();
+        compiler.addComment("--------------------------------------------------");
+        compiler.addComment("Méthodes de la classe " + className);
+        compiler.addComment("--------------------------------------------------");
+        
+        // Déléguer à la liste des méthodes
+        for (AbstractDeclMethod method : methodes.getList()) {
+            method.codeGenDeclMethod(compiler);
+        }
     }
 
     @Override

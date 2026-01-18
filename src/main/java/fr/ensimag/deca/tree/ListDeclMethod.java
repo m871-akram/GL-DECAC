@@ -16,9 +16,7 @@ public class ListDeclMethod extends TreeList<AbstractDeclMethod>{
     public void verifyListMethodBody(DecacCompiler compiler, ClassDefinition currentClassDef)
             throws ContextualError {
         for (AbstractDeclMethod method : getList()) {
-            // Création d'un environnement local pour chaque méthode ?
-            // Normalement verifyDeclMethodBody s'en charge.
-            // method.verifyDeclMethodBody(compiler, ..., currentClassDef);
+            method.verifyMethodBody(compiler, compiler.environmentType, currentClassDef);
         }
     }
 

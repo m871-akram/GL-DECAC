@@ -32,14 +32,22 @@ public class MethodBody extends AbstractMethodBody {
 
     @Override
     protected void codeGenMethodBody(DecacCompiler compiler) {
-        // Génération des variables locales (allocation pile)
+        // 1. Notifier la MMU du nombre de variables locales
+        int nbLocales = locals.size();
+        compiler.getMMU().notifyLocalBlockAllocation(nbLocales);
+        
+        // 2. Génération des variables locales (allocation pile) - sans générer d'instruction
         locals.codeGenListDeclVar(compiler);
 
-        // On notifie la MMU de la taille des locales pour le TSTO
-        compiler.getMMU().notifyLocalBlockAllocation(locals.size());
-
-        // Génération des instructions
+        // 3. Génération des instructions du corps (ceci va appeler notifyPush/notifyPop)
         insts.codeGenListInst(compiler);
+    }
+    
+    /**
+     * Retourne le nombre de variables locales (pour le calcul de ADDSP)
+     */
+    public int getLocalVarsCount() {
+        return locals.size();
     }
 
     @Override
