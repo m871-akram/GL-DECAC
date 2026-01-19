@@ -33,13 +33,9 @@ public class ConvFloat extends AbstractUnaryExpr {
     }
 
 
-    /**
-     * Génération de l'instruction de conversion.
-     * L'opérande a déjà été chargé dans le registre par AbstractUnaryExpr.codeGenExpr
-     */
     @Override
     protected void codeGenUnary(DecacCompiler compiler, GPRegister register) {
-        // Instruction IMA : FLOAT Rn, Rn (Convertit entier en flottant)
+        // float rn, rn (convertit int en float)
         compiler.addInstruction(new FLOAT(register, register));
     }
 

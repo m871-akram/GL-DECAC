@@ -71,50 +71,34 @@ public class New extends AbstractExpr {
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         ClassDefinition classDef = (ClassDefinition) className.getDefinition();
 
-        // 1. Allocation dans le tas
-        int objectSize = 1 + classDef.getNumberOfFields(); // 1 pour vTable + champs
+        // alloc dans le tas
+        int objectSize = 1 + classDef.getNumberOfFields();
         compiler.addInstruction(new NEW(objectSize, register));
 
-        // 2. Vérification débordement tas
+        // verif debordement tas
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
                     InterruptVector.IRQ_HEAP_FULL);
         }
 
-        // 3. Initialisation du pointeur VTable (offset 0 de l'objet)
-        // Récupérer l'adresse VTable stockée dans l'opérande de la définition de classe
-        RegisterOffset vTableAddr = (RegisterOffset) classDef.getOperand(); // getVTableAddress() si implémenté
+        // init pointeur vtable
+        RegisterOffset vTableAddr = (RegisterOffset) classDef.getOperand();
 
-        // On utilise R0 pour charger l'adresse de la VTable
+        // charge adresse vtable
         compiler.addInstruction(new LEA(vTableAddr, Register.R0));
         compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
 
-        // --- 4. Appel du constructeur : OPTIMISATION PEA ICI ---
-
-        // Explication : register contient l'adresse de l'objet (ex: adresse X).
-        // On veut empiler cette adresse X sur la pile pour que 'init' sache sur qui travailler (paramètre 'this').
-
-        // Ancienne méthode : PUSH(register)
-        // compiler.addInstruction(new PUSH(register));
-
-        // Nouvelle méthode : PEA (Push Effective Address)
-        // PEA calcule l'adresse 0(register) -> c'est à dire le contenu de register
-        // et l'empile directement.
+        // appel constructeur avec pea
         compiler.addInstruction(new PEA(new RegisterOffset(0, register)));
-
-        // On prévient quand même le MMU que la pile a grandi de 1 mot
         compiler.getMMU().notifyPush(1);
 
-        // Appel de la méthode d'initialisation
+        // appel init
         String initLabel = "init." + classDef.getType().getName().getName();
         compiler.addInstruction(new BSR(new Label(initLabel)));
 
-        // Nettoyage param 'this'
+        // nettoyage param this
         compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
         compiler.getMMU().notifyPop(1);
-
-        // Le résultat (l'adresse de l'objet) est toujours dans 'register' car init ne le modifie pas
-        // (ou init restaure les registres callee-saved)
     }
 
 

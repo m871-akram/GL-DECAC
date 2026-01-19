@@ -50,29 +50,28 @@ public class Program extends AbstractProgram {
 
     @Override
     public void codeGenProgram(DecacCompiler compiler) {
-        // Ajouter un JUMP pour sauter le code des classes et aller directement au main
+        // jump pour sauter code classes
         Label mainLabel = new Label("main_start");
         compiler.addInstruction(new BRA(mainLabel));
 
-        //  passe 1 : Partie "Déclarations de classes" (Table des méthodes)
+        // passe 1 : tables methodes
         compiler.addComment("Construction des tables des methodes");
         classes.codeGenListDeclClass(compiler);
 
-        // PASSE 2A : Init des objets
-        compiler.addComment("===== Sous-programmes d'initialisation =====");
+        // passe 2a : init objets
+        compiler.addComment("init objets");
         classes.codeGenListInit(compiler);
 
-        // PASSE 2B : Code des méthodes
+        // passe 2b : code methodes
         classes.codeGenListMethods(compiler);
 
-        //  passe 2 :Partie "Programme Principal"
+        // programme principal
         compiler.addLabel(mainLabel);
         compiler.addComment("Main program");
-        main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill
-        compiler.addInstruction(new HALT()); // fin normale du programme
+        main.codeGenMain(compiler);
+        compiler.addInstruction(new HALT());
 
-        // gestion des erreurs
-
+        // gestion erreurs
         compiler.getIrqController().flashServiceRoutines(compiler);
     }
 

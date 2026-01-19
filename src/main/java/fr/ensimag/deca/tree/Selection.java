@@ -73,46 +73,41 @@ public class Selection extends AbstractLValue {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Évaluer l'objet dans le registre
+        // evalue l'objet
         expr.codeGenExpr(compiler, register);
 
-        // 2. Vérifier Null
+        // verif null
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.addInstruction(new CMP(new NullOperand(), register));
             compiler.getIrqController().triggerInterrupt(compiler, InterruptVector.IRQ_NULL_PTR);
         }
 
-        // 3. Charger le champ (LOAD offset(Reg), Reg)
+        // charge le champ
         int index = fieldName.getFieldDefinition().getIndex();
         compiler.addInstruction(new LOAD(new RegisterOffset(index, register), register));
     }
 
     /**
-     * Génère le code pour stocker une valeur DANS ce champ (pour Assign).
-     * @param compiler Le compilateur
-     * @param sourceRegister Le registre contenant la valeur à écrire
+     * gen code pour stocker dans ce champ (pour assign)
      */
     public void codeGenStore(DecacCompiler compiler, GPRegister sourceRegister) {
-        // Pour faire object.field = val, on a besoin de l'adresse de object.
-        // sourceRegister contient déjà 'val'.
-        // Il nous faut un autre registre pour calculer 'object'.
-
+        // besoin reg pour adresse objet
         GPRegister addrReg = compiler.getRegisterManager().prendreRegistre();
 
-        // 1. Calculer l'adresse de l'objet
+        // calc adresse objet
         expr.codeGenExpr(compiler, addrReg);
 
-        // 2. Vérifier Null
+        // verif null
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.addInstruction(new CMP(new NullOperand(), addrReg));
             compiler.getIrqController().triggerInterrupt(compiler, InterruptVector.IRQ_NULL_PTR);
         }
 
-        // 3. Stocker la valeur (STORE source, offset(addrReg))
+        // store la valeur
         int index = fieldName.getFieldDefinition().getIndex();
         compiler.addInstruction(new STORE(sourceRegister, new RegisterOffset(index, addrReg)));
 
-        // 4. Libérer le registre d'adresse
+        // libere reg adresse
         compiler.getRegisterManager().libererRegistre();
     }
 

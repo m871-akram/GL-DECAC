@@ -24,7 +24,7 @@ public class Equals extends AbstractOpExactCmp {
     }
     
     @Override
-    protected Instruction getSccInstruction(GPRegister register) {
+    protected Instruction getAsmCode(GPRegister register) {
 
 
 

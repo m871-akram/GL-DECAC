@@ -53,17 +53,16 @@ public class Initialization extends AbstractInitialization {
 
     @Override
     protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
-        // 1. Allouer un registre temporaire
+        // alloue registre
         GPRegister register = compiler.getRegisterManager().prendreRegistre();
 
-        // 2. Calculer l'expression dans ce registre
+        // calc expression
         getExpression().codeGenExpr(compiler, register);
 
-        // 3. Stocker le résultat à l'adresse cible (target)
-        // STORE attend un DAddr, on cast l'Operand
+        // store resultat
         compiler.addInstruction(new STORE(register, (fr.ensimag.ima.pseudocode.DAddr) target));
 
-        // 4. Libérer le registre
+        // libere registre
         compiler.getRegisterManager().libererRegistre();
     }
 

@@ -25,7 +25,7 @@ public class Lower extends AbstractOpIneq {
         return "<";
     }
 
-    @Override protected Instruction getSccInstruction(GPRegister register) { return new SLT(register); }
+    @Override protected Instruction getAsmCode(GPRegister register) { return new SLT(register); }
 
     
 
