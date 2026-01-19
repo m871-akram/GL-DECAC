@@ -7,4 +7,4 @@
 // Historique:
 //    cree le 19/01/2026
 
-"include "b.deca"
+#include "b.deca"
