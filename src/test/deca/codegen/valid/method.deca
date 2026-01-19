@@ -9,11 +9,10 @@
 
 
 class Total{
-    int somme(inta, int b , int c){
+    int somme(int a, int b , int c){
         return a+b+c;
     }
 }
-class B extends A {}
 
 
 {
