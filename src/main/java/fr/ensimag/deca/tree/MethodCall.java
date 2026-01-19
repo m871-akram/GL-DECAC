@@ -8,6 +8,7 @@ import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.NullOperand;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
@@ -119,11 +120,8 @@ public class MethodCall extends AbstractExpr {
         compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register));
 
         // charge adresse methode
-        int methodIndex = methode.getMethodDefinition().getIndex();
-        compiler.addInstruction(new LOAD(new RegisterOffset(methodIndex, register), register));
-
-        // appel
-        compiler.addInstruction(new BSR(register));
+        Label methodLabel = methode.getMethodDefinition().getLabel();
+        compiler.addInstruction(new BSR(methodLabel));
 
         // nettoyage pile
         compiler.addInstruction(new SUBSP(args.size() + 1));

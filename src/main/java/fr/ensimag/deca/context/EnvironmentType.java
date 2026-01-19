@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.deca.tree.Location;
+import fr.ensimag.ima.pseudocode.Label;
 // A FAIRE: étendre cette classe pour traiter la partie "avec objet" de Déca
 /**
  * Environment containing types. Initially contains predefined identifiers, more
@@ -66,6 +67,7 @@ public class EnvironmentType {
             equalsSignature,
             0
         );
+        equalsExpDef.setLabel(new Label("equals"));
         try {
             objectMembers.declare(equalsSymbol, equalsExpDef);
         } catch (DoubleDefException e) {
