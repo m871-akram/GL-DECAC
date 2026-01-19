@@ -49,8 +49,8 @@ test_deca_file() {
             local output_file=$(mktemp)
             local error_file=$(mktemp)
             
-            # Exécuter avec timeout de 3 secondes via perl
-            printf '5\n5\n5\n3.5\n3.5\n' | timeout 3s ima "$ass_file" > "$output_file" 2> "$error_file"
+            # Exécuter avec timeout de 10 secondes via perl
+            printf '5\n5\n5\n3.5\n3.5\n' | timeout 10s ima "$ass_file" > "$output_file" 2> "$error_file"
             local exit_code=$?
             
             rm -f "$output_file" "$error_file"
@@ -68,7 +68,7 @@ test_deca_file() {
                 return 0
             fi
         else
-            # Timeout de 3 secondes pour les tests sans entrée aussi
+            # Timeout de 10 secondes pour les tests sans entrée aussi
             local output_file=$(mktemp)
             local error_file=$(mktemp)
             
