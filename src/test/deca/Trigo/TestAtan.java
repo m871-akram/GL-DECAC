@@ -1,0 +1,82 @@
+import java.util.ArrayList;
+
+public class TestAtan {
+
+    private static final float PI = 3.14159265f;
+    private static final float PI_2 = PI / 2.0f; 
+    private static final float PI_3 = PI / 3.0f;
+    private static final float PI_6 = PI / 6.0f;
+    
+    static class UnTest {
+        float x;
+        float attenduAtan;
+
+        UnTest(float x, float attenduAtan) {
+            this.x = x;
+            this.attenduAtan = attenduAtan;
+        }
+    }
+
+
+    public static void main(String[] args) {
+        ArrayList<UnTest> mesTests = new ArrayList<>();
+
+
+        float sqrt2_2 = 0.70710678f;
+        float sqrt3_2 = 0.8660254f;
+        
+        
+        float[] angles = {
+            // des petites valeurs
+            0.0f, -0.0f, 1e-37f, -1e-37f,
+            
+            // la , on utilse Taylor 
+            0.001f, 0.149f, 0.15f, 0.151f, 0.153f,
+            
+            // la on utilse CORDIC
+            0.3f, 0.5f, 0.70710678f, 0.8660254f, 0.999999f,
+            
+            1.0f, 1.000001f, 1.1f,
+            
+            1.570796f, 1.7320508f, 2.0f, 10.0f, 100.0f, 
+            1e6f, 1e20f, Float.MAX_VALUE,
+            
+            // des valeurs negatives
+            -0.15f, -0.152f , -0.5f, -1.0f, -1.570796f, -1e10f,
+            
+            // des cas spéciaux (NaN/Inf)
+            Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY
+           
+        };
+        
+    
+        for (float x : angles) {
+            mesTests.add(new UnTest(x, (float)java.lang.Math.atan(x)));
+        }
+
+        System.out.println("#nom      ; fonction   ; valeur  ; Resultat   ");
+        int total =0;
+        for (UnTest t : mesTests) {
+            total += 1;
+            verifierAtan(t);
+        }
+        System.out.println(" #on a "+ total + "test pour la fonction Atan");
+        System.out.println("");
+
+    }
+
+  
+
+    public static void verifierAtan(UnTest t) {
+        String nomTest = "atan_" + t.x;
+        if (Float.isNaN(t.attenduAtan)) {
+            System.out.printf("%-15s ; %-11s ; %-11.4f ; %s\n", 
+                            nomTest, "atan", t.x,"NAN");
+        }
+        System.out.printf("%-15s ; %-11s ; %-11.4f ; %-11.4f\n", 
+                          nomTest, "atan", t.x, t.attenduAtan);
+    }
+}
+
+
+
