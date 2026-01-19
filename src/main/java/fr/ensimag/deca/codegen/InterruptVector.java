@@ -11,7 +11,8 @@ public enum InterruptVector {
     IRQ_FLOAT_OVERFLOW("overflow_float", "Erreur : float overflow"),
     IRQ_NULL_PTR("null_ptr_isr", "Erreur : Dereferencement null"),
     IRQ_IO_ERROR("io_error_isr", "Erreur : IO"),
-    IRQ_CAST_ERROR("cast_error_isr", "Erreur : Cast invalide");
+    IRQ_CAST_ERROR("cast_error_isr", "Erreur : Cast invalide"),
+    IRQ_MISSING_RET("missing_ret", "Erreur : il manque un retour");
 
     private final String labelName;
     private final String message;

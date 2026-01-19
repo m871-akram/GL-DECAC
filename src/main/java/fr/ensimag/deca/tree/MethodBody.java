@@ -6,6 +6,8 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.instructions.RTS;
+
 import java.io.PrintStream;
 
 
@@ -34,6 +36,7 @@ public class MethodBody extends AbstractMethodBody {
 
         // 3. Génération des instructions du corps (ceci va appeler notifyPush/notifyPop)
         insts.codeGenListInst(compiler);
+        if(getType().isVoid()) compiler.addInstruction(new RTS());
     }
     
     /**
@@ -70,7 +73,11 @@ public class MethodBody extends AbstractMethodBody {
                                     ClassDefinition currentClass, Type returnType) throws ContextualError{
         locals.verifyListDeclVariable(compiler, localEnv, currentClass);
         insts.verifyListInst(compiler, localEnv, currentClass, returnType);
-    };
+        setType(returnType);
+    }
+
+
+    
 
 
 

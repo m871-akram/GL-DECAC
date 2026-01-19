@@ -119,6 +119,7 @@ public class DeclMethod extends AbstractDeclMethod {
             int maxStack = compiler.getMMU().getStackRequirements();
 
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.TSTO(maxStack));
+            if(!compiler.getCompilerOptions().getNoCheck())
             compiler.getIrqController().triggerInterrupt(compiler,
                     fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
@@ -127,7 +128,8 @@ public class DeclMethod extends AbstractDeclMethod {
             compiler.appendProgram(bodyProgram);
 
             // retour par defaut
-            compiler.addInstruction(new RTS());
+            if(!compiler.getCompilerOptions().getNoCheck()) compiler.getIrqController().triggerInterrupt(compiler,
+                fr.ensimag.deca.codegen.InterruptVector.IRQ_MISSING_RET);
         } else {
             throw new UnsupportedOperationException("Type de corps de méthode non supporté: " + body.getClass());
         }

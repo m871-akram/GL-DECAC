@@ -11,6 +11,7 @@ import java.io.PrintStream;
 
 import fr.ensimag.deca.context.*;
 import fr.ensimag.ima.pseudocode.InlinePortion;
+import fr.ensimag.ima.pseudocode.instructions.RTS;
 
 
 public class MethodAsmBody extends AbstractMethodBody {
@@ -28,12 +29,14 @@ public class MethodAsmBody extends AbstractMethodBody {
         // En Deca, asm(...) est valide partout.
         // On peut vérifier les expressions inside si nécessaire, mais ici c'est une string littérale.
         asmCode.verifyExpr(compiler, localEnv, currentClass);
+        setType(returnType);
     }
 
     @Override
     protected void codeGenMethodBody(DecacCompiler compiler) {
         // Injection directe du code assembleur
         compiler.add(new InlinePortion(asmCode.getValue()));
+        if(getType().isVoid()) compiler.addInstruction(new RTS());
     }
 
     @Override
