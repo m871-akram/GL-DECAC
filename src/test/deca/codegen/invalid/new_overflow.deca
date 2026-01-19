@@ -1,0 +1,21 @@
+// Description:
+//    Trop de new
+//
+// Resultats:
+//    Erreur : allocation infinie d'objets
+//
+// Historique:
+//    cree le 19/01/2026
+
+class A {
+    A next;
+}
+
+{
+   A a = new A ();
+   while (true){
+    A b = new A ();
+    b.next = a;
+    a=b;
+   }
+}

@@ -1,0 +1,12 @@
+// Description:
+//    fichier inclus de niveau 2
+//
+// Resultats:
+//    1
+//
+// Historique:
+//    cree le 19/01/2026
+
+{
+    println(1);
+}

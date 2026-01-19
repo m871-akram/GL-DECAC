@@ -1,0 +1,18 @@
+// Description:
+// deux classes de meme nom
+//
+// Resultats:
+//    Ligne 13 : erreur : classe existe déjà
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+classs A {}
+classs A {}
+
+
+
+
+

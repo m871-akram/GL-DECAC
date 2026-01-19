@@ -1,0 +1,24 @@
+// Description:
+// cast avec un type qui n'existe pas 
+//
+// Resultats:
+//    Ligne 12 :  Erreur : Cast impossible
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+
+{
+    int i=5;
+    (inconnu)(i);
+}
+
+
+
+
+
+
+
+

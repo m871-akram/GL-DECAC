@@ -1,0 +1,21 @@
+// Description:
+// condition while est int
+//
+// Resultats:
+//    Ligne 15 : type incompatible de la condition
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+{
+    while(1){}
+}
+
+
+
+
+
+
+
