@@ -1,0 +1,21 @@
+// Description:
+// return dans le bloc main
+//
+//    Ligne 12 :  Erreur 
+//   
+// Historique:
+//    cree le 19/01/2026
+
+
+
+{
+    return ;
+}
+
+
+
+
+
+
+
+

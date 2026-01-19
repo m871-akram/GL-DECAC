@@ -1,0 +1,21 @@
+// Description:
+// deux paramètres de meme noms
+//
+// Resultats:
+//    Ligne 13 : meme nom pour differentes variables
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+{
+    void methode(int i, int i){}
+}
+
+
+
+
+
+
+

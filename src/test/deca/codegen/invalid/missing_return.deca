@@ -1,0 +1,22 @@
+// Description:
+//    sortie de methode int sans return
+//
+// Resultats:
+//    Erreur : ligne 21 : missing return
+//
+// Historique:
+//    cree le 19/01/2026
+
+class A {
+    int f (int i) {
+        if (i > 0) {
+            return i;
+        }
+        //pas de return là
+    }
+}
+
+{
+   A a = new A();
+   a.f(-1);
+}

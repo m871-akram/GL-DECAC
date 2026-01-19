@@ -1,0 +1,25 @@
+// Description:
+// return dans une methode void 
+//
+// Resultats:
+//    Ligne 15 : type incompatible
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+
+class A{
+    void method(){
+        return 1;
+    }
+}
+
+
+
+
+
+
+
+

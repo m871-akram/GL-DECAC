@@ -1,0 +1,14 @@
+// Description:
+// caract_res dans commentaires
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 19/01/2026
+
+{
+    string char = "abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef";
+}
+
+//
