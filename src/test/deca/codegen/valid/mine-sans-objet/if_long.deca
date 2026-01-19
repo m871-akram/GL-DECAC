@@ -1,0 +1,20 @@
+// Description:
+//    tres longue suite de if
+//
+// Resultats:
+//    5
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int i = 5;
+    if ( i == 1) { println (1);}
+    else  if ( i == 2) { println (2);}
+    else  if ( i == 3) { println (3);}
+    else  if ( i == 4) { println (4);}
+    else  if ( i == 5) { println (5);}
+    else { println("autre");}
+
+
+} 

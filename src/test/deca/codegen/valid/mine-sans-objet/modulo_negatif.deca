@@ -1,0 +1,14 @@
+// Description:
+//    Calcul de modulo avec des nombres négatifs
+//
+// Resultats:
+//    -1
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int x = -5;
+    int y = 2;
+    println(x % y);
+}

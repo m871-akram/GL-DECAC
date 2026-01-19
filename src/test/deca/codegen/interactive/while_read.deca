@@ -1,0 +1,14 @@
+// Description:
+//    boucle controlée par entrée
+//
+// Resultats (pour 27):
+//    27
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    while (readInt() ! =0) {
+        print (1);
+    }
+}

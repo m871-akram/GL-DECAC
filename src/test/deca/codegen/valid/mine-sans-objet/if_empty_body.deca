@@ -1,0 +1,14 @@
+// Description:
+//    corps de if vide
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+   if (true) {}
+   else {}
+
+} 
