@@ -53,7 +53,7 @@ public abstract class AbstractPrint extends AbstractInst {
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
         for (AbstractExpr a : getArguments().getList()) {
-            if (getPrintHex()) {
+            if (getPrintHex() && a.getType().isFloat()) {
                 // printx/printlnx
                 a.codeGenPrintHex(compiler);
             } else {
