@@ -3,6 +3,8 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.instructions.BRA;
 import fr.ensimag.ima.pseudocode.instructions.HALT;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -48,6 +50,10 @@ public class Program extends AbstractProgram {
 
     @Override
     public void codeGenProgram(DecacCompiler compiler) {
+        // Ajouter un JUMP pour sauter le code des classes et aller directement au main
+        Label mainLabel = new Label("main_start");
+        compiler.addInstruction(new BRA(mainLabel));
+
         //  passe 1 : Partie "Déclarations de classes" (Table des méthodes)
         compiler.addComment("Construction des tables des methodes");
         classes.codeGenListDeclClass(compiler);
@@ -60,6 +66,7 @@ public class Program extends AbstractProgram {
         classes.codeGenListMethods(compiler);
 
         //  passe 2 :Partie "Programme Principal"
+        compiler.addLabel(mainLabel);
         compiler.addComment("Main program");
         main.codeGenMain(compiler); // reg manager compte les variables globales via declvar et les spill
         compiler.addInstruction(new HALT()); // fin normale du programme

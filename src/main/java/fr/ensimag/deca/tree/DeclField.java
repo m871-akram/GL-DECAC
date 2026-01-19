@@ -63,10 +63,13 @@ public class DeclField extends AbstractDeclField {
 
 
 
+        // L'offset 0 est réservé pour la VTable, donc les champs commencent à l'index 1
+        int fieldIndex = currentClassDef.getNumberOfFields() + 1;
+        
         FieldDefinition fieldDef = new FieldDefinition(
             fieldType,
             getLocation(),
-            this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
+            this.visibility, currentClassDef, fieldIndex
         );
 
         try {
@@ -76,6 +79,9 @@ public class DeclField extends AbstractDeclField {
         }
         name.setDefinition(fieldDef);
         name.setType(fieldType);
+        
+        // Incrémenter le compteur de champs après avoir créé la définition
+        currentClassDef.incNumberOfFields();
     }
 
     @Override
@@ -83,15 +89,14 @@ public class DeclField extends AbstractDeclField {
         // Initialisation explicite : field = expr;
         // Si Initialization est NoInitialization, codeGenInit ne fera rien, c'est parfait.
 
-        // 1. Récupérer l'adresse de 'this' dans R1 (convention appel init)
-        // 'this' est passé en paramètre implicite (-2(LB))
-        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
+        // R1 contient déjà 'this' (chargé par codeGenInit de DeclClass)
+        // Pas besoin de recharger R1
 
-        // 2. Calculer l'adresse du champ : index(R1)
+        // Calculer l'adresse du champ : index(R1)
         FieldDefinition fieldDef = name.getFieldDefinition();
         RegisterOffset fieldAddr = new RegisterOffset(fieldDef.getIndex(), Register.R1);
 
-        // 3. Générer le code d'initialisation
+        // Générer le code d'initialisation
         // On passe l'adresse où stocker le résultat
         initialization.codeGenInit(compiler, fieldAddr, fieldDef.getType());
     }
