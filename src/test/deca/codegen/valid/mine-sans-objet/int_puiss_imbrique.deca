@@ -1,0 +1,19 @@
+// Description:
+//    puissances imbriquees
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 19/01/2026
+
+{
+    int x = (2*(2*(2*(2*(2*(2*(2*(2*(2*(2))))))))));
+    println(x);
+
+}
+
+
+
+
+

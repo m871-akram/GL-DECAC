@@ -1,0 +1,19 @@
+// Description:
+//    expression à 10 registres nécéssaires
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 19/01/2026
+
+{
+    int x = (1+2)*(3+4)*(5+6)*(7+8)*(9+10);
+    println(x);
+
+}
+
+
+
+
+

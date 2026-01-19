@@ -1,0 +1,95 @@
+; start main program
+	BRA main_start
+; Construction des tables des methodes
+; init objets
+; Code des méthodes
+main_start:
+; Main program
+; Beginning of main declarations:
+	LOAD #1, R2
+	FLOAT R2, R2
+	LOAD #0x1.19999ap0, R3
+	BOV div_zero_isr
+	ADD R3, R2
+	LOAD #2, R3
+	FLOAT R3, R3
+	LOAD #0x1.19999ap1, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #3, R3
+	FLOAT R3, R3
+	LOAD #0x1.a66666p1, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #4, R3
+	FLOAT R3, R3
+	LOAD #0x1.19999ap2, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #5, R3
+	FLOAT R3, R3
+	LOAD #0x1.6p2, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #6, R3
+	FLOAT R3, R3
+	LOAD #0x1.a66666p2, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #7, R3
+	FLOAT R3, R3
+	LOAD #0x1.ecccccp2, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #8, R3
+	FLOAT R3, R3
+	LOAD #0x1.19999ap3, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #9, R3
+	FLOAT R3, R3
+	LOAD #0x1.3cccccp3, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	LOAD #10, R3
+	FLOAT R3, R3
+	LOAD #0x1.433334p3, R4
+	BOV div_zero_isr
+	ADD R4, R3
+	BOV div_zero_isr
+	MUL R3, R2
+	STORE R2, 1(LB)
+	TSTO #1
+	BOV stack_overflow_isr
+	ADDSP #1
+; Beginning of main instructions:
+	LOAD 1(LB), R1
+	WFLOAT
+	WNL
+	HALT
+; --- Interrupt Service Routines (ISR) ---
+stack_overflow_isr:
+	WSTR "Erreur : Pile pleine"
+	WNL
+	ERROR
+div_zero_isr:
+	WSTR "Erreur : FLOAT OVAEFLOW"
+	WNL
+	ERROR
+; end main program

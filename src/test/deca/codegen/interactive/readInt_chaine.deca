@@ -1,0 +1,20 @@
+// Description:
+//    somme de plusieurs entrées
+//
+// Resultats:
+//    true
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int i = readInt() + readInt() + readInt() + readInt();
+    println("Entrez un entier :");
+    println("Résultat : ", i);
+
+}
+
+
+
+
+
