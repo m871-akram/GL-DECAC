@@ -222,7 +222,16 @@ public abstract class AbstractExpr extends AbstractInst {
 
         compiler.getRegisterManager().libererRegistre();
     }
-
+    public int isPowerOftow(){
+        if(!(this instanceof IntLiteral)){
+            return -1;
+        }
+        int n = ((IntLiteral) this).getValue();
+        if( n > 0 && (n & (n - 1)) != 0){
+            return -1;
+        }
+        return  Integer.numberOfTrailingZeros(n);
+    }
 
     @Override
     protected void decompileInst(IndentPrintStream s) {
