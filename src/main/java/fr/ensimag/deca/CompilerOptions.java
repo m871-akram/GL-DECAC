@@ -85,7 +85,7 @@ public class CompilerOptions {
                 }
                 printBanner = true;
                 return;
-            
+
             case "-dddd":
                 debug++;
             case "-ddd":
@@ -95,7 +95,7 @@ public class CompilerOptions {
             case "-d":
                 debug++;
                 break;
-    
+
             case "-p":
                 if(actionSpecial != -1){
                     throw new CLIException("-v et -p ne sont pas compatible");

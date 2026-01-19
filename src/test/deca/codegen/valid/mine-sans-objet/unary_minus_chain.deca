@@ -1,0 +1,22 @@
+// Description:
+//    Plusieurs moins unaires
+//
+// Resultats:
+//    -5
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int i = - - -5;
+
+    println(i);
+
+}
+
+
+
+
+
+
+

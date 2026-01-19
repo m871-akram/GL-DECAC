@@ -1,0 +1,15 @@
+// Description:
+//    Comparaison d'entiers
+//
+// Resultats :
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    boolean b = 6 > 2;
+
+}
+
+

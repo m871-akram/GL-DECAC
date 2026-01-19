@@ -1,0 +1,15 @@
+//
+// Description: 
+// Division avec variables flottantes
+//
+// Resultat: 
+// 2.00000e+00
+//
+// Historique: 
+// cree le 18/01/2026
+//
+{
+    float a = 5.0;
+    float b = 2.5;
+    println(a / b);
+}

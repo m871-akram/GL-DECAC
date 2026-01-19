@@ -1,0 +1,16 @@
+// Description:
+//    Addition int + float
+//
+// Resultats:
+//    7.5
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    float f = 5 + 2.5 ; 
+
+    println(f);
+
+}
+

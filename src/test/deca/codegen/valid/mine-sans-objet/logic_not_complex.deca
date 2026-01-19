@@ -1,0 +1,13 @@
+// Description:
+//    Négations imbriquées
+//
+// Resultats :
+//    true
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    boolean b = !(!true);
+    println(b);
+}

@@ -1,0 +1,14 @@
+// Description:
+//    initialisatin par un variable
+//
+// Resultats :
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int i = 1;
+    int j = i;
+
+}

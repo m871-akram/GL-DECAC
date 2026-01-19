@@ -1,0 +1,14 @@
+// Description:
+//    Comparaison int vs float
+//
+// Resultats :
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    boolean b = 9.0 == 9;
+
+}
+

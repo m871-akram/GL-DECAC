@@ -7,43 +7,47 @@ import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
+import org.apache.commons.lang.Validate;
 
 
 /**
- * Declaration of a Field 
+ * Declaration of a Field
  * @author G51
  * @date 15/01/2026
  */
+public class DeclField extends AbstractDeclField {
 
-public class DeclField extends AbstractDeclField{
     private final Visibility visibility;
     private final AbstractIdentifier type;
     private final AbstractIdentifier name;
     private final AbstractInitialization initialization;
 
-    public DeclField(Visibility visibility, AbstractIdentifier type, 
+    public DeclField(Visibility visibility, AbstractIdentifier type,
                     AbstractIdentifier name, AbstractInitialization initialization) {
         this.visibility = visibility;
         this.type = type;
         this.name = name;
         this.initialization = initialization;
     }
-    
+
 
 
 
     @Override
-    public void verifyDeclField(DecacCompiler compiler, 
+    public void verifyDeclField(DecacCompiler compiler,
                                EnvironmentExp superClassEnv,
-                               EnvironmentExp localEnv, 
+                               EnvironmentExp localEnv,
                                ClassDefinition currentClassDef) throws ContextualError {
-   
+
         // on vérifier le type du champ
         Type fieldType = this.type.verifyType(compiler);
         if (fieldType.isVoid()) {
             throw new ContextualError("Un champ ne peut pas être de type void", getLocation());
         }
-        
+
         // on vérifier si le champ existe déjà dans la super classe
         Symbol fieldName = this.name.getName();
         if (superClassEnv != null && superClassEnv.get(fieldName) != null) {
@@ -56,15 +60,15 @@ public class DeclField extends AbstractDeclField{
                 );
             }
         }
-        
-        
-        
+
+
+
         FieldDefinition fieldDef = new FieldDefinition(
             fieldType,
             getLocation(),
             this.visibility, currentClassDef, currentClassDef.getNumberOfFields()
         );
-    
+
         try {
             localEnv.declare(fieldName, fieldDef);
         } catch (DoubleDefException e) {
@@ -74,12 +78,27 @@ public class DeclField extends AbstractDeclField{
         name.setType(fieldType);
     }
 
+    @Override
+    protected void codeGenInitField(DecacCompiler compiler) {
+        // Initialisation explicite : field = expr;
+        // Si Initialization est NoInitialization, codeGenInit ne fera rien, c'est parfait.
 
-        
+        // 1. Récupérer l'adresse de 'this' dans R1 (convention appel init)
+        // 'this' est passé en paramètre implicite (-2(LB))
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
+
+        // 2. Calculer l'adresse du champ : index(R1)
+        FieldDefinition fieldDef = name.getFieldDefinition();
+        RegisterOffset fieldAddr = new RegisterOffset(fieldDef.getIndex(), Register.R1);
+
+        // 3. Générer le code d'initialisation
+        // On passe l'adresse où stocker le résultat
+        initialization.codeGenInit(compiler, fieldAddr, fieldDef.getType());
+    }
 
     @Override
     public void decompile(IndentPrintStream s) {
-        if (visibility == Visibility.PROTECTED) {//pas besoin si ce n'est pas protected 
+        if (visibility == Visibility.PROTECTED) {//pas besoin si ce n'est pas protected
             s.print("protected ");
         }
         type.decompile(s);
@@ -88,30 +107,23 @@ public class DeclField extends AbstractDeclField{
         initialization.decompile(s);
         s.print(";");
     }
-    
 
-    
-    public Visibility getVisibility() { 
-        return visibility; 
-    }
-    
-    public AbstractIdentifier getType() { 
-        return type; 
-    }
-    
-    public AbstractIdentifier getName() { 
-        return name; 
-    }
-    
-    public AbstractInitialization getInitialization() { 
-        return initialization; 
+    public Visibility getVisibility() {
+        return visibility;
     }
 
-    @Override
-    protected void codeGenDeclVar(DecacCompiler compiler) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codeGenDeclVar'");
+    public AbstractIdentifier getType() {
+        return type;
     }
+
+    public AbstractIdentifier getName() {
+        return name;
+    }
+
+    public AbstractInitialization getInitialization() {
+        return initialization;
+    }
+
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
@@ -133,8 +145,8 @@ public class DeclField extends AbstractDeclField{
     @Override
     protected void verifyDeclFieldInit(DecacCompiler compiler, ClassDefinition currentClassDef, EnvironmentExp localEnv)
             throws ContextualError {
-        Type fieldType = type.getType(); 
+        Type fieldType = type.getType();
         initialization.verifyInitialization(compiler, fieldType, localEnv, currentClassDef);
-        
+
     }
 }

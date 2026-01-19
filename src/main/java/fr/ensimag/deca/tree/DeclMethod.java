@@ -5,24 +5,21 @@ import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
-import fr.ensimag.deca.context.ExpDefinition;
-import fr.ensimag.deca.context.MethodDefinition;
-import fr.ensimag.deca.context.Signature;
-import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.instructions.RTS;
+
+import java.io.PrintStream;
 
 public class DeclMethod extends AbstractDeclMethod {
     private final AbstractIdentifier type;
     private final AbstractIdentifier name;
     private final ListDeclParam params;
     private final AbstractMethodBody body;
-    
-    
-    
+
+
+
     public DeclMethod(AbstractIdentifier type, AbstractIdentifier name,
                     ListDeclParam params, AbstractMethodBody body) {
         Validate.notNull(type);
@@ -34,9 +31,13 @@ public class DeclMethod extends AbstractDeclMethod {
         this.params = params;
         this.body=body;
     }
-    
+
+    public AbstractIdentifier getName() {
+        return name;
+    }
+
     public void verifyDeclMethodPrototype(DecacCompiler compiler,
-                                         EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv) 
+                                         EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
         throws ContextualError {
         ExpDefinition superDef = superClassEnv.get(name.getName());
         Signature signature = params.verifyListDeclParam(compiler);
@@ -62,7 +63,7 @@ public class DeclMethod extends AbstractDeclMethod {
                     );
                 }
             }
-            
+
             Type typeSuper = superMethod.getType();
 
             if (!compiler.environmentType.subType(returnType,typeSuper)) {
@@ -73,10 +74,62 @@ public class DeclMethod extends AbstractDeclMethod {
             }
         }
         MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
+        // Create and set the label for this method
+        Label methodLabel = new Label("code." + currentClassDef.getType().getName().getName() + "." + name.getName().getName());
+        methodDef.setLabel(methodLabel);
         try {
             localEnv.declare(name.getName(), methodDef);
-        } catch (DoubleDefException e) {
-            throw new ContextualError(e.getMessage(), getLocation());
+        } catch (EnvironmentExp.DoubleDefException e) {
+            throw new ContextualError("Méthode " + name.getName() + " déjà définie dans cette classe", getLocation());
+        }
+    }
+
+    @Override
+    protected void codeGenDeclMethod(DecacCompiler compiler) {
+        // 1. Label de la méthode  
+        MethodDefinition methodDef = (MethodDefinition) name.getDefinition();
+        Label methodLabel = methodDef.getLabel();
+        compiler.addLabel(methodLabel);
+        compiler.addComment("Méthode " + name.getName().getName());
+
+        // 2. Nouveau Contexte Mémoire (Reset LB et compteurs pile)
+        compiler.getMMU().enterNewMethodFrame();
+        compiler.getRegisterManager().reset();
+
+        // 3. Gestion des paramètres (Liaison -3(LB)...)
+        params.codeGenListDeclParam(compiler);
+
+        // 4. Créer un programme temporaire pour le corps de la méthode
+        fr.ensimag.ima.pseudocode.IMAProgram bodyProgram = new fr.ensimag.ima.pseudocode.IMAProgram();
+        fr.ensimag.ima.pseudocode.IMAProgram originalProgram = compiler.swapProgram(bodyProgram);
+        
+        // 5. Générer le corps dans le programme temporaire (ceci va appeler notifyPush/notifyPop)
+        body.codeGenMethodBody(compiler);
+        
+        // 6. Restaurer le programme original
+        compiler.swapProgram(originalProgram);
+        
+        // 7. Vérifier le type de corps de méthode
+        if (body instanceof MethodAsmBody) {
+            // Corps assembleur inline - pas de prologue/épilogue, le code ASM est directement injecté
+            compiler.appendProgram(bodyProgram);
+        } else if (body instanceof MethodBody) {
+            // Corps Java normal - générer le prologue
+            int nbLocales = ((MethodBody) body).getLocalVarsCount();
+            int maxStack = compiler.getMMU().getStackRequirements();
+
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.TSTO(maxStack));
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
+            compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
+
+            // 8. Ajouter le corps après le prologue
+            compiler.appendProgram(bodyProgram);
+
+            // 9. Retour par défaut (RTS) si pas de return explicite
+            compiler.addInstruction(new RTS());
+        } else {
+            throw new UnsupportedOperationException("Type de corps de méthode non supporté: " + body.getClass());
         }
     }
 
@@ -84,16 +137,16 @@ public class DeclMethod extends AbstractDeclMethod {
     public void decompile(IndentPrintStream s) {
         type.decompile(s);
         s.print(" ");
-        
+
         name.decompile(s);
-        
+
         s.print("(");
         params.decompile(s);
         s.print(")");
-        
+
 
         body.decompile(s);
-        
+
     }
 
     @Override
@@ -127,7 +180,7 @@ public class DeclMethod extends AbstractDeclMethod {
 
         this.params.verifyListDeclParamEnv(compiler, methodEnv);
         this.body.verifyMethodBody(compiler, methodEnv, currentClassDef, type.getType());
-        MethodDefinition methodDef = localEnv.get(name.getName()).asMethodDefinition("la methode n'est pas definit dans la passe 2", getLocation()); // récupérée en passe 2
+        MethodDefinition methodDef = (MethodDefinition) localEnv.get(name.getName()); // récupérée en passe 2
         this.name.setDefinition(methodDef);
         this.name.setType(type.getType());
     }

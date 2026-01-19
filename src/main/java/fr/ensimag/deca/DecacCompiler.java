@@ -1,5 +1,9 @@
 package fr.ensimag.deca;
 
+import fr.ensimag.deca.codegen.InterruptController;
+import fr.ensimag.deca.codegen.MemoryManagementUnit;
+import fr.ensimag.deca.codegen.RegisterManager;
+import fr.ensimag.deca.codegen.SignalSequencer;
 import fr.ensimag.deca.context.EnvironmentType;
 import fr.ensimag.deca.syntax.DecaLexer;
 import fr.ensimag.deca.syntax.DecaParser;
@@ -21,8 +25,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.log4j.Logger;
 
-
-import fr.ensimag.deca.codegen.RegisterManager; // pour le rendre visible par le compile
+import java.io.*;
 
 /**
  * Decac compiler instance.
@@ -47,16 +50,25 @@ public class DecacCompiler {
      */
     private static final String nl = System.getProperty("line.separator", "\n");
 
-    private RegisterManager registerManager;
+
+    private final RegisterManager registerManager;
+    private final MemoryManagementUnit mmu;
+    private final InterruptController irqController;
+    private final SignalSequencer sequencer;
 
     public DecacCompiler(CompilerOptions compilerOptions, File source) {
         super();
         this.compilerOptions = compilerOptions;
         this.source = source;
+
+        this.mmu = new MemoryManagementUnit();
+        this.irqController = new InterruptController();
+        this.sequencer = new SignalSequencer();
+
         if(compilerOptions != null){
-            this.registerManager = new RegisterManager(compilerOptions.getRegisters(), this);
+            this.registerManager = new RegisterManager(compilerOptions.getRegisters());
         } else {
-            this.registerManager = new RegisterManager(16, this);
+            this.registerManager = new RegisterManager(16);
         }
     }
 
@@ -107,13 +119,6 @@ public class DecacCompiler {
     }
 
     /**
-     * Ajoute une instruction au début du programme pour TSTO/ADDSP
-     */
-    public void addFirstInstruction(Instruction instruction) {
-        program.addFirst(instruction);
-    }
-
-    /**
      * @see
      * fr.ensimag.ima.pseudocode.IMAProgram#addInstruction(fr.ensimag.ima.pseudocode.Instruction,
      * java.lang.String)
@@ -135,19 +140,36 @@ public class DecacCompiler {
     /**
      * The main program. Every instruction generated will eventually end up here.
      */
-    private final IMAProgram program = new IMAProgram();
+    private IMAProgram program = new IMAProgram();
 
     public RegisterManager getRegisterManager() { return registerManager; }
+    public MemoryManagementUnit getMMU() { return mmu; }
+    public InterruptController getIrqController() { return irqController; }
+    public SignalSequencer getSequencer() { return sequencer; }
+
+    /**
+     * Swap the current program with a new one, returning the old program.
+     * Useful for generating code into a temporary buffer.
+     */
+    public IMAProgram swapProgram(IMAProgram newProg) {
+        IMAProgram old = this.program;
+        this.program = newProg;
+        return old;
+    }
+
+    /**
+     * Append all lines from another program to the current program.
+     */
+    public void appendProgram(IMAProgram prog) {
+        this.program.append(prog);
+    }
 
 
 
-
- 
 
     /** The global environment for types (and the symbolTable) */
     public final SymbolTable symbolTable = new SymbolTable();
     public final EnvironmentType environmentType = new EnvironmentType(this);
-    
 
     public Symbol createSymbol(String name) {
         return symbolTable.create(name);
@@ -219,7 +241,7 @@ public class DecacCompiler {
             PrintStream out, PrintStream err)
             throws DecacFatalError, LocationException {
         AbstractProgram prog = doLexingAndParsing(sourceName, err);
-        
+
         if (prog == null) {
             LOG.info("Parsing failed");
             return true;
@@ -249,7 +271,7 @@ public class DecacCompiler {
         LOG.debug("Generated assembly code:" + nl + program.display());
         LOG.info("Output file assembly file is: " + destName);
 
-        
+
         FileOutputStream fstream = null;
         try {
             fstream = new FileOutputStream(destName);
@@ -258,7 +280,7 @@ public class DecacCompiler {
         }
 
         LOG.info("Writing assembler file ...");
-        
+
 
         program.display(new PrintStream(fstream));
         LOG.info("Compilation of " + sourceName + " successful.");

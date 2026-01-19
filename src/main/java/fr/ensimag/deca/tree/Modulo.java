@@ -1,17 +1,15 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
-
-import fr.ensimag.ima.pseudocode.instructions.REM;
+import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
-import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.instructions.REM;
 
-import fr.ensimag.ima.pseudocode.instructions.BOV;
 
 /**
  *
@@ -44,24 +42,19 @@ public class Modulo extends AbstractOpArith {
 
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        super.codeGenExpr(compiler, register);
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        compiler.addInstruction(new REM(opSource, opDest));
 
-        // Vérification Erreur
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("division_par_0")));
-        }
+        compiler.getIrqController().triggerInterrupt(compiler,
+                InterruptVector.IRQ_DIV_BY_ZERO);
     }
+}
 
 
     @Override
     protected String getOperatorName() {
         return "%";
-    }
-
-    @Override
-    protected Instruction getInstruction(GPRegister op1, GPRegister op2) {
-        return new REM(op1, op2);
     }
 
 }

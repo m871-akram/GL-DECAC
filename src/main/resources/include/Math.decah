@@ -3,7 +3,7 @@
 
 
 
-#include "TableCordic.deca"
+#include "CordicTable.deca"
 #include "TableSinCos.deca"
 
 
@@ -14,12 +14,14 @@ class Math {
     protected float PI = 3.141592653589793f;
     protected float TWO_PI = 6.283185307179586f;
     protected float PI_OVER_2 = 1.5707963267948966f;
+    protected float PI_OVER_4 =  0.78539816339744830962f;
+    protected float CORDIC_K_CONST = 0.60725293500888144482f;  // cette constante est calcule via Python 
+    //en utilisant un produit des cos ..
     
-
     //des trucs de la table SINCOS
     protected int CACHE_SIZE = 512;
     protected float CACHE_STEP = PI_OVER_2/(CACHE_SIZE -1);
-
+    protected int CORDIC_TABLE_SIZE = 32;
   
     // Seuils pour choix d'algorithme (bon compromis précision/energie)
     protected float TRES_PETIT = 0.001f;     // Pour approximation sin(x) ~ x
@@ -43,26 +45,26 @@ class Math {
     ");
 
 
+
+
+
     float sin(float f) {
+        float x_red;
+        boolean  negative;
+        float result;
+        float res;
+
         //des cas speciaux
-        if (_isNaN(f) || _isInfinite(f)) return 0.0f/0.0f;
-
-        if (_abs(f) > 1000) {
-            //marche pas en deca ! mais aide beaucoup en java (pour une bonne precision)
-            double x_d = (double)f;
-            double reduced_d = x_d % (TWO_PI);
-            f = (float)reduced_d;
-        }
-
+        if (_isNaN(f) || _isInfinite(f)) {return 0.0f/0.0f;}
+        
         // Gestion du signe
-        boolean negative = false;
+        negative = false;
         
         if (f < 0) {
             negative = true;
             f = -f;
         }
 
-        float x_red;
         x_red = _reduction2PIRecursive(f);
 
         // on reduit x_red au premier demi-cercle [0, PI]
@@ -77,7 +79,6 @@ class Math {
         }
 
         // Choix de la méthode
-        float result;
         if (x_red < TRES_PETIT) {
             result = x_red;                         // sin(x) = x
         } 
@@ -85,15 +86,19 @@ class Math {
             result = _tableSin(x_red);                            // Table d'interpolation
         }
         else if (x_red > VOISIN_PI_2) {
-            float res = PI_OVER_2 - x_red;
+            res = PI_OVER_2 - x_red;
             if(res < TRES_PETIT) {result = 1.0f;}                    //cos(res)~1
-            else if (res < PETIT){result = tableCos(res);}
-            else {result = 1.0f;}      //tableCos(res);}           // inversion}(res < PETIT -0.1f) 
-        else {
+            else if (res < PETIT){result = _tableCos(res);}
+            else {result = 1.0f; }     //tableCos(res);           // inversion(res < PETIT -0.1f) 
+        }else {
             result = _cordicSin(x_red);   }               // Cordic
         
         // on met le signe
-        return negative ? -result : result; 
+        if(negative){
+            return -result;
+        }else{
+            return result;
+        }
     }
 
 
@@ -101,7 +106,12 @@ class Math {
     
 
     // CORDIC pour la fonction sin
-    float _cordicSin(float x) {
+    float _cordicSin(float angle) {
+        float x,y,z;
+        int iterations , i;
+        CordicTable table = new CordicTable();
+        float xOld;
+        float pow2i; 
         boolean inverse = false;
         if (angle > PI_OVER_4) {
             angle = PI_OVER_2 - angle;
@@ -109,24 +119,32 @@ class Math {
         }
         
         // on initialise l'algo Cordic
-        float x = CORDIC_K_CONST;       //cette constante depend de la table cordic qu'on a pre-calcule
-        float y = 0.0f;
-        float z = angle;
+        x = CORDIC_K_CONST;       //cette constante depend de la table cordic qu'on a pre-calcule
+        y = 0.0f;
+        z = angle;
         
-        int iterations = (24 <= CORDIC_TABLE_SIZE) ? 24:CORDIC_TABLE_SIZE;      //min(24 , CORDIC_TABLE_SIZE)
+        //min(24 , CORDIC_TABLE_SIZE)
+        if(24 <= CORDIC_TABLE_SIZE){
+            iterations = 24 ;
+        }else{
+            iterations = CORDIC_TABLE_SIZE;
+        }
         
-        for (int i = 0; i < iterations; i++) {
-            float xOld = x;
-            float pow2i = 1.0f / (float)(1 << i); 
+        i=0;
+        while(i < iterations) {
+            xOld = x;
+            pow2i = table._getPow2(i);
+
             if (z >= 0) {
                 x = x - y * pow2i;
                 y = y + xOld * pow2i;
-                z = z - cordic_i;
+                z = z - table._getCordic(i);
             } else {
                 x = x + y * pow2i;
                 y = y - xOld * pow2i;
-                z = z + cordic_i;
+                z = z + table._getCordic(i);
             }
+            i = i+1;
         }
         
         if (inverse) {
@@ -136,33 +154,46 @@ class Math {
         return x;
     }
     
+    
+
+
     // CORDIC pour la fonction cos
-    float _cordicCos(float x) {
+    float _cordicCos(float angle) {
+        float x,y,z , xOld , pow2i;
+        CordicTable table = new CordicTable();
         boolean inverse = false;
+        int iterations , i;
         if (angle > PI_OVER_4) {
             angle = PI_OVER_2 - angle;
             inverse = true;
         }
         
         // on initialise l'algo Cordic
-        float x = CORDIC_K_CONST;       //cette constante depend de la table cordic qu'on a pre-calcule
-        float y = 0.0f;
-        float z = angle;
+        x = CORDIC_K_CONST;       //cette constante depend de la table cordic qu'on a pre-calcule
+        y = 0.0f;
+        z = angle;
         
-        int iterations = (24 <= CORDIC_TABLE_SIZE) ? 24:CORDIC_TABLE_SIZE;      //min(24 , CORDIC_TABLE_SIZE)
+        //min(24 , CORDIC_TABLE_SIZE)
+        if(24 <= CORDIC_TABLE_SIZE){
+            iterations = 24 ;
+        }else{
+            iterations = CORDIC_TABLE_SIZE;
+        }
         
-        for (int i = 0; i < iterations; i++) {
-            float xOld = x;
-            float pow2i = 1.0f / (float)(1 << i); 
+        i=0;
+        while (i < iterations) {
+            xOld = x;
+            pow2i = table._getPow2(i); 
             if (z >= 0) {
                 x = x - y * pow2i;
                 y = y + xOld * pow2i;
-                z = z - cordic_i;
+                z = z - table._getCordic(i);
             } else {
                 x = x + y * pow2i;
                 y = y - xOld * pow2i;
-                z = z + cordic_i;
+                z = z + table._getCordic(i);
             }
+            i=i+1;
         }
         
         if (inverse) {
@@ -171,47 +202,62 @@ class Math {
         
         return y;    
     }
-    
+     
+
+    float _abs(float x) {
+        //fonction auxiliare necessaire (au lieu d'utilser java.abs())
+        if(x<0){return -x;}
+        else{
+            return x;
+        }
+    }
+
+
 
 
     //l'algo d'interpolation depuis la table sin
     float _tableSin(float x) {
         float index_f = x / CACHE_STEP;
-        int i = (int) index_f;
-        if (i >= CACHE_SIZE - 1) return _getSinValue(CACHE_SIZE - 1);
+        TableSinCos table = new TableSinCos();
+        int i = (int) (index_f);
+        float h;
+        float sin_h , cos_h;
+        if (i >= CACHE_SIZE - 1) {return table._getSinValue(CACHE_SIZE - 1);}
 
-        float h = x - (i * CACHE_STEP);     // L'incrément (petit)
+        h = x - (i * CACHE_STEP);     // L'incrément (petit)
         
         // Approximation de Taylor pour sin(h) et cos(h) car h est minuscule
-        float sin_h = h; 
-        float cos_h = 1.0f - (h * h * 0.5f);
+        sin_h = h; 
+        cos_h = 1.0f - (h * h * 0.5f);
 
         // Formule d'addition
-        return sin_i * cos_h + cos_i * sin_h;
+        return cos_h*table._getSinValue(i) +  sin_h*table._getCosValue(i);
     }
 
 
     //l'algo d'interpolation depuis la table cos
     float _tableCos(float x) {
+        TableSinCos table = new TableSinCos();
         float index_f = x / CACHE_STEP;
-        int i = (int) index_f;
-        if (i >= SIN_COS_CACHE_SIZE - 1) return _getCosValue(CACHE_SIZE - 1);
+        int i = (int) (index_f);
+        float h , sin_h , cos_h;
+        if (i >= CACHE_SIZE - 1) {return table._getCosValue(CACHE_SIZE - 1);}
 
-        float h = x - (i * CACHE_STEP);             // L'incrément (petit)
+        h = x - (i * CACHE_STEP);             // L'incrément (petit)
         
         // Approximation de Taylor pour sin(h) et cos(h) car h est minuscule
-        float sin_h = h; 
-        float cos_h = 1.0f - (h * h * 0.5f);
-
+        sin_h = h; 
+        cos_h = 1.0f - (h * h * 0.5f);
+        
         // Formule d'addition
-        return cos_i * cos_h - sin_i * sin_h;   //on utilse apres le _fma()
+        return  cos_h*table._getCosValue(i) - sin_h*table._getSinValue(i);   //on utilse apres le _fma()
     }
 
 
 
     float cos(float f) {
-        if (_isNaN(f)) return 0.0f/0.0f;
-        if (_isInfinite(f)) return 1.0f/0.0f;
+        if (_isNaN(f)) {return 0.0f/0.0f;}
+        if (_isInfinite(f)) {return 1.0f/0.0f;}
         
         return sin(PI_OVER_2 - f);
     }
@@ -225,25 +271,27 @@ class Math {
 
     
     float asin(float f) {
+        float EPSILON , delta , result , x2 , denom; 
+        
         // Gestion du codomaine (x doit être dans [-1, 1])
-        if (x < -1.0f || x > 1.0f || Float.isNaN(x)) {
-            return Float.NaN;   //il faut faire une exception (A FAIRE)
-        }
+        if (f < -1.0f || f > 1.0f || _isNaN(f)) {
+            return 0.0/0.0;
+       }
 
         // on evite la division par zéro (1 - x^2 = 0)
-        final float EPSILON = 1e-7f;      // bon compromis , depend des tests qu'on a fait 
-        if (Math._abs(x - 1.0f) <= EPSILON) {
+        EPSILON = 1.0E-7f;               // bon compromis , depend des tests qu'on a fait 
+        if (_abs(f - 1.0f) <= EPSILON) {
             return PI_OVER_2;
         }
-        else if (Math._abs(x + 1.0f) <= EPSILON){
+        else if (_abs(f + 1.0f) <= EPSILON){
             return -PI_OVER_2;
         }
         
-        else if (x > 0.9999f || x < - 0.9999f) {
+        else if (f > 0.9999f || f < - 0.9999f) {
             // Pour x près de 1 (mais =! 1)
-            float delta = 1.0f - Math._abs(x);
-            float result = (float)Math._sqrt(2.0f * delta);
-            if (x > 0) {
+            delta = 1.0f - _abs(f);
+            result = (float)(_sqrt(2.0f * delta));
+            if (f > 0.0) {
                 return PI_OVER_2 - result;
             } else {
                 return result - PI_OVER_2;
@@ -254,21 +302,21 @@ class Math {
         //on a 3 methodes , on choisi une parmi les 3
 
         // Methode 1 : avec la racine , et apres on inverse
-        float x2 = x * x;
-        float denom = _sqrt(1.0f - x2);
-        return atan(x / denom);
+        x2 = f * f;
+        denom = _sqrt(1.0f - x2);
+        return atan(f / denom);
 
         // Methode 2 : avec la racine1 (autre implementation de la racine ), et apres on inverse
-        /*float x2 = x * x;
-        float denom = _sqrt1(1.0f - x2);
-        return atan(x / denom);*/
+        //x2 = f * f;
+        //denom = _sqrt1(1.0f - x2);
+        //return atan(f / denom);*/
 
 
         //Methode 3 : avec la racine inverse directement
-        /*float x2 = x * x;
-        float denom = _sqrt(1.0f - x2);*/
+        ///x2 = f * f;
+        //denom = _sqrt(1.0f - x2);*/
         
-        return atan(x / denom);
+        return atan(f / denom);
     }
 
 
@@ -277,11 +325,11 @@ class Math {
     
     float acos(float f) { 
         // on sait que : acos(x) + asin(x) = PI/2
-        float res = asin(x);
+        float res = asin(f);
         
         // Si asin renvoie NaN, acos doit aussi renvoyer NaN
-        if (Float.isNaN(res)) {
-            return Float.NaN;
+        if (_isNaN(res)) {
+            return 0.0/0.0;
         }
         
         return PI_OVER_2 - res;
@@ -292,11 +340,17 @@ class Math {
 
 
     float atan(float f) {
+        CordicTable table = new CordicTable() ;       // fichier "TableCordic.deca"
+
         //la fonction atan est la base pour les autres fonctions asin et acos
         // implemente via l'alogrithme CORDIC en mode  vectorielle , et aussi une gestion
         // des cas particuliers , via series de Taylors
-
-        if (_isNaN(f)) return 0.0f/0.0f;
+        
+        boolean negative , inverted;
+        float x , val , x_old , res;
+        float curr_x , curr_y , angle_accumulee, pow2i , cordici ;
+        int i;
+        if (_isNaN(f)) {return 0.0f/0.0f;}
         
         if (_isInfinite(f)){
             if (f > 0.0f) {
@@ -307,8 +361,8 @@ class Math {
         }
 
 
-        boolean negative = false;
-        float x = f;
+        negative = false;
+        x = f;
         if (x < 0.0f) {
             negative = true;
             x = -x;
@@ -327,7 +381,7 @@ class Math {
         // Réduction d'intervalle [0,1] pour la stabilite d'algo CORDIC 
         // si x > 1.0f , on utilise atan(x) = pi/2 - atan(1/x)
         
-        boolean inverted = false;
+        inverted = false;
         if (x > 1.0f) {
             x = 1.0f / x;
             inverted = true;
@@ -337,31 +391,28 @@ class Math {
         // ici x est dans [0.151,1] , bonne plage pour CORDIC
         // On part du vecteur (1, x) et on tourne pour ramener y vers 0
 
-        float curr_x = 1.0f;
-        float curr_y = x;
-        float angle_accumulee = 0.0f;
-        float pow2i = 1.0f;
+        curr_x = 1.0f;
+        curr_y = x;
+        angle_accumulee = 0.0f;
 
-        int i = 0;
+        i = 0;
         while (i < 30) {                // on a choisit 30 apres les tests (c'est un compromis entre complexite et precision)
-            float x_old = curr_x;
-            
-            float cordici = _getCordic(i) ;     //fonction dans le fichier "TableCordic.deca"
+            x_old = curr_x;
+            pow2i = table._getPow2(i);
             if (curr_y > 0) {
                 curr_x = curr_x + curr_y * pow2i;
                 curr_y = curr_y - x_old * pow2i;
-                angle_accumulee = angle_accumulee + cordici;
+                angle_accumulee = angle_accumulee + table._getCordic(i);
             } else {
                 curr_x = curr_x - curr_y * pow2i;
                 curr_y = curr_y + x_old * pow2i;
-                angle_accumulee = angle_accumulee - cordici;
+                angle_accumulee = angle_accumulee - table._getCordic(i);
             }
-            pow2i = pow2i * 0.5f;
             i = i + 1;
         }
 
 
-        float res = angle_accumulee;
+        res = angle_accumulee;
 
         // Retransformation
         if (inverted) {
@@ -378,6 +429,8 @@ class Math {
 
     //la fonction ulp en deca ; pas encore teste , (en attendant le compilateur)  
     float ulp(float f) {
+        float val , res ;
+        int i , exp , targetExp;
         //l'idee est de reconstruire l'entree manuellement
 
         // cas particulier 0
@@ -397,7 +450,6 @@ class Math {
 
 
         // on travaille avec la valeur absolue (car l'ULP est toujours positif)
-        float val;
       
         if (f < 0.0) {
             val = -f;
@@ -409,7 +461,7 @@ class Math {
 
         //  On commence par chercher l'exposant par normalisation
         // l'idee est de chercher exp telque : 2^exp <= val < 2^(exp+1)
-        int exp = 0;
+        exp = 0;
 
         if (val >= 1.0) {
             while (val >= 2.0) {
@@ -426,7 +478,7 @@ class Math {
 
         //  en suite on calcul  l'ULP : 2^(exp - 23)
         // Le décalage de 23 correspond aux bits de la mantisse en simple précision(float 32bit )
-        int targetExp = exp - 23;
+        targetExp = exp - 23;
         
         if (targetExp < -126) {
             // dans ce cas, on est en  dessous de l'exposant minimum
@@ -434,8 +486,7 @@ class Math {
         }
 
         // en fin , en reconstruit  la puissance de 2 par itérations(while)
-        float res = 1.0f;
-        int i;
+        res = 1.0f;
         
         if (targetExp >= 0) {
             i = 0;
@@ -468,7 +519,7 @@ class Math {
     }
 
 
-    float _reduction2PIRecursive(f){
+    float _reduction2PIRecursive(float x){
         // Cas de base :
         if (x >= 0 && x < TWO_PI) {
             return x;
@@ -524,6 +575,51 @@ class Math {
         return _reduction2PIRecursive(x - TWO_PI);
         }
     }
+
+
+    float _sqrt(float x) {
+        //fonction auxilaire , qui pose beaucoup de problems  en terme de precision 
+        // Cas spéciaux
+        float res;
+        if (x < 0.0f) {return 0.0/0.0 ;}
+        if (x == 0.0f || x == -0.0f) {return x;}
+        if (_isInfinite(x)) {return x;}
+
+        // approximlation pour commencer (pour une bonne stabilite)
+
+        if (x > 1.0f) {
+            res = x; 
+        } else {
+            res = 1.0f;
+        }
+
+        // 7 Itérations de Newton (aussi le nombre 7 est un resulatat des tests , on a commence par 5 ,mais c'etait pas suffisant)
+        // La formule de Newton est : x_{n+1} = (x_n + a/x_n) / 2 (avec a ~ x**2)
+        // c'est une methode efficace avec un grand nombre d'iterations ,mais comme on utilse des nombres float en 32bits de precision , 
+        // le resulatat n'est pas autant precis 
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+        res = 0.5f * (res + x / res);
+
+        return res;
+    }
+
+
+
+
+    float _sqrt1(float x) {
+        // Méthode de Newton implicit
+        float y = 1.0f;
+        while (_abs(y*y - x) > 1.0E-6f) {
+            y = (y + x/y) * 0.5f;
+        }
+        return y;
+    }
+}
 
     
 

@@ -1,17 +1,14 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
-import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
-import fr.ensimag.ima.pseudocode.Register;
-import fr.ensimag.ima.pseudocode.instructions.CMP;
-import fr.ensimag.ima.pseudocode.instructions.LOAD;
-import fr.ensimag.ima.pseudocode.instructions.POP;
-import fr.ensimag.ima.pseudocode.instructions.PUSH;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
+import fr.ensimag.ima.pseudocode.DVal;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Instruction;
+import fr.ensimag.ima.pseudocode.instructions.CMP;
 
 /**
  *
@@ -40,7 +37,7 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
                 return this.getType();
             }
         }
-        if (!compiler.environmentType.aritCompatible(t1, t2)) {
+        if (!compiler.environmentType.castCompatible(t1, t2)) {
             throw new ContextualError(
                 "Opérandes arithmétiques doivent être int ou float, pas " + 
                 t1 + " et " + t2,
@@ -49,10 +46,14 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
         if( t1.isFloat() && t2.isInt()){
             setRightOperand(new ConvFloat(getRightOperand()));
             this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
+            setType(compiler.environmentType.BOOLEAN);
+            return compiler.environmentType.BOOLEAN;
         }
         if( t2.isFloat() && t1.isInt()){
             setLeftOperand(new ConvFloat(getLeftOperand()));
             this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
+            setType(compiler.environmentType.BOOLEAN);
+            return compiler.environmentType.BOOLEAN;
         }
         
         setType(compiler.environmentType.BOOLEAN);
@@ -60,44 +61,23 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
     }
 
 
+    /**
+     * Implémentation générique de la comparaison.
+     * Cette méthode est appelée par AbstractBinaryExpr après avoir chargé les opérandes.
+     */
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
- 
-        getLeftOperand().codeGenExpr(compiler, register);
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        // 1. Comparaison (opDest - opSource)
+        // Note: CMP op1, op2 fait (op2 - op1) et set les flags.
+        compiler.addInstruction(new CMP(opSource, opDest));
 
-       
-        if (compiler.getRegisterManager().registreLibre()) {
-            GPRegister rRight = compiler.getRegisterManager().prendreRegistre(register);
-            getRightOperand().codeGenExpr(compiler, rRight);
-            
-            //  CMP Val, Reg => Codes conditions basés sur (Reg - Val)
-            compiler.addInstruction(new CMP(rRight, register));
-            
-            compiler.getRegisterManager().libererRegistre();
-        } else {
-            // gestion du Spill 
-            GPRegister rRight = Register.R0; 
-            
-            // sauvegard gauche
-            compiler.addInstruction(new PUSH(register));
-            
-
-            getRightOperand().codeGenExpr(compiler, register);
-           
-            compiler.addInstruction(new LOAD(register, rRight)); 
-            compiler.addInstruction(new POP(register));         
-            
-            //  CMP Droite, Gauche
-            compiler.addInstruction(new CMP(rRight, register));
-        }
-
-        // si (cc = vrai) alors Rm <- 1 sinon Rm <- 0"
-        
-        compiler.addInstruction(getSccInstruction(register));
+        // 2. Set Condition Code (Transformation en booléen 0/1)
+        // ex: SEQ R2 (Met R2 à 1 si égal, 0 sinon)
+        compiler.addInstruction(getSccInstruction(opDest));
     }
-    
-    // Retourne l'instruction Scc (Set on Condition Code) correspondant à l'opérateur
+
+    /**
+     * Retourne l'instruction de saut conditionnel ou de set (ex: SEQ, SLT)
+     */
     protected abstract Instruction getSccInstruction(GPRegister register);
-
-
 }

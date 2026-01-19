@@ -17,11 +17,21 @@ public class ListDeclMethod extends TreeList<AbstractDeclMethod>{
             method.verifyDeclMethodContent(compiler, currentClassDef, localEnv);
         }
     }
+
+    /**
+     * Génération du code des méthodes (Code complet)
+     */
+    public void codeGenListDeclMethod(DecacCompiler compiler) {
+        for (AbstractDeclMethod method : getList()) {
+            method.codeGenDeclMethod(compiler);
+        }
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclMethod methode : getList()) {
                 methode.decompile(s);
                 s.println();
-        }    
+        }
     }
 }

@@ -7,6 +7,8 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.Operand;
+
 import java.io.PrintStream;
 
 /**
@@ -22,12 +24,15 @@ public class NoInitialization extends AbstractInitialization {
     protected void verifyInitialization(DecacCompiler compiler, Type t,
             EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
+//        throw new UnsupportedOperationException("not yet implemented");
     }
 
 
     @Override
-    protected void codeGenInit(DecacCompiler compiler, Type t, VariableDefinition varDef) {
-        // on fait rien ( peut etre il va recevoir un 0 !! )
+    protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
+        // On ne fait rien.
+        // - Si c'est une variable locale : valeur indéfinie (ou reste de la pile).
+        // - Si c'est un champ : il a déjà été mis à 0/null lors de l'allocation de l'objet.
     }
 
     /**

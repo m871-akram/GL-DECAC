@@ -50,12 +50,12 @@ public class ListExpr extends TreeList<AbstractExpr> {
                 sig.paramNumber(i)
             );
 
-            getList().set(i, convArg);
+            set(i, convArg);
         }
     }
     @Override
     public void decompile(IndentPrintStream s) {
-        boolean first = true; 
+        boolean first = true;
         for(AbstractExpr exp : getList()){
             if (!first) {
                 s.print(", ");

@@ -6,7 +6,9 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+import fr.ensimag.ima.pseudocode.instructions.LOAD;
 
 import java.io.PrintStream;
 
@@ -22,7 +24,7 @@ import fr.ensimag.ima.pseudocode.GPRegister;
  * @date 01/01/2026
  */
 public class This extends AbstractExpr {
-    
+
     boolean value;
 
     public This(boolean value) {
@@ -39,22 +41,15 @@ public class This extends AbstractExpr {
                 getLocation()
             );
         }
-        
+
         setType(currentClass.getType());
         return currentClass.getType();
     }
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister dest) {
-
-        
-    }
-
-    @Override
-    protected void codeGenPrint(DecacCompiler compiler) {
-
-        
-        
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        // 'this' est toujours passé en paramètre caché à l'adresse -2(LB)
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
     }
 
     @Override

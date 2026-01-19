@@ -1,0 +1,13 @@
+//
+// Description:
+// Conversion à droite (float*int)
+//
+// Résultat:
+// 6.00000e+00
+//
+// Historique:
+// cree le 18/01/2026
+//
+{
+    println(3.0*2);
+}

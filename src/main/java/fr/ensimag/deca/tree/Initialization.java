@@ -1,18 +1,17 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
-import fr.ensimag.deca.context.VariableDefinition;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
-import java.io.PrintStream;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Operand;
+import fr.ensimag.ima.pseudocode.instructions.STORE;
 import org.apache.commons.lang.Validate;
 
-import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.instructions.STORE;
+import java.io.PrintStream;
 
 /**
  * @author gl51
@@ -53,19 +52,19 @@ public class Initialization extends AbstractInitialization {
 
 
     @Override
-    protected void codeGenInit(DecacCompiler compiler, Type type, VariableDefinition varDef) {
+    protected void codeGenInit(DecacCompiler compiler, Operand target, Type type) {
+        // 1. Allouer un registre temporaire
+        GPRegister register = compiler.getRegisterManager().prendreRegistre();
 
-        fr.ensimag.deca.codegen.RegisterManager regMa = compiler.getRegisterManager();
-        GPRegister register = regMa.prendreRegistre(null);
-
-        // code de  expression dans ce registre
+        // 2. Calculer l'expression dans ce registre
         getExpression().codeGenExpr(compiler, register);
 
-        // stocker la valeur à l'adresse de la variable
-        compiler.addInstruction(new STORE(register, varDef.getOperand()));
+        // 3. Stocker le résultat à l'adresse cible (target)
+        // STORE attend un DAddr, on cast l'Operand
+        compiler.addInstruction(new STORE(register, (fr.ensimag.ima.pseudocode.DAddr) target));
 
-   
-        regMa.libererRegistre();
+        // 4. Libérer le registre
+        compiler.getRegisterManager().libererRegistre();
     }
 
     @Override

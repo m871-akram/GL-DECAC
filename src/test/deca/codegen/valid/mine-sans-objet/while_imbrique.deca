@@ -1,0 +1,25 @@
+// Description:
+//    xhile dans while
+//
+// Resultats :
+//    2 1 3 2 4 3 5 4
+//
+// Historique:
+//    cree le 18/01/2026
+
+
+{
+    int i = 1;
+    int j = 1;
+
+    while(i<5){
+        while(j<5){
+            j=j+1; 
+            println("j");
+        } 
+        println("i");
+        i=i+1;
+    }
+
+}
+

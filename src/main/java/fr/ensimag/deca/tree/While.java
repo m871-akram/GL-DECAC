@@ -36,29 +36,6 @@ public class While extends AbstractInst {
         this.body = body;
     }
 
-   
-    private static int c = 0;
-
-    @Override
-    protected void codeGenInst(DecacCompiler compiler) {
-        // throw new UnsupportedOperationException("not yet implemented");
-
-        // <Code(while (C) { I })> =
-        // BRA E_Cond.n
-        // E_Debut.n:
-        // <Code(I)>
-        // E_Cond.n:
-        // <Code(C, vrai, E_Debut.n)>        
-        String w = "." + c;
-        Label conditionLabel = new Label("while_cond" + w);
-        Label startLabel = new Label("while_start" + w);
-        compiler.addInstruction(new BRA(conditionLabel));
-        compiler.addLabel(startLabel);
-        body.codeGenListInst(compiler);
-        compiler.addLabel(conditionLabel);
-        condition.codeGenBool(compiler, true, startLabel);
-    }
-
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
             ClassDefinition currentClass, Type returnType)
@@ -71,6 +48,41 @@ public class While extends AbstractInst {
             body.verifyListInst(compiler, localEnv, currentClass, returnType);    
         }
 
+    @Override
+    protected void codeGenInst(DecacCompiler compiler) {
+        // 1. Initialiser la séquence de boucle (gestion contextuelle des labels)
+        compiler.getSequencer().enterLoopSequence();
+
+        // Récupérer les labels générés par le Sequencer
+        Label startLabel = compiler.getSequencer().getCurrentLoopStart(); // Début du corps
+        Label exitLabel = compiler.getSequencer().getCurrentLoopExit();   // Fin de la boucle
+
+        // Pour l'optimisation "Test à la fin", il nous faut un label pour le test
+        // Le Sequencer ne le donne pas par défaut, on le demande manuellement
+        Label condLabel = compiler.getSequencer().genSignal("while_cond");
+
+        // Structure optimisée :
+        //    BRA condLabel
+        // startLabel:
+        //    CORPS
+        // condLabel:
+        //    Code(Condition, Vrai -> startLabel, Faux -> Fallthrough/Exit)
+
+        compiler.addInstruction(new BRA(condLabel));
+        compiler.addLabel(startLabel);
+
+        body.codeGenListInst(compiler);
+
+        compiler.addLabel(condLabel);
+        // Si condition VRAIE, on remonte à startLabel. Sinon on continue (sortie).
+        condition.codeGenBool(compiler, true, startLabel);
+
+        // Label de fin (utile si un 'break' est généré dans le corps)
+        compiler.addLabel(exitLabel);
+
+        // 2. Fermer le contexte
+        compiler.getSequencer().exitLoopSequence();
+    }
 
     @Override
     public void decompile(IndentPrintStream s) {

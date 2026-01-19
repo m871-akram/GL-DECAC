@@ -20,6 +20,18 @@ public class ListDeclParam extends TreeList<AbstractDeclParam>{
         }
     }
 
+    /**
+     * Génération de code : Associe chaque paramètre à son offset dans la pile
+     * Appelé au début de codeGenMethod
+     */
+    public void codeGenListDeclParam(DecacCompiler compiler) {
+        int index = 0;
+        for (AbstractDeclParam param : getList()) {
+            param.codeGenDeclParam(compiler, index);
+            index++;
+        }
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         //throw new UnsupportedOperationException("Unimplemented method 'decompile'");

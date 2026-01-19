@@ -21,6 +21,28 @@ public class MethodBody extends AbstractMethodBody {
         this.insts = insts;
     }
 
+
+
+    @Override
+    protected void codeGenMethodBody(DecacCompiler compiler) {
+        // 1. Notifier la MMU du nombre de variables locales
+        int nbLocales = locals.size();
+        compiler.getMMU().notifyLocalBlockAllocation(nbLocales);
+        
+        // 2. Génération des variables locales (allocation pile) - sans générer d'instruction
+        locals.codeGenListDeclVar(compiler);
+
+        // 3. Génération des instructions du corps (ceci va appeler notifyPush/notifyPop)
+        insts.codeGenListInst(compiler);
+    }
+    
+    /**
+     * Retourne le nombre de variables locales (pour le calcul de ADDSP)
+     */
+    public int getLocalVarsCount() {
+        return locals.size();
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         s.println("{");
@@ -52,9 +74,4 @@ public class MethodBody extends AbstractMethodBody {
 
 
 
-    @Override
-    protected void codeGenMethodBody(DecacCompiler compiler) {
-        locals.codeGenListDeclVar(compiler);
-        insts.codeGenListInst(compiler);
-    }
 }

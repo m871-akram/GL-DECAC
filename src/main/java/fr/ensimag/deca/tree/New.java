@@ -1,17 +1,15 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
-import fr.ensimag.deca.context.TypeDefinition;
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.codegen.InterruptVector;
+import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
+import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
-import org.apache.commons.lang.Validate;
 
 
 /**
@@ -22,7 +20,7 @@ import org.apache.commons.lang.Validate;
  */
 public class New extends AbstractExpr {
     private final AbstractIdentifier className;
-    
+
     public New(AbstractIdentifier className) {
         Validate.notNull(className);
         this.className = className;
@@ -42,14 +40,14 @@ public class New extends AbstractExpr {
         throws ContextualError {
         // on vérifier que le nom est une classe qui exist
         TypeDefinition typeDef = compiler.environmentType.defOfType(className.getName());
-        
-        // on verifie si ce objet 'classs' existe 
+
+        // on verifie si ce objet 'classs' existe
         if (typeDef == null) {
             throw new ContextualError(
                 "la Classe :" + className.getName().getName() + ",est inconnue", getLocation()
             );
         }
-        
+
         //et s'il existe , est ce une classe ,ou un autre type
         if (!typeDef.isClass()) {
             throw new ContextualError(
@@ -57,7 +55,7 @@ public class New extends AbstractExpr {
                 getLocation()
             );
         }
-        
+
         // si tout est bon , on retourn son type
         ClassDefinition classDef = (ClassDefinition) typeDef;
         Type classType = classDef.getType();
@@ -70,9 +68,55 @@ public class New extends AbstractExpr {
 
 
     @Override
-    protected void codeGenExpr(DecacCompiler compiler, fr.ensimag.ima.pseudocode.GPRegister dest) {
-        throw new UnsupportedOperationException("not yet implemented");
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        ClassDefinition classDef = (ClassDefinition) className.getDefinition();
+
+        // 1. Allocation dans le tas
+        int objectSize = 1 + classDef.getNumberOfFields(); // 1 pour vTable + champs
+        compiler.addInstruction(new NEW(objectSize, register));
+
+        // 2. Vérification débordement tas
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptVector.IRQ_HEAP_FULL);
+        }
+
+        // 3. Initialisation du pointeur VTable (offset 0 de l'objet)
+        // Récupérer l'adresse VTable stockée dans l'opérande de la définition de classe
+        RegisterOffset vTableAddr = (RegisterOffset) classDef.getOperand(); // getVTableAddress() si implémenté
+
+        // On utilise R0 pour charger l'adresse de la VTable
+        compiler.addInstruction(new LEA(vTableAddr, Register.R0));
+        compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
+
+        // --- 4. Appel du constructeur : OPTIMISATION PEA ICI ---
+
+        // Explication : register contient l'adresse de l'objet (ex: adresse X).
+        // On veut empiler cette adresse X sur la pile pour que 'init' sache sur qui travailler (paramètre 'this').
+
+        // Ancienne méthode : PUSH(register)
+        // compiler.addInstruction(new PUSH(register));
+
+        // Nouvelle méthode : PEA (Push Effective Address)
+        // PEA calcule l'adresse 0(register) -> c'est à dire le contenu de register
+        // et l'empile directement.
+        compiler.addInstruction(new PEA(new RegisterOffset(0, register)));
+
+        // On prévient quand même le MMU que la pile a grandi de 1 mot
+        compiler.getMMU().notifyPush(1);
+
+        // Appel de la méthode d'initialisation
+        String initLabel = "init." + classDef.getType().getName().getName();
+        compiler.addInstruction(new BSR(new Label(initLabel)));
+
+        // Nettoyage param 'this'
+        compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
+        compiler.getMMU().notifyPop(1);
+
+        // Le résultat (l'adresse de l'objet) est toujours dans 'register' car init ne le modifie pas
+        // (ou init restaure les registres callee-saved)
     }
+
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {

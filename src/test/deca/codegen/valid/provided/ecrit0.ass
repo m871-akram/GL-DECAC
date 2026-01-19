@@ -1,0 +1,21 @@
+; start main program
+; Construction des tables des methodes
+; ===== Sous-programmes d'initialisation =====
+; ===== Code des méthodes =====
+; Main program
+; Beginning of main declarations:
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+; Beginning of main instructions:
+	WSTR "ok"
+	WNL
+	WSTR "ok"
+	WNL
+	HALT
+; --- Interrupt Service Routines (ISR) ---
+stack_overflow_isr:
+	WSTR "Erreur : Pile pleine"
+	WNL
+	ERROR
+; end main program

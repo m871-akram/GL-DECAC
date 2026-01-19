@@ -1,6 +1,8 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.ima.pseudocode.DVal;
+import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Label;
 
 
@@ -16,39 +18,41 @@ public class And extends AbstractOpBool {
     }
 
     @Override
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+
+    }
+
+    @Override
     protected String getOperatorName() {
         return "&&";
     }
 
-
-    // compteur  pour générer des labels uniques 
-    private static int count = 0;
-
     @Override
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
-        
         if (branchOn) {
-            // sauter à 'target' si (A && B) est Vrai
+            // Sauter à 'target' si (A && B) est Vrai
 
-            count++;
-            Label endAndLabel = new Label("end_and." + count);
-            
-            // Si A est faux, on saute à la fin 
+            // On a besoin d'un label pour sortir si A est faux (Court-circuit)
+            Label endAndLabel = compiler.getSequencer().genSignal("end_and");
+
+            // 1. Si A est Faux, on arrête tout (on saute à la fin de ce bloc)
             getLeftOperand().codeGenBool(compiler, false, endAndLabel);
-            
-           
-            // Si B est vrai, on saute à target.
+
+            // 2. Si on est ici, A est Vrai. Donc le résultat dépend de B.
+            // Si B est Vrai, on saute à la cible.
             getRightOperand().codeGenBool(compiler, true, target);
-            
-            // Point de sortie si A était faux
+
+            // 3. Point de sortie si A était faux
             compiler.addLabel(endAndLabel);
-            
+
         } else {
             // Sauter à 'target' si (A && B) est Faux
-            
+
+            // 1. Si A est Faux, tout est Faux -> On saute à target
             getLeftOperand().codeGenBool(compiler, false, target);
+
+            // 2. Si A est Vrai, on teste B. Si B est Faux -> On saute à target
             getRightOperand().codeGenBool(compiler, false, target);
-            
         }
     }
 

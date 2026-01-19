@@ -1,65 +1,60 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-
-import static org.mockito.Mockito.verify;
+import fr.ensimag.ima.pseudocode.Register;
 
 import java.io.PrintStream;
 
-import org.apache.commons.lang.Validate;
-
-import fr.ensimag.ima.pseudocode.GPRegister;
-
-
 /**
- * Integer literal
- *
- * @author G51
- * @date 16/01/2026
+ * @author gl51
+ * @date 15/01/2026
  */
 public class Return extends AbstractInst {
+
     private AbstractExpr value;
-    
+
     public Return(AbstractExpr value) {
-        setOperand(value);
-    }
-    protected void setOperand(AbstractExpr value) {
-        Validate.notNull(value);
         this.value = value;
     }
 
-    @Override
-    public void decompile(IndentPrintStream s) {
-        s.print("return");
-        s.print(" ");
-        value.decompile(s);
-        s.print(";");
+    public AbstractExpr getValue() {
+        return value;
     }
-
 
     @Override
     protected void verifyInst(DecacCompiler compiler,  EnvironmentExp localEnv,
                             ClassDefinition currentClass, Type returnType) throws ContextualError {
-        
+
         if (returnType.isVoid()) {
             throw new ContextualError(
                 "return avec un void interdit", getLocation()
             );
         }
         AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass,returnType);
-        setOperand(convValue);
+        this.value = convValue;
     }
 
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codeGenInst'");
+        // 1. Évaluer l'expression de retour dans R0 (Registre de retour conventionnel)
+        value.codeGenExpr(compiler, Register.R0);
+
+        // 2. Retourner de la méthode (le résultat est dans R0)
+        // RTS va dépiler et retourner à l'appelant
+        compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.RTS());
+    }
+
+    @Override
+    public void decompile(IndentPrintStream s) {
+        s.print("return ");
+        value.decompile(s);
+        s.print(";");
     }
 
     @Override

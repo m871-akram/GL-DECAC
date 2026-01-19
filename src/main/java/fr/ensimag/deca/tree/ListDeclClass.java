@@ -55,17 +55,43 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         }
         LOG.debug("verify listClassBody: end");
     }
-    
 
-    /**
-     * Génération de code pour les déclarations de classes.
-     * (Construction des tables des méthodes, etc.)
-     */
+    // --- Génération de Code ---
+
+    /** Passe 1 : Construction des Tables des Méthodes */
     public void codeGenListDeclClass(DecacCompiler compiler) {
+
+        LOG.debug("generation table des methodes: start");
         for (AbstractDeclClass c : getList()) {
             c.codeGenDeclClass(compiler);
         }
+        LOG.debug("generation table des methodes: end");
     }
+
+    /** Passe 2 : Initialisation des champs (et constructeurs) */
+    public void codeGenListInit(DecacCompiler compiler) {
+        for (AbstractDeclClass classe : getList()) {
+            // Note: AbstractDeclClass n'a pas codeGenInit par défaut dans ta version abstraite,
+            // il faut caster ou l'ajouter dans AbstractDeclClass.
+            // Ici, on suppose que DeclClass (concret) implémente cette méthode.
+            if (classe instanceof DeclClass) {
+                ((DeclClass) classe).codeGenInit(compiler);
+            }
+        }
+    }
+
+    /** Passe 3 : Corps des méthodes */
+    public void codeGenListMethods(DecacCompiler compiler) {
+        compiler.addComment("===== Code des méthodes =====");
+        for (AbstractDeclClass classe : getList()) {
+            // Idem, on cast ou on modifie l'abstrait
+            if (classe instanceof DeclClass) {
+                ((DeclClass) classe).codeGenMethods(compiler);
+            }
+        }
+    }
+
+
+
+
 }
-
-

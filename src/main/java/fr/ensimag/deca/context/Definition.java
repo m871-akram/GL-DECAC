@@ -48,6 +48,10 @@ public abstract class Definition {
         return false;
     }
     
+    public fr.ensimag.ima.pseudocode.DAddr getOperand() {
+        return null; // Par défaut, à override dans les sous-classes qui en ont besoin
+    }
+    
     public boolean isMethod() {
         return false;
     }

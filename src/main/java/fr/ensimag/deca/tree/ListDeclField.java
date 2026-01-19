@@ -17,11 +17,21 @@ public class ListDeclField extends TreeList<AbstractDeclField>{
             method.verifyDeclFieldInit(compiler, currentClassDef, localEnv);
         }
     }
+
+    /**
+     * Génération du code d'initialisation des champs (appelée par DeclClass.codeGenInit)
+     */
+    public void codeGenListDeclField(DecacCompiler compiler) {
+        for (AbstractDeclField field : getList()) {
+            field.codeGenInitField(compiler);
+        }
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclField field : getList()) {
                 field.decompile(s);
                 s.println();
-        }    
+        }
     }
 }

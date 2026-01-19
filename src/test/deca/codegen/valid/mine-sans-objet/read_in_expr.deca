@@ -1,0 +1,14 @@
+// Description:
+//    Utiliser read dans un calcul
+//
+// Resultats :
+//    Affiche la valeur de x après lecture et addition
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    println("Entrez un entier :");
+    int i = readInt() + 10;
+    println("Résultat : ", i);
+}

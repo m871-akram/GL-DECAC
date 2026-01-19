@@ -496,7 +496,7 @@ literal returns[AbstractExpr tree]
         setLocation($tree, $THIS);
     }
     | NULL {
-        $tree = new nullLiteral();
+        $tree = new Null();
         setLocation($tree, $NULL);
     }
     ;
@@ -631,7 +631,9 @@ decl_method returns[AbstractDeclMethod tree]
             body.setLocation($block.location);
         }
       | ASM OPARENT code=multi_line_string CPARENT SEMI {
-            body = new MethodAsmBody(new StringLiteral($code.text));
+            StringLiteral asmLiteral = new StringLiteral($code.text);
+            asmLiteral.setLocation($code.location);
+            body = new MethodAsmBody(asmLiteral);
             setLocation(body, $ASM);
         }
       ) {

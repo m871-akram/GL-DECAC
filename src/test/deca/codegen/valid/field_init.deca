@@ -14,7 +14,7 @@ class A {
 }
 {
    A a = new A();
-   if (a.i == 0 && a.j == 0.0){
+   if (a.i == 0 && a.y == 0.0){
     println("OK");
    }
 }

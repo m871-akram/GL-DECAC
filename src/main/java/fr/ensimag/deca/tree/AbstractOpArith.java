@@ -1,11 +1,6 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.context.Type;
-import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
-import fr.ensimag.ima.pseudocode.Register;
-import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
-import fr.ensimag.ima.pseudocode.instructions.WINT;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
@@ -56,37 +51,5 @@ public abstract class AbstractOpArith extends AbstractBinaryExpr {
         }
         
         return getType();
-    }
-
-    @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-
-        getLeftOperand().codeGenExpr(compiler, register);
-
-        GPRegister rRight = compiler.getRegisterManager().prendreRegistre(register);
-
-        getRightOperand().codeGenExpr(compiler, rRight);
-
-
-        // IMA: OP Source, Dest
-        compiler.addInstruction(getInstruction(rRight, register));
-
-        // Libération du registre temporaire
-        compiler.getRegisterManager().libererRegistre();
-    }
-
-    // Méthode abstraite que chaque sous-classe (Plus, Minus...) devra implémenter
-    // pour retourner l'instruction IMA correspondante (ADD, SUB...).
-    protected abstract Instruction getInstruction(GPRegister op1, GPRegister op2);
-
-    @Override
-    protected void codeGenPrint(DecacCompiler compiler) {
-        // Calcule l'expression dans R1 et affiche
-        codeGenExpr(compiler, Register.R1);
-        if (getType().isFloat()) {
-            compiler.addInstruction(new WFLOAT());
-        } else {
-            compiler.addInstruction(new WINT());
-        }
     }
 }

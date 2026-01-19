@@ -1,0 +1,14 @@
+//
+// Description:
+// Conversions multiples dans une expression
+//
+// Résultat:
+// 1.50000e+00
+//
+// Historique:
+// cree le 18/01/2026
+//
+{
+    float f = (5+1)/4.0;
+    println(f);
+}

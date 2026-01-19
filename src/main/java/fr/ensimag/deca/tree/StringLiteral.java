@@ -6,7 +6,6 @@ import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.ImmediateString;
 import fr.ensimag.ima.pseudocode.instructions.WSTR;
 import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
@@ -27,12 +26,12 @@ public class StringLiteral extends AbstractStringLiteral {
 
     private String value;
 
-    
+
 
      @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) { throw new UnsupportedOperationException("on evalue pas un stringliteral dans un registre "); }
 
-   
+
 
     public StringLiteral(String value) {
         Validate.notNull(value);
@@ -52,7 +51,7 @@ public class StringLiteral extends AbstractStringLiteral {
 
     @Override
     protected void codeGenPrint(DecacCompiler compiler) {
-        compiler.addInstruction(new WSTR(new ImmediateString(value)));
+        compiler.addInstruction(new WSTR(value));
     }
 
     @Override

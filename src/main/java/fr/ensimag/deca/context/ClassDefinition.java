@@ -40,6 +40,15 @@ public class ClassDefinition extends TypeDefinition {
 
     private int numberOfFields = 0;
     private int numberOfMethods = 0;
+    private fr.ensimag.ima.pseudocode.DAddr operand;  // Address of the vTable
+    
+    public fr.ensimag.ima.pseudocode.DAddr getOperand() {
+        return operand;
+    }
+    
+    public void setOperand(fr.ensimag.ima.pseudocode.DAddr operand) {
+        this.operand = operand;
+    }
     
     @Override
     public boolean isClass() {
@@ -74,17 +83,6 @@ public class ClassDefinition extends TypeDefinition {
         }
         members = new EnvironmentExp(parent);
         this.superClass = superClass;
-    }
-
-    public boolean isSubClassOf(ClassDefinition containingClass) {
-        ClassDefinition current = this;
-        while (current != null) {
-            if (current == containingClass) {
-                return true;
-            }
-            current = current.getSuperClass();
-        }
-        return false;
     }
     
 }

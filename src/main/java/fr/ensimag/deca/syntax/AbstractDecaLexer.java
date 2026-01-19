@@ -181,7 +181,7 @@ public abstract class AbstractDecaLexer extends Lexer {
             return CharStreams.fromReader(new InputStreamReader(url.openStream()), url.getFile());
         }
 
-        throw new IncludeFileNotFound(name, this, getInputStream()); 
+        throw new IncludeFileNotFound(name, this, getInputStream());
     }
 
     /**

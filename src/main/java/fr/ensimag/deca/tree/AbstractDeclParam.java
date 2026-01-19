@@ -5,11 +5,22 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 
-public abstract class AbstractDeclParam extends Tree{
-    protected abstract Type verifyDeclParam(DecacCompiler compiler)
-            throws ContextualError;
 
-    protected abstract void codeGenDeclVar(DecacCompiler compiler);
+public abstract class AbstractDeclParam extends Tree {
 
-    protected abstract void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError;
+    /**
+     * Vérifie le type du paramètre (Passe 2)
+     */
+    protected abstract Type verifyDeclParam(DecacCompiler compiler) throws ContextualError;
+
+    /**
+     * Déclare le paramètre dans l'environnement local (Passe 3)
+     */
+    protected abstract void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp envExp) throws ContextualError;
+
+    /**
+     * Génère le code pour lier le paramètre à son adresse mémoire (Pile LB)
+     */
+    protected abstract void codeGenDeclParam(DecacCompiler compiler, int index);
+
 }

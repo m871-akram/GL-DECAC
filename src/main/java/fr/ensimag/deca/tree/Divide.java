@@ -1,15 +1,12 @@
 package fr.ensimag.deca.tree;
 
 
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptVector;
+import fr.ensimag.ima.pseudocode.DVal;
+import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.instructions.DIV;
 import fr.ensimag.ima.pseudocode.instructions.QUO;
-import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.Instruction;
-import fr.ensimag.deca.DecacCompiler;
-
-import fr.ensimag.ima.pseudocode.Label;
-
-import fr.ensimag.ima.pseudocode.instructions.BOV;
 
 
 
@@ -23,22 +20,18 @@ public class Divide extends AbstractOpArith {
     public Divide(AbstractExpr leftOperand, AbstractExpr rightOperand) {
         super(leftOperand, rightOperand);
     }
+
     @Override
-    protected Instruction getInstruction(GPRegister op1, GPRegister op2) {
-        if (this.getType().isFloat()) {
-            return new DIV(op1, op2);
+    protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+        if (getType().isInt()) {
+            compiler.addInstruction(new QUO(opSource, opDest));
         } else {
-            return new QUO(op1, op2);
+            compiler.addInstruction(new DIV(opSource, opDest));
         }
-    }
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        super.codeGenExpr(compiler, register);
-        // Vérification Erreur
+
         if (!compiler.getCompilerOptions().getNoCheck()) {
-            compiler.addInstruction(new BOV(new Label("division_par_0")));
-            if (this.getType().isFloat()) {
-                compiler.addInstruction(new BOV(new Label("erreur de pile_OV")));
-            }
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptVector.IRQ_DIV_BY_ZERO);
         }
     }
     

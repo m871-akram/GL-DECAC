@@ -41,26 +41,29 @@ public class EnvironmentType {
         // not added to envTypes, it's not visible for the user.
         Symbol nullSymb = compiler.createSymbol("null");
         this.NULL = new NullType(nullSymb);
-        
+
         // Classe  Objet necessaire en Partie Objet
         Symbol objectSymb = compiler.createSymbol("Object");
-        
+
         ClassType objectType = new ClassType(objectSymb, Location.BUILTIN, null);
         ClassDefinition objectDef = objectType.getDefinition();
-        
+
         EnvironmentExp objectMembers = objectDef.getMembers();
         // Signature equalsSign = new Signature();
         // MethodDefinition equalsMethodDef = new MethodDefinition(
-        //     BOOLEAN,  
+        //     BOOLEAN,
         //     Location.BUILTIN,
         //     equalsSign,
         //     0
         // );
 
         Symbol equalsSymbol = compiler.createSymbol("equals");
-        ExpDefinition equalsExpDef = new ExpDefinition(
+        Signature equalsSignature = new Signature();
+        MethodDefinition equalsExpDef = new MethodDefinition(
             BOOLEAN,
-            Location.BUILTIN
+            Location.BUILTIN,
+            equalsSignature,
+            0
         );
         try {
             objectMembers.declare(equalsSymbol, equalsExpDef);
@@ -103,15 +106,15 @@ public class EnvironmentType {
         return false;
     }
     public boolean assignCompatible(Type T1, Type T2) {
-    
+
         if (T1.isFloat() && T2.isInt()) {
             return true;
         }
         if(subType(T1,T2)){
             return true;
         }
-        
-    
+
+
         return false;
     }
     public boolean aritCompatible(Type T1, Type T2) {

@@ -1,0 +1,15 @@
+//
+// Description:
+// Division variables entieres
+//
+// Résultat:
+// 3
+//
+// Historique:
+// cree le 18/01/2026
+//
+{
+    int a=15;
+    int b=4;
+    println(a/b);
+}

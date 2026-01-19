@@ -4,12 +4,14 @@ import java.io.PrintStream;
 import org.apache.commons.lang.Validate;
 
 import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.context.ClassDefinition;
-import fr.ensimag.deca.context.ContextualError;
-import fr.ensimag.deca.context.EnvironmentExp;
-import fr.ensimag.deca.context.Type;
+import fr.ensimag.deca.codegen.InterruptVector;
+import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.NullOperand;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
+import fr.ensimag.ima.pseudocode.instructions.*;
 
 public class MethodCall extends AbstractExpr {
     private final ListExpr args;
@@ -30,7 +32,7 @@ public class MethodCall extends AbstractExpr {
         Type callType = verifyExpr(compiler, localEnv, currentClass);
         if (returnType != null && !callType.sameType(returnType)) {
             throw new ContextualError(
-                "Type de retour de la methode incorrect : attendu " 
+                "Type de retour de la methode incorrect : attendu "
                 + returnType + ", trouve " + callType,
                 getLocation()
             );
@@ -59,31 +61,98 @@ public class MethodCall extends AbstractExpr {
                 getLocation()
             );
         }
-    
+
         if (!def.isMethod()) {
             throw new ContextualError(
                 "'" + methode.getName().getName() + "' n'est pas une méthode",
                 getLocation()
             );
         }
-    
+
         var methodDef = def.asMethodDefinition(
             "Ce n'est pas une méthode",
             getLocation()
         );
         args.verifyRValue(compiler, localEnv, currentClass, methodDef.getSignature(), getLocation());
-    
+
         methode.setDefinition(methodDef);
-    
+
         Type returnType = methodDef.getType();
         setType(returnType);
         return returnType;
     }
 
+
+    public AbstractExpr getObject() { return object; }
+
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codeGenExpr'");
+        // 1. Calculer l'adresse de l'objet (this)
+        // On utilise 'register' pour stocker l'adresse de l'objet
+        object.codeGenExpr(compiler, register);
+
+        // 2. Vérification null
+        if (!compiler.getCompilerOptions().getNoCheck()) {
+            compiler.addInstruction(new CMP(new NullOperand(), register));
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptVector.IRQ_NULL_PTR);
+        }
+
+        // 3. Empiler les paramètres (Convention : empiler le résultat de l'évaluation)
+        // On a besoin d'un registre temporaire pour calculer les params si 'register' tient 'this'
+        // ASTUCE : On peut calculer les params AVANT de calculer 'this' pour libérer les registres,
+        // puis empiler. Ou alors utiliser la pile.
+        // Pour simplifier ici : On empile directement le résultat de l'évaluation.
+
+        // ADDSP pour réserver la place des paramètres + this
+        compiler.addInstruction(new ADDSP(args.size() + 1));
+        compiler.getMMU().notifyPush(args.size() + 1);
+
+        // Stocker 'this' (qui est dans 'register') à 0(SP)
+        compiler.addInstruction(new STORE(register, new RegisterOffset(0, Register.SP)));
+
+        // Calculer et stocker les arguments
+        int index = -1; // -1(SP), -2(SP)...
+        for (AbstractExpr arg : args.getList()) {
+            // On réutilise 'register' car on a déjà sauvegardé 'this' sur la pile
+            arg.codeGenExpr(compiler, register);
+            compiler.addInstruction(new STORE(register, new RegisterOffset(index, Register.SP)));
+            index--;
+        }
+
+        // 4. Récupérer l'adresse de la méthode (Liaison Dynamique)
+        // On recharge 'this' dans 'register' depuis la pile pour accéder à la vTable
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, Register.SP), register));
+
+        // Charger adresse VTable (0(this))
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register));
+
+        // Charger adresse méthode (index + 1 dans VTable, car 0 = super)
+        int methodIndex = methode.getMethodDefinition().getIndex();
+        compiler.addInstruction(new LOAD(new RegisterOffset(methodIndex, register), register));
+
+        // 5. Appel (BSR sur registre)
+        compiler.addInstruction(new BSR(register));
+
+        // 6. Nettoyage Pile
+        // On a fait ADDSP, on doit faire SUBSP
+        compiler.addInstruction(new SUBSP(args.size() + 1));
+        compiler.getMMU().notifyPop(args.size() + 1);
+
+        // 7. Résultat
+        // Le résultat est dans R0. On le copie dans le registre cible si besoin
+        if (getType() != compiler.environmentType.VOID) {
+            compiler.addInstruction(new LOAD(Register.R0, register));
+        }
+    }
+
+    @Override
+    protected void codeGenInst(DecacCompiler compiler) {
+        // Pour un appel de méthode utilisé comme instruction,
+        // on alloue un registre temporaire et on appelle codeGenExpr
+        GPRegister reg = compiler.getRegisterManager().prendreRegistre();
+        codeGenExpr(compiler, reg);
+        compiler.getRegisterManager().libererRegistre();
     }
 
     @Override
@@ -107,9 +176,9 @@ public class MethodCall extends AbstractExpr {
 
     @Override
     protected void iterChildren(TreeFunction f) {
-        object.iterChildren(f);
-        methode.iterChildren(f);
+        object.iter(f);
+        methode.iter(f);
         args.iterChildren(f);
     }
-    
+
 }

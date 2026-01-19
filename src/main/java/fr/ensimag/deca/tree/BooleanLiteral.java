@@ -7,7 +7,7 @@ import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
+import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.BRA;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 
@@ -49,7 +49,7 @@ public class BooleanLiteral extends AbstractExpr {
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
         int intValue = value ? 1 : 0;
-        compiler.addInstruction(new LOAD(new ImmediateInteger(intValue), register));
+        compiler.addInstruction(new LOAD(intValue, register));
     }
 
     @Override

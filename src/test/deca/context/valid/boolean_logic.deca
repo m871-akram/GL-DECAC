@@ -1,5 +1,5 @@
 // Description:
-//    test de cohence des expressions booleennes complexsx (3.33)
+//    test de cohence des expressions booleennes complexes (3.33)
 //
 // Resultats:
 //    Test OK
@@ -12,7 +12,7 @@
 {
     boolean b = (true || false) && (8 <=17);
     if (b) {
-        printlb( "OK");
+        println( "OK");
     }
 }
 

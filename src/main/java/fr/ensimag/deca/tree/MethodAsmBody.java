@@ -22,6 +22,21 @@ public class MethodAsmBody extends AbstractMethodBody {
     }
 
     @Override
+    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentExp localEnv,
+                                    ClassDefinition currentClass, Type returnType) throws ContextualError {
+        // Le corps ASM n'est pas vérifié sémantiquement, juste le type de retour ?
+        // En Deca, asm(...) est valide partout.
+        // On peut vérifier les expressions inside si nécessaire, mais ici c'est une string littérale.
+        asmCode.verifyExpr(compiler, localEnv, currentClass);
+    }
+
+    @Override
+    protected void codeGenMethodBody(DecacCompiler compiler) {
+        // Injection directe du code assembleur
+        compiler.add(new InlinePortion(asmCode.getValue()));
+    }
+
+    @Override
     public void decompile(IndentPrintStream s) {
         s.print("asm(");
         asmCode.decompile(s);
@@ -37,16 +52,4 @@ public class MethodAsmBody extends AbstractMethodBody {
     protected void iterChildren(TreeFunction f) {
         asmCode.iter(f);
     }
-
-    protected void verifyMethodBody(DecacCompiler compiler, EnvironmentExp localEnv,
-                             ClassDefinition currentClass, Type returnType) throws ContextualError {
-        
-    }
-
-
-    @Override
-    protected void codeGenMethodBody(DecacCompiler compiler) {
-        compiler.add(new InlinePortion(asmCode.getValue()));
-    }
-
 }

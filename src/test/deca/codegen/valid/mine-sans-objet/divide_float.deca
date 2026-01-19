@@ -1,0 +1,13 @@
+//
+// Description:
+// Division flottante simple
+//
+// Résultat:
+// 2.50000e+00
+//
+// Historique:
+// cree le 18/01/2026
+//
+{
+    println(10.0/4.0);
+}
