@@ -1,4 +1,4 @@
-// Generated from /Users/mohammedakramlrhorfi/Desktop/gl51/src/main/antlr4/fr/ensimag/deca/syntax/DecaParser.g4 by ANTLR 4.13.1
+// Generated from /home/thibault/travail/genie/gl51/src/main/antlr4/fr/ensimag/deca/syntax/DecaParser.g4 by ANTLR 4.13.1
 
     import fr.ensimag.deca.tree.*;
     import java.io.PrintStream;

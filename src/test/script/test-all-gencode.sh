@@ -26,7 +26,7 @@ test_deca_file() {
     local ass_file="${dir}/${base}.ass"
     local needs_input=${2:-false}
     
-    echo -n "Test de $(basename $file)... "
+    echo -n "Test de ${dir}/${base}.deca ... "
     
     # Compilation
     if ! decac "$file" 2>/dev/null; then
@@ -104,7 +104,7 @@ test_deca_file_invalid() {
     local base=$(basename "$file" .deca)
     local ass_file="${dir}/${base}.ass"
     
-    echo -n "Test de $(basename $file)... "
+    echo -n "Test de ${dir}/${base}.deca ... "
     
     # Compilation
     if ! decac "$file" 2>/dev/null; then
