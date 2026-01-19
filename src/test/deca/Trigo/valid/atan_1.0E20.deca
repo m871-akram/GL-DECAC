@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: atan(100000002004087730000.000000)
+//
+// Resultats attendus: 1.570796
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.atan(100000002004087730000.000000));
+}

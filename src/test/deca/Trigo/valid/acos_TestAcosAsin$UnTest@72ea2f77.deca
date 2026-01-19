@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: acos(0.880000)
+//
+// Resultats attendus: 0.494934
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.acos(0.880000));
+}

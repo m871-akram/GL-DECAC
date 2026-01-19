@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: asin(0.500000)
+//
+// Resultats attendus: 0.523599
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.asin(0.500000));
+}

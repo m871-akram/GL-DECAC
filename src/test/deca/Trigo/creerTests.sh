@@ -87,7 +87,7 @@ echo "${nom}_ulp.deca cree: $fichier_ulp"
 fichiers_crees=$((fichiers_crees + 1))
 fi
     
-done < "src/test/deca/Trigo/TestsSin.txt"
+done < "src/test/deca/Trigo/TestsAcosAsin.txt"
 
 # un Resume
 echo ""
