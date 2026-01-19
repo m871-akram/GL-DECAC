@@ -11,5 +11,7 @@
     int i = 3;
     int j = 3;
     boolean b = (i == j);
-    println(b);
+    if (b) {
+        println("marche");
+    }
 }

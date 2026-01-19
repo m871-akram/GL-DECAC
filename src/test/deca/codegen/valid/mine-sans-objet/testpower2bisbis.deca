@@ -1,0 +1,14 @@
+// Description:
+//    Vérifie le cas de succès avec des puissances de deux (2, 8, 1024)
+//
+// Resultats:
+//    16 10240
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int x = 2 * 8;       
+    int y = 10 * 1024;   
+    println(x, " ", y);
+}

@@ -9,5 +9,4 @@
 
 {
     boolean b = true && false || true;
-    println(b);
 }

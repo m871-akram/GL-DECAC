@@ -1,0 +1,21 @@
+// Description:
+// instanceOf sur un type primitif
+//
+// Resultats:
+//    Ligne 13 : erreur : pas de type primitif dans instancOf
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+{
+    if (5 instanceOf int){}
+}
+
+
+
+
+
+
+

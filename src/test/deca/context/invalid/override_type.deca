@@ -1,0 +1,24 @@
+// Description:
+// redéfinition changeant le type
+//
+// Resultats:
+//    Ligne 17 : ovveride faux
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+class A {
+    int methode(){}
+}
+
+class B extends A {
+    float methode(){}
+}
+
+
+
+
+
+

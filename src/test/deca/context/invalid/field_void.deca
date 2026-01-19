@@ -1,0 +1,21 @@
+// Description:
+// champ de classe de type void 
+//
+// Resultats:
+//    Ligne 12 :  Erreur 
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+class A {
+    void x;
+}
+
+
+
+
+
+
+
+

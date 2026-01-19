@@ -14,5 +14,5 @@ class A {
 }
 
 {
-   (new A()).methode();
+   (new A()).method();
 }

@@ -8,7 +8,7 @@
 //    cree le 18/01/2026
 
 {
-    println("Entrez un entier :");
     int i = readInt() + 10;
+    println("Entrez un entier :");
     println("Résultat : ", i);
 }

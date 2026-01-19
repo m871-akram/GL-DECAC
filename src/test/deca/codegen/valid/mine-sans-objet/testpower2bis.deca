@@ -1,0 +1,14 @@
+// Description:
+//    Vérifie le cas où le littéral n'est pas une puissance de deux
+//
+// Resultats:
+//    14
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    int x = 2;
+    int y = x * 7;
+    println(y);
+}

@@ -1,0 +1,18 @@
+// Description:
+// heritage d'un type primitif
+//
+// Resultats:
+//    Ligne 12 : heritage impossible
+//    
+// Historique:
+//    cree le 19/01/2026
+
+
+
+class A extends int {}
+
+
+
+
+
+

@@ -9,5 +9,5 @@
 {
     boolean b = true && false;
     boolean c = true || false;
-    boolean b = !true;
+    b = !true;
 }

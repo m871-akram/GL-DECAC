@@ -29,8 +29,8 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
 
         // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
         if (this instanceof AbstractOpExactCmp) {
-            boolean leftOk  = t1.isClass() || t1.isNull();
-            boolean rightOk = t2.isClass() || t2.isNull();
+            boolean leftOk  = t1.isClassOrNull();
+            boolean rightOk = t2.isClassOrNull();
         
             if (leftOk && rightOk) {
                 this.setType(compiler.environmentType.BOOLEAN);
