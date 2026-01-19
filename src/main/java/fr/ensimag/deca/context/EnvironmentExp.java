@@ -52,18 +52,6 @@ public class EnvironmentExp {
         return null;
     }
 
-//     // In EnvironmentExp.java - Add visibility checks:
-// public ExpDefinition get(Symbol key, boolean checkVisibility) {
-//     ExpDefinition def = map.get(key);
-//     if (def != null && checkVisibility) {
-//         // Check if 'protected' member accessible from current class context
-//         if (def.isProtected() && !isAccessibleFrom(currentClass)) {
-//             return null; // Not visible
-//         }
-//     }
-//     return def;
-// }
-
     /**
      * Add the definition def associated to the symbol name in the environment.
      * 

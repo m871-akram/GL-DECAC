@@ -11,6 +11,8 @@ import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import fr.ensimag.ima.pseudocode.instructions.BRA;
 
+
+
 /**
  *
  * @author gl51
@@ -36,27 +38,22 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
     }
 
 
-    // Compteur pour générer des étiquettes uniques
-    private static int boolSeq = 0;
-
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
 
-        
-        boolSeq++;
-        String suffix = "." + boolSeq;
-        
-        Label trueLabel = new Label("bool_true" + suffix);
-        Label endLabel = new Label("bool_end" + suffix);
+        // CORRECTION : Utilisation du Sequencer propre à cette compilation
+        // Cela garantit l'unicité des labels même en parallèle (-P)
+        Label trueLabel = compiler.getSequencer().genSignal("bool_true");
+        Label endLabel  = compiler.getSequencer().genSignal("bool_end");
 
-        // Si VRAI, on saute à trueLabel
+        // Si l'expression booléenne est VRAIE, on saute à trueLabel
         this.codeGenBool(compiler, true, trueLabel);
 
-        // (On n'a pas sauté) -> On charge 0
+        // Cas FAUX (On n'a pas sauté) -> On charge 0 (False)
         compiler.addInstruction(new LOAD(0, register));
         compiler.addInstruction(new BRA(endLabel));
 
-        //  (On a sauté ici) -> On charge 1
+        // Cas VRAI (On a sauté ici) -> On charge 1 (True)
         compiler.addLabel(trueLabel);
         compiler.addInstruction(new LOAD(1, register));
 

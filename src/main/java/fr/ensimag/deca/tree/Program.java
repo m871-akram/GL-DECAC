@@ -67,66 +67,6 @@ public class Program extends AbstractProgram {
         // gestion des erreurs
 
         compiler.getIrqController().flashServiceRoutines(compiler);
-
-//        // erreur de pile_OV
-//        compiler.addLabel(new Label("erreur_pile_OV"));
-//        compiler.addInstruction(new WSTR("Error: pile_OV"));
-//
-//        compiler.addInstruction(new WNL());
-//
-//        compiler.addInstruction(new ERROR());
-//
-//        // erreur_io
-//
-//        compiler.addLabel(new Label("erreur_io"));
-//        compiler.addInstruction(new WSTR("Error: erreur I/O"));
-//        compiler.addInstruction(new WNL());
-//        compiler.addInstruction(new ERROR());
-//
-//        // erreur de division_par_0
-//         compiler.addLabel(new Label("division_par_0"));
-//         compiler.addInstruction(new WSTR("Error: division par 0"));
-//         compiler.addInstruction(new WNL());
-//         compiler.addInstruction(new ERROR());
-//
-//
-//
-////        // Déréférencement de null
-////        compiler.addLabel(new Label("dereferencement_null"));
-////        compiler.addInstruction(new WSTR("Error: Null Dereference"));
-////        compiler.addInstruction(new WNL());
-////        compiler.addInstruction(new ERROR());
-////
-////        // Erreur de cast
-////        compiler.addLabel(new Label("cast_error"));
-////        compiler.addInstruction(new WSTR("Error: Invalid Cast"));
-////        compiler.addInstruction(new WNL());
-////        compiler.addInstruction(new ERROR());
-//
-//
-//        // Partie En-tête du programme (TSTO / ADDSP) en ordre LIFO
-//        int maxTemp = compiler.getRegisterManager().getTaillePileMax();
-//        int nbGlob = compiler.getRegisterManager().getNbGlobales();
-//
-//        // 3 ADDSP #nbGlob
-//        if (nbGlob > 0) {
-//            compiler.addFirstInstruction(new ADDSP(nbGlob));
-//        }
-//
-//        // 2 BOV erreur de pile_OV
-//        compiler.addFirstInstruction(new BOV(new Label("erreur_pile_OV")));
-//
-//        // 1 TSTO #(maxTemp + nbGlob)
-//        compiler.addFirstInstruction(new TSTO(maxTemp + nbGlob));
-//
-////        // 2. Vérification débordement pile initiale
-////        if (!compiler.getCompilerOptions().getNoCheck()) {
-////            compiler.addFirstInstruction(new BOV(new Label("stack_overflow_error")));
-////            // 1. TSTO
-////            compiler.addFirstInstruction(new TSTO(new ImmediateInteger(maxTemp + nbGlob)));
-////        }
-
-
     }
 
     @Override

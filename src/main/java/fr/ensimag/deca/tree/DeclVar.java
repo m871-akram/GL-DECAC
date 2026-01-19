@@ -11,7 +11,6 @@ import org.apache.commons.lang.Validate;
 import java.io.PrintStream;
 
 /**
- * Déclaration de variable ( int x = 3;)
  * @author gl51
  * @date 01/01/2026
  */

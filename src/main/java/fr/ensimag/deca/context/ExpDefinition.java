@@ -24,14 +24,4 @@ public abstract class ExpDefinition extends Definition {
         super(type, location);
     }
 
-    @Override
-    public String getNature() {
-        return "field";
-    }
-
-    @Override
-    public boolean isExpression() {
-        return true;
-    }
-
 }
