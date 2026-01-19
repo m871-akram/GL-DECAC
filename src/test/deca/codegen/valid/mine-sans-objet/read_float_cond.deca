@@ -8,8 +8,9 @@
 //    cree le 18/01/2026
 
 {
+    float x;
     println("Entrez un nombre réel :");
-    float x = readFloat();
+    x = readFloat();
 
     if (x > 0.0) {
         println("Le nombre est positif : ", x);
