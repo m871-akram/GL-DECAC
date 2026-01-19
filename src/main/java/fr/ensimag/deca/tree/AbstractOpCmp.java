@@ -28,7 +28,16 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
         // on verifier que les deux opérandes sont soit int soit float (en deca ,pas de string)
-        if (!compiler.environmentType.aritCompatible(t1, t2)) {
+        if (this instanceof AbstractOpExactCmp) {
+            boolean leftOk  = t1.isClass() || t1.isNull();
+            boolean rightOk = t2.isClass() || t2.isNull();
+        
+            if (leftOk && rightOk) {
+                this.setType(compiler.environmentType.BOOLEAN);
+                return this.getType();
+            }
+        }
+        if (!compiler.environmentType.castCompatible(t1, t2)) {
             throw new ContextualError(
                 "Opérandes arithmétiques doivent être int ou float, pas " + 
                 t1 + " et " + t2,
