@@ -112,25 +112,27 @@ public class TestCos {
             mesTests.add(new UnTest(x, (float)java.lang.Math.cos(x)));
         }
 
-        System.out.println("nom       | fonction   | valeur  | Resultat   ");
+        System.out.println("#nom       ; fonction   ; valeur  ; Resultat   ");
         int total =0;
         for (UnTest t : mesTests) {
             total += 1;
+            verifierCos(t);
         }
-        System.out.println(" on a "+ total + "test pour la fonction cos");
+        System.out.println(" #on a "+ total + "test pour la fonction cos");
         System.out.println("");
 
     }
 
   
 
-    public static int verifierSin(UnTest t) {
+    public static void verifierCos(UnTest t) {
+        String nomTest = "cos_" + t.x;
         if (Float.isNaN(t.attenduCos)) {
-            System.out.printf("%-15s | %-11s | %-11s | %s\n", 
-                            "cos{t.x}", "cos", t.x,"erreur");
+            System.out.printf("%-15s ; %-11s ; %-11.4f ; %s\n", 
+                            nomTest, "cos", t.x,"NAN");
         }
-        System.out.printf("%-15s | %-11.4f | %-11.4f | %s\n", 
-                          "cos{t.x}", "cos", t.x, t.attenduCos);
+        System.out.printf("%-15s ; %-11s ; %-11.4f ; %-11.4f\n", 
+                          nomTest, "cos", t.x, t.attenduCos);
     }
 }
         
