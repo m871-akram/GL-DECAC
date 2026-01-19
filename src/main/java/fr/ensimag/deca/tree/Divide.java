@@ -7,6 +7,7 @@ import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.instructions.DIV;
 import fr.ensimag.ima.pseudocode.instructions.QUO;
+import fr.ensimag.ima.pseudocode.instructions.SHR;
 
 
 
@@ -23,8 +24,16 @@ public class Divide extends AbstractOpArith {
 
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
+            
         if (getType().isInt()) {
-            compiler.addInstruction(new QUO(opSource, opDest));
+            int shiftR = getRightOperand().isPowerOftow();
+            if(shiftR != -1){
+                for(int i =0;i<shiftR;i++){
+                    compiler.addInstruction(new SHR(opDest));
+                }
+            } else {
+                compiler.addInstruction(new QUO(opSource, opDest));
+            }
         } else {
             compiler.addInstruction(new DIV(opSource, opDest));
         }
