@@ -8,7 +8,7 @@
 //    cree le 17/01/2026
 
 
-class Totall{
+class Total{
     int somme(inta, int b , int c){
         return a+b+c;
     }

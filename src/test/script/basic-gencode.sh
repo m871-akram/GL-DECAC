@@ -158,12 +158,9 @@ echo ""
 
 # Test des fichiers valides
 echo "=== Tests valides ==="
-for file in ./src/test/deca/codegen/valid/**/*.deca; do
+for file in ./src/test/deca/codegen/valid/*.deca ./src/test/deca/codegen/valid/**/*.deca; do
     if [ -f "$file" ]; then
-        # Fichiers qui nécessitent une entrée interactive - on fournit des entrées par défaut
-        if [[ "$file" == *"lire_expr_io.deca"* ]] || [[ "$file" == *"lire_io.deca"* ]] || \
-           [[ "$file" == *"readint.deca"* ]] || [[ "$file" == *"readfloat.deca"* ]] || \
-           [[ "$file" == *"erreur_lecture.deca"* ]]; then
+        if [[ "$file" =~ (lire_expr_io|lire_io|readint|readfloat|erreur_lecture)\.deca$ ]]; then
             test_deca_file "$file" true
         else
             test_deca_file "$file"
@@ -174,7 +171,7 @@ echo ""
 
 # Test des fichiers perf/provided
 echo "=== Tests perf/provided ==="
-for file in ./src/test/deca/codegen/perf/provided/**/*.deca; do
+for file in ./src/test/deca/codegen/perf/provided/*.deca ./src/test/deca/codegen/perf/provided/**/*.deca; do
     if [ -f "$file" ]; then
         # Tester tous les fichiers maintenant
         test_deca_file "$file"
@@ -184,7 +181,7 @@ echo ""
 
 # Test des fichiers invalides (doivent échouer à l'exécution)
 echo "=== Tests invalides (échec attendu) ==="
-for file in ./src/test/deca/codegen/invalid/**/*.deca; do
+for file in ./src/test/deca/codegen/invalid/*.deca ./src/test/deca/codegen/invalid/**/*.deca; do
     if [ -f "$file" ]; then
         test_deca_file_invalid "$file"
     fi

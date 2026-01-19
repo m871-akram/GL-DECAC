@@ -1,6 +1,7 @@
 package fr.ensimag.deca.tree;
 
 import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.DVal;
 import fr.ensimag.ima.pseudocode.GPRegister;
@@ -63,6 +64,10 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
             // cas normal : reg dispo
             GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
             getRightOperand().codeGenExpr(compiler, rRight);
+            if (getType().isFloat() && this instanceof AbstractOpArith && !compiler.getCompilerOptions().getNoCheck() && !(this instanceof Divide)) {
+                compiler.getIrqController().triggerInterrupt(compiler,
+                        InterruptVector.IRQ_FLOAT_OVERFLOW);
+            }
 
             // operation
             codeGenInst(compiler, rRight, register);
@@ -78,6 +83,10 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
 
             // calcul droite
             getRightOperand().codeGenExpr(compiler, register);
+            if (getType().isFloat() && this instanceof AbstractOpArith && !compiler.getCompilerOptions().getNoCheck() && !(this instanceof Divide)) {
+                compiler.getIrqController().triggerInterrupt(compiler,
+                        InterruptVector.IRQ_FLOAT_OVERFLOW);
+            }
 
             // charge droite dans r0
             compiler.addInstruction(new LOAD(register, rRight));
