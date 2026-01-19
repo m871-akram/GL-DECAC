@@ -12,12 +12,12 @@
 
 class Track {
     Track objet() { println("Objet"); return this; }
-    int p(string s) { println(s); return 0; }
+    int p(int s) { println(s); return 0; }
     void m(int a, int b) {}
 }
 
 {
     Track t = new Track();
-    t.objet().m(t.p("P1"), t.p("P2"));
+    t.objet().m(t.p(0), t.p(1));
 }
 

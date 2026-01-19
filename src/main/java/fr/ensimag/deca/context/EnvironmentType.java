@@ -59,6 +59,7 @@ public class EnvironmentType {
 
         Symbol equalsSymbol = compiler.createSymbol("equals");
         Signature equalsSignature = new Signature();
+        equalsSignature.add(objectType);
         MethodDefinition equalsExpDef = new MethodDefinition(
             BOOLEAN,
             Location.BUILTIN,

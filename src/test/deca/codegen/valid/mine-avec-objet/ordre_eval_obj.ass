@@ -56,7 +56,7 @@ code.Track.m:
 	BOV heap_full_isr
 	LEA 1(GB), R0
 	STORE R0, 0(R2)
-	PUSH R2
+	PEA 0(R2)
 	BSR init.Track
 	SUBSP #1
 	STORE R2, 1(LB)
@@ -84,7 +84,7 @@ code.Track.m:
 	BOV null_ptr_isr
 	ADDSP #2
 	STORE R2, 0(SP)
-	LOAD #1, R2
+	LOAD #0, R2
 	STORE R2, -1(SP)
 	LOAD 0(SP), R2
 	LOAD 0(R2), R2
@@ -98,7 +98,7 @@ code.Track.m:
 	BOV null_ptr_isr
 	ADDSP #2
 	STORE R2, 0(SP)
-	LOAD #2, R2
+	LOAD #1, R2
 	STORE R2, -1(SP)
 	LOAD 0(SP), R2
 	LOAD 0(R2), R2
@@ -114,16 +114,16 @@ code.Track.m:
 	SUBSP #3
 	HALT
 ; --- Interrupt Service Routines (ISR) ---
+null_ptr_isr:
+	WSTR "Erreur : Dereferencement null"
+	WNL
+	ERROR
 heap_full_isr:
 	WSTR "Erreur : Tas plein"
 	WNL
 	ERROR
 stack_overflow_isr:
 	WSTR "Erreur : Pile pleine"
-	WNL
-	ERROR
-null_ptr_isr:
-	WSTR "Erreur : Dereferencement null"
 	WNL
 	ERROR
 ; end main program
