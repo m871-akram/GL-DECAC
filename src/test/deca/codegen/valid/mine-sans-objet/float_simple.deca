@@ -1,0 +1,19 @@
+// Description:
+//    multiplication longue de float
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 19/01/2026
+
+{
+    float f = 1.1*2.2*3.3*4.4*5.5*6.6;
+    println(f);
+
+}
+
+
+
+
+

@@ -1,0 +1,18 @@
+// Description:
+//    melange comparaison et logique
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    boolean b = (1+1==2) && (2+2==4);
+   
+}
+
+
+
+
+

@@ -1,0 +1,14 @@
+// Description:
+//    Vérifie le fonctionnement de printlnx sur des mélanges
+//
+// Resultats:
+//    0x1.4p+2 10
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    float f = 5.0;
+    int i = 10;
+    printlnx(f, " ", i);
+}
