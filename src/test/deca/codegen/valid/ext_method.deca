@@ -1,21 +1,26 @@
 // Description:
-//    Fils appelle méthode parent
+//    Fils appelle méthode parent (Vérification de l'héritage et des offsets)
 //
-// Resultats :
+// Resultats:
 //    ok
 //
 // Historique:
 //    cree le 18/01/2026
-
+//
 
 class A {
-    mParent(); 
+    void mParent() {
+        println("ok");
+    }
+}
 
-} 
+class B extends A {
+    void m() {
+        mParent(); // Appel valide par héritage
+    }
+}
 
-
-class B extends A { 
-    void m() { 
-        mParent(); 
-   } 
+{
+    B b = new B();
+    b.m();
 }
