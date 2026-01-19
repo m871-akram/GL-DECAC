@@ -165,6 +165,27 @@ public abstract class AbstractExpr extends AbstractInst {
         compiler.getRegisterManager().libererRegistre();
     }
 
+    protected void codeGenPrintHex(DecacCompiler compiler) {
+        // 1. Évaluation
+        GPRegister register = compiler.getRegisterManager().prendreRegistre();
+        codeGenExpr(compiler, register);
+
+        // 2. Chargement dans R1
+        compiler.addInstruction(new LOAD(register, Register.R1));
+
+        // 3. Affichage
+        if (getType().isInt()) {
+            // printx sur un entier se comporte comme print (WINT)
+            compiler.addInstruction(new WINT());
+        } else if (getType().isFloat()) {
+            // C'est ici que ça change : WFLOATX
+            compiler.addInstruction(new WFLOATX());
+        }
+
+        // 4. Libération
+        compiler.getRegisterManager().libererRegistre();
+    }
+
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
         // Fallback pour les expressions utilisées comme instructions (ex: Assign hérite de ça)
