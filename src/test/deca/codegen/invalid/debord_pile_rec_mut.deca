@@ -9,12 +9,12 @@
 
 class A {
     void methodA (B b){
-        b.methodeB(this);
+        b.methodB(this);
     }
 }
 class B {
     void methodB (A a){
-        a.methodeB(this);
+        a.methodA(this);
     }
 }
 
@@ -22,5 +22,5 @@ class B {
    A a =new A();
    B b =new B();
 
-   a.methodeA(b);
+   a.methodA(b);
 }
