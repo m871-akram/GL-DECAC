@@ -1,5 +1,5 @@
 // Description:
-//    Division par zéro flottante
+//    division par zéro flottante
 //
 // Resultats:
 //    Error: Division by zero
@@ -8,8 +8,8 @@
 //    cree le 15/01/2026
 
 {
-    int x = 10.5;
-    int y = 0.0;
+    int x = 10;
+    int y = 0;
     println("Ceci va planter :");
     x = x / y;
     println("On ne devrait pas voir ce message");

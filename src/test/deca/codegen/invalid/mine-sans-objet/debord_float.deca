@@ -8,7 +8,7 @@
 //    cree le 15/01/2026
 
 {
-    float x = 1.0e30;
+    float x = 1.0e20;
     float y = x * x * x; 
     println(y);
 }
