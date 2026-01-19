@@ -2,12 +2,15 @@
 //    allocation de base
 //
 // Resultats:
-//    ok
-// 
+//    l'objet est créé
+//
 // Historique:
 //    cree le 17/01/2026
 
-class A{
-    println ("l'objet est créé");
+class A {
 }
 
+{
+    A a = new A();
+    println("l'objet est créé");
+}
