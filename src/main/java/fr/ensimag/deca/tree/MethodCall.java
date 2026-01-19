@@ -30,7 +30,7 @@ public class MethodCall extends AbstractExpr {
             ClassDefinition currentClass, Type returnType)
             throws ContextualError {
         Type callType = verifyExpr(compiler, localEnv, currentClass);
-        if (returnType != null && !callType.sameType(returnType)) {
+        if (!returnType.isVoid() && !callType.sameType(returnType)) {
             throw new ContextualError(
                 "Type de retour de la methode incorrect : attendu "
                 + returnType + ", trouve " + callType,
