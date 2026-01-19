@@ -62,22 +62,19 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
 
 
     /**
-     * Implémentation générique de la comparaison.
-     * Cette méthode est appelée par AbstractBinaryExpr après avoir chargé les opérandes.
+     * impl generique comparaison
      */
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
-        // 1. Comparaison (opDest - opSource)
-        // Note: CMP op1, op2 fait (op2 - op1) et set les flags.
+        // comparaison (opdest - opsource)
         compiler.addInstruction(new CMP(opSource, opDest));
 
-        // 2. Set Condition Code (Transformation en booléen 0/1)
-        // ex: SEQ R2 (Met R2 à 1 si égal, 0 sinon)
-        compiler.addInstruction(getSccInstruction(opDest));
+        // set condition code
+        compiler.addInstruction(getAsmCode(opDest));
     }
 
     /**
-     * Retourne l'instruction de saut conditionnel ou de set (ex: SEQ, SLT)
+     * retourne instruction saut conditionnel ou set
      */
-    protected abstract Instruction getSccInstruction(GPRegister register);
+    protected abstract Instruction getAsmCode(GPRegister register);
 }

@@ -49,54 +49,49 @@ public class Cast extends AbstractExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Évaluer l'expression
+        // evalue expression
         expr.codeGenExpr(compiler, register);
 
-        // 2. Conversion float → int
+        // conversion float -> int
         if (expr.getType().isFloat() && getType().isInt()) {
             compiler.addInstruction(new INT(register, register));
             return;
         }
 
-        // 3. Conversion int → float (normalement déjà gérée par ConvFloat)
+        // conversion int -> float
         if (expr.getType().isInt() && getType().isFloat()) {
             compiler.addInstruction(new FLOAT(register, register));
             return;
         }
 
-        // 4. Si c'est un cast vers Float/Int, gérer ici (ConvFloat)
-        // Mais Cast est souvent utilisé pour les objets.
+        // cast objet
         if (getType().isClass()) {
             ClassDefinition targetClassDef = (ClassDefinition) cast.getDefinition();
 
             Label endLabel = compiler.getSequencer().genSignal("cast_end");
             Label loopLabel = compiler.getSequencer().genSignal("cast_loop");
 
-            // Si null, cast réussi (null est instance de tout)
+            // si null, cast ok
             compiler.addInstruction(new CMP(new NullOperand(), register));
             compiler.addInstruction(new BEQ(endLabel));
 
-            // Vérification dynamique (instanceof)
-            // On utilise R0 et R1 pour parcourir la hiérarchie
-            // R0 : VTable de l'objet courant
-            // R1 : Adresse VTable cible
-
-            // Charger VTable de l'objet (offset 0)
+            // verif dynamique avec r0 et r1
+            // charge vtable objet
             compiler.addInstruction(new LOAD(new RegisterOffset(0, register), Register.R0));
 
-            // Charger adresse VTable cible
+            // charge vtable cible
             RegisterOffset targetVTableAddr = (RegisterOffset) targetClassDef.getOperand();
             compiler.addInstruction(new LEA(targetVTableAddr, Register.R1));
 
             compiler.addLabel(loopLabel);
-            // Si VTable courante == VTable cible -> OK
+            // si vtable courante == cible -> ok
             compiler.addInstruction(new CMP(Register.R1, Register.R0));
             compiler.addInstruction(new BEQ(endLabel));
 
-            // Sinon, remonter au parent (VTable[0] contient le pointeur super)
+            // remonte au parent
             compiler.addInstruction(new LOAD(new RegisterOffset(0, Register.R0), Register.R0));
 
-            // Si parent est null (on est arrivé en haut sans trouver) -> Erreur
+            // si parent null -> erreur
             compiler.addInstruction(new CMP(new NullOperand(), Register.R0));
             compiler.addInstruction(new BNE(loopLabel));
 

@@ -59,22 +59,19 @@ public class InstanceOf extends AbstractExpr {
         Label loopLabel = compiler.getSequencer().genSignal("instanceof_loop");
         Label trueLabel = compiler.getSequencer().genSignal("instanceof_true");
 
-        // 1. Evaluer l'objet
+        // evalue objet
         leftOperand.codeGenExpr(compiler, register);
 
-        // 2. Si null -> False
+        // si null -> false
         compiler.addInstruction(new CMP(new NullOperand(), register));
-        compiler.addInstruction(new BEQ(endLabel)); // Sauter avec 0 (déjà chargé si null, ou charger 0 avant ?)
-        // Attention : si register contient null (0), c'est bon, on a déjà 0 (False).
-        // Mais pour être sûr, on devrait charger 0 explicitement si on saute.
-        // Ici on suppose que null est représenté par 0.
+        compiler.addInstruction(new BEQ(endLabel));
 
-        // 3. Charger VTable objet
-        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), Register.R0)); // R0 = VTable courante
+        // charge vtable objet
+        compiler.addInstruction(new LOAD(new RegisterOffset(0, register), Register.R0));
 
-        // Charger VTable cible
+        // charge vtable cible
         RegisterOffset targetVTableAddr = (RegisterOffset) targetClassDef.getOperand();
-        compiler.addInstruction(new LEA(targetVTableAddr, Register.R1)); // R1 = VTable Cible
+        compiler.addInstruction(new LEA(targetVTableAddr, Register.R1));
 
         compiler.addLabel(loopLabel);
         compiler.addInstruction(new CMP(Register.R1, Register.R0));

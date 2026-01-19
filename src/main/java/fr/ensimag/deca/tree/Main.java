@@ -44,30 +44,27 @@ public class Main extends AbstractMain {
 
     @Override
     protected void codeGenMain(DecacCompiler compiler) {
-        // 1. Initialiser une nouvelle Frame pour le Main
+        // nouvelle frame pour main
         compiler.getMMU().enterNewMethodFrame();
 
-        // 2. Déclarations de variables (Allocation MMU interne)
+        // declarations variables
         compiler.addComment("Beginning of main declarations:");
         declVariables.codeGenListDeclVar(compiler);
 
-        // 3. EN-TÊTE DU MAIN : Gestion Pile et Globales
-        // Récupérer les infos de la MMU
+        // entete main : pile et globales
         int nbLocales = declVariables.size();
         compiler.getMMU().notifyLocalBlockAllocation(nbLocales);
         int maxStack = compiler.getMMU().getStackRequirements();
-        int nbGlobals = compiler.getMMU().getGlobalUsage(); // Si tu gères les globales dans MMU
+        int nbGlobals = compiler.getMMU().getGlobalUsage();
 
-        // A. TSTO : Pile Max + Globales (si elles n'ont pas leur propre zone réservée)
-        // Note: Dans IMA, GB est à part, mais si on empile beaucoup, TSTO doit couvrir.
-        // Souvent TSTO = maxStack
+        // tsto pour check pile
         compiler.addInstruction(new TSTO(maxStack));
 
-        // B. BOV : Vérification Stack Overflow
+        // bov si overflow
         compiler.getIrqController().triggerInterrupt(compiler,
                 InterruptVector.IRQ_STACK_OVERFLOW);
 
-        // C. ADDSP : Réservation pour les variables locales
+        // addsp pour les locales
         compiler.addInstruction(new ADDSP(nbLocales));
 
         // A FAIRE: traiter les déclarations de variables.

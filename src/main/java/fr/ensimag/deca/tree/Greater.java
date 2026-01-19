@@ -20,7 +20,7 @@ public class Greater extends AbstractOpIneq {
     }
 
     @Override
-    protected Instruction getSccInstruction(GPRegister register) { return new SGT(register); }
+    protected Instruction getAsmCode(GPRegister register) { return new SGT(register); }
 
 
     @Override

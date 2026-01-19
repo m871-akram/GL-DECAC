@@ -87,60 +87,49 @@ public class MethodCall extends AbstractExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Calculer l'adresse de l'objet (this)
-        // On utilise 'register' pour stocker l'adresse de l'objet
+        // calc adresse objet (this)
         object.codeGenExpr(compiler, register);
 
-        // 2. Vérification null
+        // verif null
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.addInstruction(new CMP(new NullOperand(), register));
             compiler.getIrqController().triggerInterrupt(compiler,
                     InterruptVector.IRQ_NULL_PTR);
         }
 
-        // 3. Empiler les paramètres (Convention : empiler le résultat de l'évaluation)
-        // On a besoin d'un registre temporaire pour calculer les params si 'register' tient 'this'
-        // ASTUCE : On peut calculer les params AVANT de calculer 'this' pour libérer les registres,
-        // puis empiler. Ou alors utiliser la pile.
-        // Pour simplifier ici : On empile directement le résultat de l'évaluation.
-
-        // ADDSP pour réserver la place des paramètres + this
+        // reserve place params + this
         compiler.addInstruction(new ADDSP(args.size() + 1));
         compiler.getMMU().notifyPush(args.size() + 1);
 
-        // Stocker 'this' (qui est dans 'register') à 0(SP)
+        // stocke this
         compiler.addInstruction(new STORE(register, new RegisterOffset(0, Register.SP)));
 
-        // Calculer et stocker les arguments
-        int index = -1; // -1(SP), -2(SP)...
+        // calc et stocke arguments
+        int index = -1;
         for (AbstractExpr arg : args.getList()) {
-            // On réutilise 'register' car on a déjà sauvegardé 'this' sur la pile
             arg.codeGenExpr(compiler, register);
             compiler.addInstruction(new STORE(register, new RegisterOffset(index, Register.SP)));
             index--;
         }
 
-        // 4. Récupérer l'adresse de la méthode (Liaison Dynamique)
-        // On recharge 'this' dans 'register' depuis la pile pour accéder à la vTable
+        // recup adresse methode via vtable
         compiler.addInstruction(new LOAD(new RegisterOffset(0, Register.SP), register));
 
-        // Charger adresse VTable (0(this))
+        // charge vtable
         compiler.addInstruction(new LOAD(new RegisterOffset(0, register), register));
 
-        // Charger adresse méthode (index + 1 dans VTable, car 0 = super)
+        // charge adresse methode
         int methodIndex = methode.getMethodDefinition().getIndex();
         compiler.addInstruction(new LOAD(new RegisterOffset(methodIndex, register), register));
 
-        // 5. Appel (BSR sur registre)
+        // appel
         compiler.addInstruction(new BSR(register));
 
-        // 6. Nettoyage Pile
-        // On a fait ADDSP, on doit faire SUBSP
+        // nettoyage pile
         compiler.addInstruction(new SUBSP(args.size() + 1));
         compiler.getMMU().notifyPop(args.size() + 1);
 
-        // 7. Résultat
-        // Le résultat est dans R0. On le copie dans le registre cible si besoin
+        // resultat dans r0
         if (getType() != compiler.environmentType.VOID) {
             compiler.addInstruction(new LOAD(Register.R0, register));
         }
@@ -148,8 +137,7 @@ public class MethodCall extends AbstractExpr {
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // Pour un appel de méthode utilisé comme instruction,
-        // on alloue un registre temporaire et on appelle codeGenExpr
+        // appel comme instruction, alloue reg temp
         GPRegister reg = compiler.getRegisterManager().prendreRegistre();
         codeGenExpr(compiler, reg);
         compiler.getRegisterManager().libererRegistre();

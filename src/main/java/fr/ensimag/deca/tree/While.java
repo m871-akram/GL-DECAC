@@ -50,34 +50,25 @@ public class While extends AbstractInst {
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // 1. Initialiser la séquence de boucle (gestion contextuelle des labels)
+        // init sequence boucle
         compiler.getSequencer().enterLoopSequence();
 
-        // Récupérer les labels générés par le Sequencer
-        Label startLabel = compiler.getSequencer().getCurrentLoopStart(); // Début du corps
-        Label exitLabel = compiler.getSequencer().getCurrentLoopExit();   // Fin de la boucle
-
-        // Pour l'optimisation "Test à la fin", il nous faut un label pour le test
-        // Le Sequencer ne le donne pas par défaut, on le demande manuellement
+        // recup labels
+        Label startLabel = compiler.getSequencer().getCurrentLoopStart();
+        Label exitLabel = compiler.getSequencer().getCurrentLoopExit();
         Label condLabel = compiler.getSequencer().genSignal("while_cond");
 
-        // Structure optimisée :
-        //    BRA condLabel
-        // startLabel:
-        //    CORPS
-        // condLabel:
-        //    Code(Condition, Vrai -> startLabel, Faux -> Fallthrough/Exit)
-
+        // structure optimisee test a la fin
         compiler.addInstruction(new BRA(condLabel));
         compiler.addLabel(startLabel);
 
         body.codeGenListInst(compiler);
 
         compiler.addLabel(condLabel);
-        // Si condition VRAIE, on remonte à startLabel. Sinon on continue (sortie).
+        // si vrai -> remonte au debut
         condition.codeGenBool(compiler, true, startLabel);
 
-        // Label de fin (utile si un 'break' est généré dans le corps)
+        // label de sortie
         compiler.addLabel(exitLabel);
 
         // 2. Fermer le contexte

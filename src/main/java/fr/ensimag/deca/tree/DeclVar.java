@@ -64,15 +64,13 @@ public class DeclVar extends AbstractDeclVar {
 
     @Override
     protected void codeGenDeclVar(DecacCompiler compiler) {
-        // 1. Allocation mémoire via MMU (Pile locale)
-        // La MMU renvoie un RegisterOffset (ex: 3(LB))
+        // alloc memoire via mmu
         RegisterOffset addr = compiler.getMMU().allocLocal();
 
-        // 2. Stockage de l'adresse dans la définition pour usage ultérieur (Identifier)
+        // stockage adresse dans def
         this.varName.getVariableDefinition().setOperand(addr);
 
-        // 3. Génération du code d'initialisation
-        // On passe l'adresse directement à l'initialisation pour qu'elle STORE le résultat
+        // gen code init
         this.initialization.codeGenInit(compiler, addr, this.varName.getVariableDefinition().getType());
     }
 

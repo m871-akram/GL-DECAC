@@ -55,38 +55,38 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
      */
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Calcul Gauche
+        // calcul gauche
         getLeftOperand().codeGenExpr(compiler, register);
 
-        // 2. Calcul Droite avec gestion Registres
+        // calcul droite + gestion reg
         if (compiler.getRegisterManager().registreLibre()) {
-            // Cas Normal : On a un registre dispo
+            // cas normal : reg dispo
             GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
             getRightOperand().codeGenExpr(compiler, rRight);
 
-            // Opération (ADD, SUB, CMP...)
+            // operation
             codeGenInst(compiler, rRight, register);
 
             compiler.getRegisterManager().libererRegistre();
         } else {
-            // Cas Spill : Plus de registres -> On passe par la pile
+            // spill : plus de reg -> pile
             GPRegister rRight = fr.ensimag.ima.pseudocode.Register.R0;
 
-            // Sauvegarde Gauche
+            // sauvegarde gauche
             compiler.addInstruction(new PUSH(register));
             compiler.getMMU().notifyPush(1);
 
-            // Calcul Droite (dans le registre qui servait à gauche)
+            // calcul droite
             getRightOperand().codeGenExpr(compiler, register);
 
-            // Charger Droite dans R0
+            // charge droite dans r0
             compiler.addInstruction(new LOAD(register, rRight));
 
-            // Restaurer Gauche
+            // restaure gauche
             compiler.addInstruction(new POP(register));
             compiler.getMMU().notifyPop(1);
 
-            // Opération avec R0
+            // operation avec r0
             codeGenInst(compiler, rRight, register);
         }
     }

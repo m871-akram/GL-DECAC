@@ -28,9 +28,7 @@ public abstract class AbstractUnaryExpr extends AbstractExpr {
     protected abstract String getOperatorName();
 
     /**
-     * Méthode template pour les opérations unaires.
-     * 1. Evalue l'opérande dans le registre.
-     * 2. Applique l'opération (codeGenUnary).
+     * template pour les operations unaires
      */
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
@@ -39,8 +37,7 @@ public abstract class AbstractUnaryExpr extends AbstractExpr {
     }
 
     /**
-     * À implémenter par les sous-classes (Not, UnaryMinus, ConvFloat).
-     * Génère juste l'instruction atomique (ex: OPP R2, R2).
+     * gen l'instruction atomique (ex: OPP R2, R2)
      */
     protected abstract void codeGenUnary(DecacCompiler compiler, GPRegister register);
 

@@ -41,19 +41,18 @@ public abstract class AbstractOpBool extends AbstractBinaryExpr {
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
 
-        // CORRECTION : Utilisation du Sequencer propre à cette compilation
-        // Cela garantit l'unicité des labels même en parallèle (-P)
+        // sequencer unique pour eviter pb en parallele
         Label trueLabel = compiler.getSequencer().genSignal("bool_true");
         Label endLabel  = compiler.getSequencer().genSignal("bool_end");
 
-        // Si l'expression booléenne est VRAIE, on saute à trueLabel
+        // si vrai -> saut
         this.codeGenBool(compiler, true, trueLabel);
 
-        // Cas FAUX (On n'a pas sauté) -> On charge 0 (False)
+        // cas faux -> charge 0
         compiler.addInstruction(new LOAD(0, register));
         compiler.addInstruction(new BRA(endLabel));
 
-        // Cas VRAI (On a sauté ici) -> On charge 1 (True)
+        // cas vrai -> charge 1
         compiler.addLabel(trueLabel);
         compiler.addInstruction(new LOAD(1, register));
 

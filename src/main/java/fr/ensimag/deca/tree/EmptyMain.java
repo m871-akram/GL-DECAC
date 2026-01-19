@@ -20,8 +20,7 @@ public class EmptyMain extends AbstractMain {
 
     @Override
     protected void codeGenMain(DecacCompiler compiler) {
-        // Main vide - ne génère rien, juste HALT
-        // Le HALT sera ajouté automatiquement par Program.codeGenProgram()
+        // main vide - halt auto par program
     }
 
     /**

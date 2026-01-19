@@ -145,78 +145,74 @@ public abstract class AbstractExpr extends AbstractInst {
      * @param compiler
      */
     protected void codeGenPrint(DecacCompiler compiler) {
-        // 1. Évaluation dans un registre temporaire
-        // Utilisation de takeRegister (Hardware Architecture)
+        // eval dans reg temp
         GPRegister register = compiler.getRegisterManager().prendreRegistre();
 
         codeGenExpr(compiler, register);
 
-        // 2. Charger dans R1 pour WINT/WFLOAT
+        // charge dans r1
         compiler.addInstruction(new LOAD(register, Register.R1));
 
-        // 3. Afficher
+        // affiche
         if (getType().isInt()) {
             compiler.addInstruction(new WINT());
         } else if (getType().isFloat()) {
             compiler.addInstruction(new WFLOAT());
         }
 
-        // 4. Libérer le registre
+        // libere registre
         compiler.getRegisterManager().libererRegistre();
     }
 
     protected void codeGenPrintHex(DecacCompiler compiler) {
-        // 1. Évaluation
+        // eval
         GPRegister register = compiler.getRegisterManager().prendreRegistre();
         codeGenExpr(compiler, register);
 
-        // 2. Chargement dans R1
+        // chargement r1
         compiler.addInstruction(new LOAD(register, Register.R1));
 
-        // 3. Affichage
+        // affichage
         if (getType().isInt()) {
-            // printx sur un entier se comporte comme print (WINT)
+            // printx entier = wint
             compiler.addInstruction(new WINT());
         } else if (getType().isFloat()) {
-            // C'est ici que ça change : WFLOATX
+            // wfloatx
             compiler.addInstruction(new WFLOATX());
         }
 
-        // 4. Libération
+        // liberation
         compiler.getRegisterManager().libererRegistre();
     }
 
     @Override
     protected void codeGenInst(DecacCompiler compiler) {
-        // Fallback pour les expressions utilisées comme instructions (ex: Assign hérite de ça)
-        // Mais Assign override cette méthode.
-        // Si on est ici, on calcule juste pour l'effet de bord (rare en sans-objet pur hors Assign)
-
+        // fallback pour expr utilisees comme inst
         GPRegister register = compiler.getRegisterManager().prendreRegistre();
         codeGenExpr(compiler, register);
         compiler.getRegisterManager().libererRegistre();
     }
 
     /**
-     * Génère un saut conditionnel basé sur la valeur de l'expression.
-     * Implémentation par défaut pour les expressions non-booléennes pures (ex: variables)
+     * gen saut conditionnel
+     * impl par defaut pour expr non-bool pures
      */
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
 
         GPRegister reg = compiler.getRegisterManager().prendreRegistre();
 
-        // 1. Calculer la valeur (0 ou 1)
+        // calc valeur (0 ou 1)
         this.codeGenExpr(compiler, reg);
 
-        // 2. Comparer à 0 (Faux)
+        // compare a 0
         compiler.addInstruction(new CMP(0, reg));
 
-        // 3. Saut
+        // saut
         if (branchOn) {
-            // Si on veut sauter quand c'est Vrai (donc reg != 0)
+            // saut si vrai (reg != 0)
             compiler.addInstruction(new BNE(target));
         } else {
-            // Si on veut sauter quand c'est Faux (donc reg == 0)
+            // saut si faux (reg == 0)
             compiler.addInstruction(new BEQ(target));
         }
 

@@ -24,6 +24,6 @@ public class GreaterOrEqual extends AbstractOpIneq {
     }
 
     @Override
-    protected Instruction getSccInstruction(GPRegister register) { return new SGE(register); }
+    protected Instruction getAsmCode(GPRegister register) { return new SGE(register); }
 
     }

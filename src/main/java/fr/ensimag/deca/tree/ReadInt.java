@@ -28,16 +28,16 @@ public class ReadInt extends AbstractReadExpr {
     }
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Lire entier (Résultat dans R1)
+        // lit entier (resultat dans r1)
         compiler.addInstruction(new RINT());
 
-        // 2. Gestion Erreur IO via InterruptController
+        // gestion erreur io
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
-                    InterruptVector.IRQ_IO_ERROR); // Ajoute ce vecteur s'il manque
+                    InterruptVector.IRQ_IO_ERROR);
         }
 
-        // 3. Charger le résultat dans le registre cible
+        // charge resultat
         compiler.addInstruction(new LOAD(Register.R1, register));
     }
 
