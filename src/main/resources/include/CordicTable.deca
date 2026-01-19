@@ -1,72 +1,258 @@
-class CordicTable{
+class CordicTable {
 
-float _getPow2(int i) {
-    if(i == 0) { return 1.0f; }
-    else if(i == 1) { return 5.000000000E-01f; }
-    else if(i == 2) { return 2.500000000E-01f; }
-    else if(i == 3) { return 1.250000000E-01f; }
-    else if(i == 4) { return 6.250000000E-02f; }
-    else if(i == 5) { return 3.125000000E-02f; }
-    else if(i == 6) { return 1.562500000E-02f; }
-    else if(i == 7) { return 7.812500000E-03f; }
-    else if(i == 8) { return 3.906250000E-03f; }
-    else if(i == 9) { return 1.953125000E-03f; }
-    else if(i == 10) { return 9.765625000E-04f; }
-    else if(i == 11) { return 4.882812500E-04f; }
-    else if(i == 12) { return 2.441406250E-04f; }
-    else if(i == 13) { return 1.220703125E-04f; }
-    else if(i == 14) { return 6.103515625E-05f; }
-    else if(i == 15) { return 3.051757812E-05f; }
-    else if(i == 16) { return 1.525878906E-05f; }
-    else if(i == 17) { return 7.629394531E-06f; }
-    else if(i == 18) { return 3.814697266E-06f; }
-    else if(i == 19) { return 1.907348633E-06f; }
-    else if(i == 20) { return 9.536743164E-07f; }
-    else if(i == 21) { return 4.768371582E-07f; }
-    else if(i == 22) { return 2.384185791E-07f; }
-    else if(i == 23) { return 1.192092896E-07f; }
-    else if(i == 24) { return 5.960464478E-08f; }
-    else if(i == 25) { return 2.980232239E-08f; }
-    else if(i == 26) { return 1.490116119E-08f; }
-    else if(i == 27) { return 7.450580597E-09f; }
-    else if(i == 28) { return 3.725290298E-09f; }
-    else if(i == 29) { return 1.862645149E-09f; }
-    else if(i == 30) { return 9.313225746E-10f; }
-    else { return 0.0f; }
-}
+    float _getPow2(int i) {
+        if (i <= 15) {
+            if (i <= 7) {
+                if (i <= 3) {
+                    if (i <= 1) {
+                        if (i <= 0) {
+                            return 1.000000000E+00f;
+                        } else {
+                            return 5.000000000E-01f;
+                        }
+                    } else {
+                        if (i <= 2) {
+                            return 2.500000000E-01f;
+                        } else {
+                            return 1.250000000E-01f;
+                        }
+                    }
+                } else {
+                    if (i <= 5) {
+                        if (i <= 4) {
+                            return 6.250000000E-02f;
+                        } else {
+                            return 3.125000000E-02f;
+                        }
+                    } else {
+                        if (i <= 6) {
+                            return 1.562500000E-02f;
+                        } else {
+                            return 7.812500000E-03f;
+                        }
+                    }
+                }
+            } else {
+                if (i <= 11) {
+                    if (i <= 9) {
+                        if (i <= 8) {
+                            return 3.906250000E-03f;
+                        } else {
+                            return 1.953125000E-03f;
+                        }
+                    } else {
+                        if (i <= 10) {
+                            return 9.765625000E-04f;
+                        } else {
+                            return 4.882812500E-04f;
+                        }
+                    }
+                } else {
+                    if (i <= 13) {
+                        if (i <= 12) {
+                            return 2.441406250E-04f;
+                        } else {
+                            return 1.220703125E-04f;
+                        }
+                    } else {
+                        if (i <= 14) {
+                            return 6.103515625E-05f;
+                        } else {
+                            return 3.051757812E-05f;
+                        }
+                    }
+                }
+            }
+        } else {
+            if (i <= 23) {
+                if (i <= 19) {
+                    if (i <= 17) {
+                        if (i <= 16) {
+                            return 1.525878906E-05f;
+                        } else {
+                            return 7.629394531E-06f;
+                        }
+                    } else {
+                        if (i <= 18) {
+                            return 3.814697266E-06f;
+                        } else {
+                            return 1.907348633E-06f;
+                        }
+                    }
+                } else {
+                    if (i <= 21) {
+                        if (i <= 20) {
+                            return 9.536743164E-07f;
+                        } else {
+                            return 4.768371582E-07f;
+                        }
+                    } else {
+                        if (i <= 22) {
+                            return 2.384185791E-07f;
+                        } else {
+                            return 1.192092896E-07f;
+                        }
+                    }
+                }
+            } else {
+                if (i <= 27) {
+                    if (i <= 25) {
+                        if (i <= 24) {
+                            return 5.960464478E-08f;
+                        } else {
+                            return 2.980232239E-08f;
+                        }
+                    } else {
+                        if (i <= 26) {
+                            return 1.490116119E-08f;
+                        } else {
+                            return 7.450580597E-09f;
+                        }
+                    }
+                } else {
+                    if (i <= 29) {
+                        if (i <= 28) {
+                            return 3.725290298E-09f;
+                        } else {
+                            return 1.862645149E-09f;
+                        }
+                    } else {
+                        if (i <= 30) {
+                            return 9.313225746E-10f;
+                        } else {
+                            return 4.656612873E-10f;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-float _getCordic(int i) {
-        if (i == 0) { return 7.853981634E-01f; }
-        else if (i == 1) { return 4.636476090E-01f; }
-        else if (i == 2) { return 2.449786631E-01f; }
-        else if (i == 3) { return 1.243549945E-01f; }
-        else if (i == 4) { return 6.241881000E-02f; }
-        else if (i == 5) { return 3.123983343E-02f; }
-        else if (i == 6) { return 1.562372862E-02f; }
-        else if (i == 7) { return 7.812341060E-03f; }
-        else if (i == 8) { return 3.906230132E-03f; }
-        else if (i == 9) { return 1.953122516E-03f; }
-        else if (i == 10) { return 9.765621896E-04f; }
-        else if (i == 11) { return 4.882812112E-04f; }
-        else if (i == 12) { return 2.441406201E-04f; }
-        else if (i == 13) { return 1.220703119E-04f; }
-        else if (i == 14) { return 6.103515617E-05f; }
-        else if (i == 15) { return 3.051757812E-05f; }
-        else if (i == 16) { return 1.525878906E-05f; }
-        else if (i == 17) { return 7.629394531E-06f; }
-        else if (i == 18) { return 3.814697266E-06f; }
-        else if (i == 19) { return 1.907348633E-06f; }
-        else if (i == 20) { return 9.536743164E-07f; }
-        else if (i == 21) { return 4.768371582E-07f; }
-        else if (i == 22) { return 2.384185791E-07f; }
-        else if (i == 23) { return 1.192092896E-07f; }
-        else if (i == 24) { return 5.960464478E-08f; }
-        else if (i == 25) { return 2.980232239E-08f; }
-        else if (i == 26) { return 1.490116119E-08f; }
-        else if (i == 27) { return 7.450580597E-09f; }
-        else if (i == 28) { return 3.725290298E-09f; }
-        else if (i == 29) { return 1.862645149E-09f; }
-        else if (i == 30) { return 9.313225746E-10f; }
-        else { return 0.0f; }
+    float _getCordic(int i) {
+        if (i <= 15) {
+            if (i <= 7) {
+                if (i <= 3) {
+                    if (i <= 1) {
+                        if (i <= 0) {
+                            return 7.853981634E-01f;
+                        } else {
+                            return 4.636476090E-01f;
+                        }
+                    } else {
+                        if (i <= 2) {
+                            return 2.449786631E-01f;
+                        } else {
+                            return 1.243549945E-01f;
+                        }
+                    }
+                } else {
+                    if (i <= 5) {
+                        if (i <= 4) {
+                            return 6.241881000E-02f;
+                        } else {
+                            return 3.123983343E-02f;
+                        }
+                    } else {
+                        if (i <= 6) {
+                            return 1.562372862E-02f;
+                        } else {
+                            return 7.812341060E-03f;
+                        }
+                    }
+                }
+            } else {
+                if (i <= 11) {
+                    if (i <= 9) {
+                        if (i <= 8) {
+                            return 3.906230132E-03f;
+                        } else {
+                            return 1.953122516E-03f;
+                        }
+                    } else {
+                        if (i <= 10) {
+                            return 9.765621896E-04f;
+                        } else {
+                            return 4.882812112E-04f;
+                        }
+                    }
+                } else {
+                    if (i <= 13) {
+                        if (i <= 12) {
+                            return 2.441406201E-04f;
+                        } else {
+                            return 1.220703119E-04f;
+                        }
+                    } else {
+                        if (i <= 14) {
+                            return 6.103515617E-05f;
+                        } else {
+                            return 3.051757812E-05f;
+                        }
+                    }
+                }
+            }
+        } else {
+            if (i <= 23) {
+                if (i <= 19) {
+                    if (i <= 17) {
+                        if (i <= 16) {
+                            return 1.525878906E-05f;
+                        } else {
+                            return 7.629394531E-06f;
+                        }
+                    } else {
+                        if (i <= 18) {
+                            return 3.814697266E-06f;
+                        } else {
+                            return 1.907348633E-06f;
+                        }
+                    }
+                } else {
+                    if (i <= 21) {
+                        if (i <= 20) {
+                            return 9.536743164E-07f;
+                        } else {
+                            return 4.768371582E-07f;
+                        }
+                    } else {
+                        if (i <= 22) {
+                            return 2.384185791E-07f;
+                        } else {
+                            return 1.192092896E-07f;
+                        }
+                    }
+                }
+            } else {
+                if (i <= 27) {
+                    if (i <= 25) {
+                        if (i <= 24) {
+                            return 5.960464478E-08f;
+                        } else {
+                            return 2.980232239E-08f;
+                        }
+                    } else {
+                        if (i <= 26) {
+                            return 1.490116119E-08f;
+                        } else {
+                            return 7.450580597E-09f;
+                        }
+                    }
+                } else {
+                    if (i <= 29) {
+                        if (i <= 28) {
+                            return 3.725290298E-09f;
+                        } else {
+                            return 1.862645149E-09f;
+                        }
+                    } else {
+                        if (i <= 30) {
+                            return 9.313225746E-10f;
+                        } else {
+                            return 4.656612873E-10f;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

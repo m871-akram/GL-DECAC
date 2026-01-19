@@ -1,59 +1,50 @@
-/*
-* class pour remplir les tables cos et sin et creer des methodes getSin et getCos , utilse dans la class Math.decah
-*/
-
-
-class remplirTable{
+public class remplirTable {
     public static void main(String[] args) {
-        float PI_OVER_2 = 1.57079632679489661923f;
+        float PI_OVER_2 = 1.5707964f;
         int CACHE_SIZE = 512;
         float CACHE_STEP = PI_OVER_2 / (CACHE_SIZE - 1);
         
-        System.out.println("//table sin:");
-
-        for (int i = 0; i < CACHE_SIZE ; i++) {
-            float angle = i * CACHE_STEP;
-            float sin_i = (float)java.lang.Math.sin(angle);
-            System.out.println("float SIN_"+i+ " = " + sin_i + ";");
-        }
+        float[] sinValues = new float[CACHE_SIZE];
+        float[] cosValues = new float[CACHE_SIZE];
         
-        System.out.println("//table cos:");
-
-        for (int i = 0; i < CACHE_SIZE ; i++) {
-            float angle = i * CACHE_STEP;
-            float cos_i = (float)java.lang.Math.cos(angle);
-            System.out.println("float COS_"+i+ " = " + cos_i + ";");
-        }
-
-
-        System.out.println("");
-
-        System.out.println("float _getSinValue(int index) {");
+        // Pré-calcul des valeurs avec Java
         for (int i = 0; i < CACHE_SIZE; i++) {
-            if (i == 0) {
-                System.out.print("    if (index == " + i + ") return SIN_" + i + ";");
-            } else {
-                System.out.print("    else if (index == " + i + ") return SIN_" + i + ";");
-            }
-            System.out.println();
+            sinValues[i] = (float) Math.sin(i * CACHE_STEP);
+            cosValues[i] = (float) Math.cos(i * CACHE_STEP);
         }
-        System.out.println("    else { return 0.0f / 0.0f; } // NaN");
+
+        System.out.println("class TableSinCos {");
+
+        // Génération pour le Sinus
+        System.out.println("    float _getSinValue(int index) {");
+        generateBinarySearch(0, CACHE_SIZE - 1, sinValues, "        ");
+        System.out.println("    }");
+
+        // Génération pour le Cosinus
+        System.out.println("\n    float _getCosValue(int index) {");
+        generateBinarySearch(0, CACHE_SIZE - 1, cosValues, "        ");
+        System.out.println("    }");
+
         System.out.println("}");
+    }
+
+    /**
+     * Génère récursivement l'arbre de recherche binaire
+     */
+    public static void generateBinarySearch(int min, int max, float[] values, String indent) {
+        if (min == max) {
+            // Cas de base : on a trouvé l'index exact
+            System.out.printf("%sreturn %.8Ef;\n", indent, values[min]);
+            return;
+        }
+
+        int mid = (min + max) / 2;
         
-
-
-        System.out.println("");
-
-        System.out.println("float _getCosValue(int index) {");
-        for (int i = 0; i < CACHE_SIZE; i++) {
-            if (i == 0) {
-                System.out.print("    if (index == " + i + ") return COS_" + i + ";");
-            } else {
-                System.out.print("    else if (index == " + i + ") return COS_" + i + ";");
-            }
-            System.out.println();
-        }
-        System.out.println("    else { return 0.0f / 0.0f; } // NaN");
-        System.out.println("}");
+        // Division du domaine de recherche en deux
+        System.out.println(indent + "if (index <= " + mid + ") {");
+        generateBinarySearch(min, mid, values, indent + "    ");
+        System.out.println(indent + "} else {");
+        generateBinarySearch(mid + 1, max, values, indent + "    ");
+        System.out.println(indent + "}");
     }
 }
