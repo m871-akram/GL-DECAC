@@ -1,35 +1,21 @@
-#!/usr/bin/env python3
+"""code python pour remplir la table cordic , et creer une methode deca _getCordic , utilse dans Math.decah"""
 import math
 
-# Fonction récursive pour générer la recherche binaire
-def generate_binary_search(min_idx, max_idx, values, indent):
-    if min_idx == max_idx:
-        # Cas de base : on retourne la valeur au format scientifique
-        val = float(values[min_idx])
-        print(f"{indent}return {val:.9E}f;")
-        return
+for i in range(32):
+    print(f"float cordic{i} = {math.atan(2**(-i)):.9g}f;")  #9chifres en total 
 
-    mid = (min_idx + max_idx) // 2
-    print(f"{indent}if (i <= {mid}) {{")
-    generate_binary_search(min_idx, mid, values, indent + "    ")
-    print(f"{indent}}} else {{")
-    generate_binary_search(mid + 1, max_idx, values, indent + "    ")
-    print(f"{indent}}}")
 
-print("class CordicTable {")
+print("\nfloat _getCordic(int i) {")
+for i in range(32):
+    print(f"    {'if' if i==0 else 'else if'} (i == {i}) return cordic{i};")
 
-# Pré-calcul des valeurs
-pow2_values = [2**(-i) for i in range(32)]
-atan_values = [math.atan(2**(-i)) for i in range(32)]
-
-# Génération de _getPow2
-print("\n    float _getPow2(int i) {")
-generate_binary_search(0, 31, pow2_values, "        ")
+print("    else {")
+print("        float pow2i = 1.0f;")
+print("        int j = 0;")
+print("        while (j < i) {")
+print("            pow2i = pow2i * 0.5f;")
+print("            j = j + 1;")
+print("        }")
+print("        return pow2i;")
 print("    }")
-
-# Génération de _getCordic
-print("\n    float _getCordic(int i) {")
-generate_binary_search(0, 31, atan_values, "        ")
-print("    }")
-
 print("}")

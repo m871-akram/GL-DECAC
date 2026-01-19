@@ -219,19 +219,19 @@ public class DeclClass extends AbstractDeclClass {
         compiler.addLabel(new Label("init." + className));
         compiler.addComment("Initialisation des champs de " + className);
 
-        // --- Préambule ---
-        // TSTO : On a besoin de empiler R1 et de faire un appel (BSR)
-        // Pas de calcul complexe ici, on peut mettre une petite valeur ou utiliser MMU
-        // compiler.addInstruction(new TSTO(3));
-        // compiler.addInstruction(new BOV(new Label("stack_overflow")));
-
-        compiler.addInstruction(new PUSH(Register.R1)); // Sauvegarde
+        // --- Préambule : Sauvegarde de R1 ---
+        // BSR crée automatiquement un frame : empile PC, empile old LB, met LB=SP
+        // Les paramètres sont accessibles via des offsets négatifs depuis LB
+        compiler.addInstruction(new PUSH(Register.R1));
         compiler.getMMU().notifyPush(1);
 
-        // --- 1. Initialisation Héritée ---
-        // L'objet courant est passé dans -2(LB) (convention implicite d'appel méthode/init)
-        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1)); // this -> R1
+        // --- 1. Charger 'this' ---
+        // Avant BSR : SP -> [this] (paramètre empilé par l'appelant)
+        // Après BSR : LB -> [old LB], LB-1 -> [return addr], LB-2 -> [this]
+        // Donc 'this' est à -2(LB)
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
 
+        // --- 2. Initialisation Héritée ---
         // Si on n'est pas Object, on appelle init.Super
         if (superClassDef != null && !"Object".equals(superClassDef.getType().getName().getName())) {
             // Empiler 'this' pour l'appel au parent
@@ -240,11 +240,11 @@ public class DeclClass extends AbstractDeclClass {
             compiler.addInstruction(new SUBSP(1)); // Nettoyage param
         }
 
-        // --- 2. Initialisation Champs Propres ---
-        // Délégation à la liste des champs
+        // --- 3. Initialisation Champs Propres ---
+        // Délégation à la liste des champs (R1 contient toujours 'this')
         fields.codeGenListDeclField(compiler);
 
-        // --- Fin ---
+        // --- Fin : Restauration du contexte ---
         compiler.addInstruction(new POP(Register.R1));
         compiler.getMMU().notifyPop(1);
         compiler.addInstruction(new RTS());

@@ -17,7 +17,7 @@ public class Multiply extends AbstractOpArith {
     public Multiply(AbstractExpr leftOperand, AbstractExpr rightOperand) {
         super(leftOperand, rightOperand);
     }
-    
+
     // Implémente juste l'instruction spécifique
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
@@ -34,7 +34,7 @@ public class Multiply extends AbstractOpArith {
                     compiler.addInstruction(new SHL(opDest));
                 }
             }
-            
+
         } else {
             compiler.addInstruction(new MUL(opSource, opDest));
         }
