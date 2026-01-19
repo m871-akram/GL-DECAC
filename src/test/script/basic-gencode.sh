@@ -49,7 +49,7 @@ test_deca_file() {
             local output_file=$(mktemp)
             local error_file=$(mktemp)
             
-            # Exécuter avec timeout de 10 secondes via perl
+            # Exécuter avec timeout de  secondes via perl
             printf '5\n5\n5\n3.5\n3.5\n' | timeout 10s ima "$ass_file" > "$output_file" 2> "$error_file"
             local exit_code=$?
             
