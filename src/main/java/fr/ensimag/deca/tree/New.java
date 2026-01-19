@@ -89,11 +89,23 @@ public class New extends AbstractExpr {
         compiler.addInstruction(new LEA(vTableAddr, Register.R0));
         compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
 
-        // 4. Appel du constructeur init.Classe
-        // Empiler 'this' (l'objet nouvellement créé qui est dans register)
-        compiler.addInstruction(new PUSH(register));
+        // --- 4. Appel du constructeur : OPTIMISATION PEA ICI ---
+
+        // Explication : register contient l'adresse de l'objet (ex: adresse X).
+        // On veut empiler cette adresse X sur la pile pour que 'init' sache sur qui travailler (paramètre 'this').
+
+        // Ancienne méthode : PUSH(register)
+        // compiler.addInstruction(new PUSH(register));
+
+        // Nouvelle méthode : PEA (Push Effective Address)
+        // PEA calcule l'adresse 0(register) -> c'est à dire le contenu de register
+        // et l'empile directement.
+        compiler.addInstruction(new PEA(new RegisterOffset(0, register)));
+
+        // On prévient quand même le MMU que la pile a grandi de 1 mot
         compiler.getMMU().notifyPush(1);
 
+        // Appel de la méthode d'initialisation
         String initLabel = "init." + classDef.getType().getName().getName();
         compiler.addInstruction(new BSR(new Label(initLabel)));
 
@@ -104,6 +116,7 @@ public class New extends AbstractExpr {
         // Le résultat (l'adresse de l'objet) est toujours dans 'register' car init ne le modifie pas
         // (ou init restaure les registres callee-saved)
     }
+
 
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
