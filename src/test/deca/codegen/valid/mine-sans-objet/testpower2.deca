@@ -1,0 +1,16 @@
+// Description:
+//    Vérifie le cas où l'opérande n'est pas un littéral
+//
+// Resultats:
+//    8
+//
+// Historique:
+//    cree le 18/01/2026
+//
+
+{
+    int x = 2;
+    int y = 4;
+    int z = x * y; 
+    println(z);
+}
