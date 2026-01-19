@@ -1,0 +1,13 @@
+// Description:
+//    Calcul ULP pour: 4.188790
+//
+// Resultats attendus: ulp(4.188790)
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.ulp(4.188790));
+}

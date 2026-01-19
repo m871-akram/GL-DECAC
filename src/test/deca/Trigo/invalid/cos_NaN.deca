@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: cos(NaN)
+//
+// Resultats attendus: NaN
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.cos(NaN));
+}

@@ -112,13 +112,13 @@ public class TestSin {
             mesTests.add(new UnTest(x, (float)java.lang.Math.sin(x)));
         }
 
-        System.out.println("#nom       | fonction   | valeur  | Resultat   ");
+        System.out.println("# nom ; fonction ; valeur ; Resultat");
         int total =0;
         for (UnTest t : mesTests) {
             total += 1;
             verifierSin(t);
         }
-        System.out.println(" #on a "+ total + "test pour la fonction sin");
+        System.out.println("# on a "+ total + "test pour la fonction sin");
         System.out.println("");
 
     }
@@ -128,10 +128,10 @@ public class TestSin {
     public static void verifierSin(UnTest t) {
         String nomTest = "sin_" + t.x;
         if (Float.isNaN(t.attenduSin)) {
-            System.out.printf("%-15s ; %-11s ; %-11.4f ; %s\n", 
+            System.out.printf("%s;%s;%f;%s\n", 
                             nomTest, "sin", t.x,"NAN");
         }
-        System.out.printf("%-15s ; %-11s ; %-11.4f ; %-11.4f\n", 
+        System.out.printf("%s;%s;%f;%f\n", 
                           nomTest, "sin", t.x, t.attenduSin);
     }
 }

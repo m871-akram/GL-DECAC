@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: cos(4.188790)
+//
+// Resultats attendus: -0.500000
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.cos(4.188790));
+}
