@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: sin(0.120000)
+//
+// Resultats attendus: 0.119712
+//
+// Historique:
+//    cree le 19/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.sin(0.120000));
+}
