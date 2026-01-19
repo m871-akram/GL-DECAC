@@ -15,7 +15,7 @@ public class LowerOrEqual extends AbstractOpIneq {
     }
 
 
-    @Override protected Instruction getSccInstruction(GPRegister register) { return new SLE(register); }
+    @Override protected Instruction getAsmCode(GPRegister register) { return new SLE(register); }
 
 
     @Override

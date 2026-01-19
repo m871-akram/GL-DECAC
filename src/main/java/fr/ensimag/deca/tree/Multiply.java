@@ -18,7 +18,7 @@ public class Multiply extends AbstractOpArith {
         super(leftOperand, rightOperand);
     }
 
-    // Implémente juste l'instruction spécifique
+
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
         if(getType().isInt()){

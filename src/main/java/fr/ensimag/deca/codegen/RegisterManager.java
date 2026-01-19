@@ -94,12 +94,7 @@ public class RegisterManager {
         registreCourant = 2;
     }
 
-    /**
-     * Pour le debug
-     */
-    public int getCurrentIndex() {
-        return registreCourant;
-    }
+
 
 }
 

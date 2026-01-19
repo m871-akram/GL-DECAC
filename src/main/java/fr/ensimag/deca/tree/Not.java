@@ -42,20 +42,17 @@ public class Not extends AbstractUnaryExpr {
 
     @Override
     protected void codeGenUnary(DecacCompiler compiler, GPRegister register) {
-        // Si register contient 0 (Faux), SEQ le met à 1 (Vrai)
-        // Si register contient 1 (Vrai), SEQ le met à 0 (Faux)
+        // si reg=0 -> seq met a 1, si reg=1 -> seq met a 0
         compiler.addInstruction(new CMP(0, register));
         compiler.addInstruction(new SEQ(register));
     }
 
     /**
-     * Optimisation du flux de contrôle (pour les if/while).
-     * Inverse la condition de saut.
+     * optim flux controle - inverse condition
      */
     @Override
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
-        // Si on veut sauter quand !A est VRAI, cela veut dire sauter quand A est FAUX.
-        // On appelle récursivement l'opérande en inversant le booléen 'branchOn'.
+        // inverse branchon
         getOperand().codeGenBool(compiler, !branchOn, target);
     }
 }

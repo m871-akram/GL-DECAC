@@ -64,13 +64,10 @@ public class DeclParam extends AbstractDeclParam {
 
     @Override
     protected void codeGenDeclParam(DecacCompiler compiler, int index) {
-        // Calcul de l'adresse relative à LB
-        // index = 0 -> -3(LB)
-        // index = 1 -> -4(LB)
+        // calc adresse relative lb
         int offset = -3 - index;
 
-        // On lie le symbole à cette adresse physique
-        // ATTENTION: getParamDefinition() doit être défini dans Identifier ou on cast
+        // lie symbole a adresse physique
         ParamDefinition paramDef = (ParamDefinition) this.name.getDefinition();
         paramDef.setOperand(new RegisterOffset(offset, Register.LB));
     }

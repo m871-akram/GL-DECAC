@@ -38,17 +38,16 @@ public class ReadFloat extends AbstractReadExpr {
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        // 1. Lecture du flottant (résultat dans R1)
+        // lecture flottant (r1)
         compiler.addInstruction(new RFLOAT());
 
-        // 2. Gestion des erreurs I/O (Overflow ou format invalide)
-        // Utilisation de l'architecture Hardware
+        // gestion erreurs io
         if (!compiler.getCompilerOptions().getNoCheck()) {
             compiler.getIrqController().triggerInterrupt(compiler,
                     InterruptVector.IRQ_IO_ERROR);
         }
 
-        // 3. Déplacer R1 vers le registre cible
+        // deplace vers reg cible
         compiler.addInstruction(new LOAD(Register.R1, register));
     }
 

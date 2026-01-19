@@ -86,18 +86,15 @@ public class DeclField extends AbstractDeclField {
 
     @Override
     protected void codeGenInitField(DecacCompiler compiler) {
-        // Initialisation explicite : field = expr;
-        // Si Initialization est NoInitialization, codeGenInit ne fera rien, c'est parfait.
+        // init explicite
 
-        // R1 contient déjà 'this' (chargé par codeGenInit de DeclClass)
-        // Pas besoin de recharger R1
+        // r1 contient deja this
 
-        // Calculer l'adresse du champ : index(R1)
+        // calc adresse champ
         FieldDefinition fieldDef = name.getFieldDefinition();
         RegisterOffset fieldAddr = new RegisterOffset(fieldDef.getIndex(), Register.R1);
 
-        // Générer le code d'initialisation
-        // On passe l'adresse où stocker le résultat
+        // gen code init
         initialization.codeGenInit(compiler, fieldAddr, fieldDef.getType());
     }
 

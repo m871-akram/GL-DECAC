@@ -86,35 +86,35 @@ public class DeclMethod extends AbstractDeclMethod {
 
     @Override
     protected void codeGenDeclMethod(DecacCompiler compiler) {
-        // 1. Label de la méthode  
+        // label methode
         MethodDefinition methodDef = (MethodDefinition) name.getDefinition();
         Label methodLabel = methodDef.getLabel();
         compiler.addLabel(methodLabel);
         compiler.addComment("Méthode " + name.getName().getName());
 
-        // 2. Nouveau Contexte Mémoire (Reset LB et compteurs pile)
+        // nouveau contexte memoire
         compiler.getMMU().enterNewMethodFrame();
         compiler.getRegisterManager().reset();
 
-        // 3. Gestion des paramètres (Liaison -3(LB)...)
+        // gestion parametres
         params.codeGenListDeclParam(compiler);
 
-        // 4. Créer un programme temporaire pour le corps de la méthode
+        // programme temp pour le corps
         fr.ensimag.ima.pseudocode.IMAProgram bodyProgram = new fr.ensimag.ima.pseudocode.IMAProgram();
         fr.ensimag.ima.pseudocode.IMAProgram originalProgram = compiler.swapProgram(bodyProgram);
         
-        // 5. Générer le corps dans le programme temporaire (ceci va appeler notifyPush/notifyPop)
+        // gen corps
         body.codeGenMethodBody(compiler);
         
-        // 6. Restaurer le programme original
+        // restaure programme
         compiler.swapProgram(originalProgram);
         
-        // 7. Vérifier le type de corps de méthode
+        // check type corps
         if (body instanceof MethodAsmBody) {
-            // Corps assembleur inline - pas de prologue/épilogue, le code ASM est directement injecté
+            // corps asm inline - pas de prologue
             compiler.appendProgram(bodyProgram);
         } else if (body instanceof MethodBody) {
-            // Corps Java normal - générer le prologue
+            // corps java normal - prologue
             int nbLocales = ((MethodBody) body).getLocalVarsCount();
             int maxStack = compiler.getMMU().getStackRequirements();
 
@@ -123,10 +123,10 @@ public class DeclMethod extends AbstractDeclMethod {
                     fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
 
-            // 8. Ajouter le corps après le prologue
+            // ajoute corps
             compiler.appendProgram(bodyProgram);
 
-            // 9. Retour par défaut (RTS) si pas de return explicite
+            // retour par defaut
             compiler.addInstruction(new RTS());
         } else {
             throw new UnsupportedOperationException("Type de corps de méthode non supporté: " + body.getClass());

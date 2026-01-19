@@ -214,40 +214,36 @@ public class Identifier extends AbstractIdentifier {
         Definition def = getDefinition();
 
         if (def.isField()) {
-            // Accès Champ (implicite sur 'this' (-2(LB)))
-            // 1. Charger 'this' dans le registre
+            // acces champ (implicite sur this)
+            // charge this
             compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), register));
 
-            // 2. Charger le champ depuis l'objet (Offset par rapport au début de l'objet)
+            // charge le champ depuis l'objet
             FieldDefinition fieldDef = (FieldDefinition) def;
-            // ATTENTION: index champ commence à 1 (après VTable)
             compiler.addInstruction(new LOAD(new RegisterOffset(fieldDef.getIndex(), register), register));
 
         } else {
-            // Accès Variable Locale / Paramètre / Globale
-            // L'opérande (adresse) a été stockée dans la définition par DeclVar ou DeclParam
+            // acces variable locale/param/globale
             compiler.addInstruction(new LOAD(def.getOperand(), register));
         }
     }
 
     /**
-     * Stocke la valeur d'un registre dans l'identifiant (Écriture)
-     * Utile pour Assign (gauche = source)
+     * stocke valeur dans l'identifiant
      */
     protected void codeGenStore(DecacCompiler compiler, GPRegister source) {
         Definition def = getDefinition();
 
         if (def.isField()) {
-            // Accès Champ (implicite sur 'this')
-            // Il faut un registre temporaire pour calculer l'adresse de 'this'
-            // On utilise R1 (jamais alloué par RegisterManager, toujours dispo comme scratch)
+            // acces champ
+            // utilise r1 comme scratch
             compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R1));
 
             FieldDefinition fieldDef = (FieldDefinition) def;
             compiler.addInstruction(new STORE(source, new RegisterOffset(fieldDef.getIndex(), Register.R1)));
 
         } else {
-            // Variable standard
+            // variable standard
             compiler.addInstruction(new STORE(source, def.getOperand()));
         }
     }

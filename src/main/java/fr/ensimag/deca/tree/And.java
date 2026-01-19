@@ -30,28 +30,27 @@ public class And extends AbstractOpBool {
     @Override
     protected void codeGenBool(DecacCompiler compiler, boolean branchOn, Label target) {
         if (branchOn) {
-            // Sauter à 'target' si (A && B) est Vrai
+            // saut si (A && B) vrai
 
-            // On a besoin d'un label pour sortir si A est faux (Court-circuit)
+            // label pour sortir si a faux
             Label endAndLabel = compiler.getSequencer().genSignal("end_and");
 
-            // 1. Si A est Faux, on arrête tout (on saute à la fin de ce bloc)
+            // si a faux -> fin
             getLeftOperand().codeGenBool(compiler, false, endAndLabel);
 
-            // 2. Si on est ici, A est Vrai. Donc le résultat dépend de B.
-            // Si B est Vrai, on saute à la cible.
+            // si a vrai, teste b
             getRightOperand().codeGenBool(compiler, true, target);
 
-            // 3. Point de sortie si A était faux
+            // point de sortie
             compiler.addLabel(endAndLabel);
 
         } else {
-            // Sauter à 'target' si (A && B) est Faux
+            // saut si (A && B) faux
 
-            // 1. Si A est Faux, tout est Faux -> On saute à target
+            // si a faux -> saut target
             getLeftOperand().codeGenBool(compiler, false, target);
 
-            // 2. Si A est Vrai, on teste B. Si B est Faux -> On saute à target
+            // si a vrai, teste b faux
             getRightOperand().codeGenBool(compiler, false, target);
         }
     }
