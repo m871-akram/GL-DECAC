@@ -43,7 +43,7 @@ public class TestAcosAsin {
 
 
         // quelques valeurs calculées par Java
-        float[] valeurs = {
+        float[] values = {
             0.12f, 
             -0.45f, 
             0.88f , 
@@ -88,11 +88,11 @@ public class TestAcosAsin {
             };
 
 
-        for (float x : angles) {
+        for (float x : values) {
             mesTests.add(new UnTest(x, (float)java.lang.Math.asin(x) , (float)java.lang.Math.acos(x)));
         }
 
-        System.out.println("#nom       ; fonction   ; valeur  ; Resultat   ");
+        System.out.println("#nom;fonction;valeur;Resultat");
         int total =0;
         for (UnTest t : mesTests) {
             total += 1;
@@ -106,22 +106,22 @@ public class TestAcosAsin {
   
 
     public static void verifierAsin(UnTest t) {
-        string nomTest = "asin_" + t;
+        String nomTest = "asin_" + t;
         if (Float.isNaN(t.attenduAsin)) {
-            System.out.printf("%-15s | %-11s | %-11s | %s\n", 
+            System.out.printf("%s;%s;%s;%s\n", 
                             nomTest, "asin", t.x,"NAN");
         }
-        System.out.printf("%-11s | %-11s | %-11.4f | %-11.4f\n", 
+        System.out.printf("%s;%s;%f;%f\n", 
                           nomTest, "asin", t.x, t.attenduAsin);
     }
 
     public static void verifierAcos(UnTest t) {
-        string nomTest = "acos_" + t;
+        String nomTest = "acos_" + t;
         if (Float.isNaN(t.attenduAcos)) {
-            System.out.printf("%-15s | %-11s | %-11s | %s\n", 
+            System.out.printf("%s;%s;%s;%s\n", 
                             nomTest, "acos", t.x,"NAN");
         }
-        System.out.printf("%-11s | %-11s | %-11.4f | %-11.4f\n", 
+        System.out.printf("%s;%s;%f;%f\n", 
                           nomTest, "acos", t.x, t.attenduAcos);
     }
 }
