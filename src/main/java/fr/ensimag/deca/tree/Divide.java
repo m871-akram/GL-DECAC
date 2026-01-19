@@ -24,7 +24,7 @@ public class Divide extends AbstractOpArith {
 
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
-            
+
         if (getType().isInt()) {
             int shiftR = getRightOperand().isPowerOftow();
             if(shiftR != -1){

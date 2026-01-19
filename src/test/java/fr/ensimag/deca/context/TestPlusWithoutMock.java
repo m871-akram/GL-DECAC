@@ -5,13 +5,11 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tree.AbstractExpr;
 import fr.ensimag.deca.tree.Plus;
 import fr.ensimag.deca.tree.TreeFunction;
-import fr.ensimag.ima.pseudocode.GPRegister;
-import fr.ensimag.ima.pseudocode.ImmediateInteger;
-import fr.ensimag.ima.pseudocode.instructions.LOAD;
-
 import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import fr.ensimag.ima.pseudocode.GPRegister;
 
 /**
  * Test for the Plus node in a manual way. The same test would be much easier to
@@ -49,7 +47,7 @@ public class TestPlusWithoutMock {
 
         @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        throw new UnsupportedOperationException("Should not be called.");
+        throw new UnsupportedOperationException("ca beugger ici pour une raison dont elle avait besoin un import car on a ajouter le codegen expr");
     }
 
         @Override

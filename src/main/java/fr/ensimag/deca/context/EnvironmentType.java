@@ -132,16 +132,7 @@ public class EnvironmentType {
         }
         return false;
     }
-    public boolean castCompatible(Type T1, Type T2) {
-        if (T1.isVoid()) {
-            return false;
-        }
-        if (assignCompatible(T1,T2) || assignCompatible(T2,T1)) {
-            return true;
-        }
-    
-        return false;
-    }
+
     public final VoidType    VOID;
     public final IntType     INT;
     public final FloatType   FLOAT;

@@ -70,7 +70,7 @@ public class Main extends AbstractMain {
         // C. ADDSP : Réservation pour les variables locales
         compiler.addInstruction(new ADDSP(nbLocales));
 
-        // 4. Instructions
+        // A FAIRE: traiter les déclarations de variables.
         compiler.addComment("Beginning of main instructions:");
         insts.codeGenListInst(compiler);
     }
