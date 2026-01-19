@@ -1,0 +1,14 @@
+// Description:
+//    corps de while vide
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+    while (false) {
+        // corps vide
+    }
+}

@@ -1,0 +1,14 @@
+// Description:
+//    or dans if
+//
+// Resultats:
+//    ok
+//
+// Historique:
+//    cree le 18/01/2026
+
+{
+   if (true || false ) {}
+   println ("ok");
+
+} 
