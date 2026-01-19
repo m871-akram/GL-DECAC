@@ -13,8 +13,8 @@ class B extends A {}
 
 
 {
-   A a new B();
-   if (a instanceOf B){
+   A a = new B();
+   if (a instanceof B){
     println("OK");
    }
 }
