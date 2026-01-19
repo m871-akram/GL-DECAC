@@ -1,0 +1,12 @@
+// Description:
+//    Erreur de contexte : division d'un int par un boolean
+//
+// Resultats:
+//    Ligne 10 : Erreur
+//
+// Historique:
+//    cree le 18/01/2026
+//
+{
+    int x = 10 / true; 
+}
