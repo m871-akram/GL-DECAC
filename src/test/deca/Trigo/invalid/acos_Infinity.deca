@@ -1,7 +1,7 @@
 // Description:
-//    Test TRIGO: asin(-0.400000)
+//    Test TRIGO: acos(Infinity)
 //
-// Resultats attendus: -0.411517
+// Resultats attendus: NaN
 //
 // Historique:
 //    cree le 19/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.asin(-0.400000));
+    println(m.acos(Infinity));
 }

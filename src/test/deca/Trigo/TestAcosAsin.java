@@ -106,7 +106,7 @@ public class TestAcosAsin {
   
 
     public static void verifierAsin(UnTest t) {
-        String nomTest = "asin_" + t;
+        String nomTest = "asin_" + t.x;
         if (Float.isNaN(t.attenduAsin)) {
             System.out.printf("%s;%s;%s;%s\n", 
                             nomTest, "asin", t.x,"NAN");
@@ -116,7 +116,7 @@ public class TestAcosAsin {
     }
 
     public static void verifierAcos(UnTest t) {
-        String nomTest = "acos_" + t;
+        String nomTest = "acos_" + t.x;
         if (Float.isNaN(t.attenduAcos)) {
             System.out.printf("%s;%s;%s;%s\n", 
                             nomTest, "acos", t.x,"NAN");
