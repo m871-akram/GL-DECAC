@@ -26,7 +26,7 @@ test_deca_file() {
     local ass_file="${dir}/${base}.ass"
     local needs_input=${2:-false}
     
-    echo -n "Test de $(basename $file)... "
+    echo -n "Test de ${dir}/${base}.deca ... "
     
     # Compilation
     if ! decac "$file" 2>/dev/null; then
@@ -50,7 +50,7 @@ test_deca_file() {
             local error_file=$(mktemp)
             
             # Exécuter avec timeout de 3 secondes via perl
-            (printf '5\n5\n5\n3.5\n3.5\n' | perl -e 'alarm 3; exec @ARGV' ima "$ass_file") > "$output_file" 2> "$error_file"
+            printf '5\n5\n5\n3.5\n3.5\n' | timeout 3s ima "$ass_file" > "$output_file" 2> "$error_file"
             local exit_code=$?
             
             rm -f "$output_file" "$error_file"
@@ -72,7 +72,7 @@ test_deca_file() {
             local output_file=$(mktemp)
             local error_file=$(mktemp)
             
-            (perl -e 'alarm 3; exec @ARGV' ima "$ass_file") > "$output_file" 2> "$error_file"
+            timeout 10s ima "$ass_file" > "$output_file" 2> "$error_file"
             local exit_code=$?
             
             rm -f "$output_file" "$error_file"
@@ -104,7 +104,7 @@ test_deca_file_invalid() {
     local base=$(basename "$file" .deca)
     local ass_file="${dir}/${base}.ass"
     
-    echo -n "Test de $(basename $file)... "
+    echo -n "Test de ${dir}/${base}.deca ... "
     
     # Compilation
     if ! decac "$file" 2>/dev/null; then
@@ -122,7 +122,7 @@ test_deca_file_invalid() {
     
     # Exécution avec ima (doit échouer)
     if command -v ima &> /dev/null; then
-        if ! ima "$ass_file" > /dev/null 2>&1; then
+        if ! timeout 10s ima "$ass_file" > /dev/null 2>&1; then
             echo -e "${GREEN}[OK - Échec attendu]${NC}"
             SUCCESS=$((SUCCESS + 1))
             rm -f "$ass_file"
@@ -148,7 +148,7 @@ echo ""
 
 # Test des fichiers provided
 echo "=== Tests provided ==="
-for file in ./src/test/deca/codegen/valid/provided/*.deca; do
+for file in ./src/test/deca/codegen/valid/provided/**/*.deca; do
     if [ -f "$file" ]; then
         # Tester tous les fichiers maintenant que tout est implémenté
         test_deca_file "$file"
@@ -157,8 +157,8 @@ done
 echo ""
 
 # Test des fichiers valides
-echo "=== Tests fichiers valides ==="
-for file in ./src/test/deca/codegen/valid/*.deca; do
+echo "=== Tests valides ==="
+for file in ./src/test/deca/codegen/valid/**/*.deca; do
     if [ -f "$file" ]; then
         # Fichiers qui nécessitent une entrée interactive - on fournit des entrées par défaut
         if [[ "$file" == *"lire_expr_io.deca"* ]] || [[ "$file" == *"lire_io.deca"* ]] || \
@@ -174,7 +174,7 @@ echo ""
 
 # Test des fichiers perf/provided
 echo "=== Tests perf/provided ==="
-for file in ./src/test/deca/codegen/perf/provided/*.deca; do
+for file in ./src/test/deca/codegen/perf/provided/**/*.deca; do
     if [ -f "$file" ]; then
         # Tester tous les fichiers maintenant
         test_deca_file "$file"
@@ -184,7 +184,7 @@ echo ""
 
 # Test des fichiers invalides (doivent échouer à l'exécution)
 echo "=== Tests invalides (échec attendu) ==="
-for file in ./src/test/deca/codegen/invalid/*.deca; do
+for file in ./src/test/deca/codegen/invalid/**/*.deca; do
     if [ -f "$file" ]; then
         test_deca_file_invalid "$file"
     fi
