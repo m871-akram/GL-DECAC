@@ -1,0 +1,19 @@
+// Description:
+//    return d'une expression longue
+//
+// Resultats:
+//    55
+//
+// Historique:
+//    cree le 18/01/2026
+
+class A {
+    int methode() {
+        return (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
+    }
+}
+
+{
+    A a = new A();
+    println(a.methode());
+}
