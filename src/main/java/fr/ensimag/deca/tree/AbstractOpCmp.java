@@ -37,7 +37,7 @@ public abstract class AbstractOpCmp extends AbstractBinaryExpr {
                 return this.getType();
             }
         }
-        if (!compiler.environmentType.castCompatible(t1, t2)) {
+        if (!compiler.environmentType.aritCompatible(t1, t2)) {
             throw new ContextualError(
                 "Opérandes arithmétiques doivent être int ou float, pas " + 
                 t1 + " et " + t2,
