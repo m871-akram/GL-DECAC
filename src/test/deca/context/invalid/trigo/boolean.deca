@@ -1,0 +1,15 @@
+// Description:
+//    appel a atan avec boolean
+//
+// Resultats:
+//    erreur
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    println("atan(true) = ", m.atan(true));
+}

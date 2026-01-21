@@ -1,0 +1,15 @@
+// Description:
+//    appel a cos avec string
+//
+// Resultats:
+//    erreur
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    println("cos("5.5) = ", m.cos("5.5"));
+}

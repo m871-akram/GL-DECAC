@@ -1,0 +1,15 @@
+// Description:
+//    appel a asin avec 2 parametres
+//
+// Resultats:
+//    erreur
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    println("asin(1.9 , 3.5) = ", m.asinn(1.9 , 3.5));
+}

@@ -1,0 +1,13 @@
+// Description:
+//    appel a ulp  sans avoir deja  instantie
+//
+// Resultats:
+//    erreur
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    float ulp = Math.ulp(3.6);
+}

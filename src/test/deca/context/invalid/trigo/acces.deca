@@ -1,0 +1,14 @@
+// Description:
+//    acces interdit a PI (protected)
+//
+// Resultats:
+//    erreur
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    float pi = m.PI;
+}
