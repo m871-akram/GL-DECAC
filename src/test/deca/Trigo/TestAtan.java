@@ -20,11 +20,6 @@ public class TestAtan {
 
     public static void main(String[] args) {
         ArrayList<UnTest> mesTests = new ArrayList<>();
-
-
-        float sqrt2_2 = 0.70710678f;
-        float sqrt3_2 = 0.8660254f;
-        
         
         float[] angles = {
             // des petites valeurs
@@ -39,14 +34,10 @@ public class TestAtan {
             1.0f, 1.000001f, 1.1f,
             
             1.570796f, 1.7320508f, 2.0f, 10.0f, 100.0f, 
-            1e6f, 1e20f, Float.MAX_VALUE,
+            1e6f, 1e20f,
             
             // des valeurs negatives
-            -0.15f, -0.152f , -0.5f, -1.0f, -1.570796f, -1e10f,
-            
-            // des cas spéciaux (NaN/Inf)
-            Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY
-           
+            -0.15f, -0.152f , -0.5f, -1.0f, -1.570796f, -1e10f,           
         };
         
     

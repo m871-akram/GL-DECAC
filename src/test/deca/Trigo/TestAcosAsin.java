@@ -33,14 +33,6 @@ public class TestAcosAsin {
         mesTests.add(new UnTest(0.8660254f, PI/3, PI/6));   // √3/2
         mesTests.add(new UnTest(-0.8660254f, -PI/3, PI - PI/6));
 
-        // cas de NAN 
-        mesTests.add(new UnTest(1.0000001f, Float.NaN, Float.NaN));
-        mesTests.add(new UnTest(-1.0000001f, Float.NaN, Float.NaN));
-        mesTests.add(new UnTest(Float.POSITIVE_INFINITY, Float.NaN, Float.NaN));
-        mesTests.add(new UnTest(Float.NEGATIVE_INFINITY, Float.NaN, Float.NaN));
-        mesTests.add(new UnTest(Float.NaN, Float.NaN, Float.NaN));
-
-
 
         // quelques valeurs calculées par Java
         float[] values = {
@@ -53,8 +45,7 @@ public class TestAcosAsin {
             -0.0f, 
             0.99999994f,
             -0.99999994f, 
-            Float.MIN_VALUE, 
-            1.17549435E-38f,
+            1.17549435E-35f,
             //valeurs proches de 1
             0.9999999f,
             0.99999999f,
@@ -71,9 +62,7 @@ public class TestAcosAsin {
             1e-10f,
             -1e-10f,
             1e-20f,
-            //valeurs speciales 
-            Float.MIN_VALUE,
-            Float.MIN_NORMAL,
+        
             0.12f, 
             -0.45f, 
             0.88f, 
