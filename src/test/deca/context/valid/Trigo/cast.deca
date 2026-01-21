@@ -1,0 +1,15 @@
+// Description:
+//    appel a sin avec un cast float
+//
+// Resultats:
+//    0
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    println("sin(0) = ", m.sin((float)(0)));
+}

@@ -1,0 +1,15 @@
+// Description:
+//    appel a atan sur une exp arith
+//
+// Resultats:
+//    0
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    println("atan(0.1 - 0.1) = ", m.atan(0.1 - 0.1));
+}

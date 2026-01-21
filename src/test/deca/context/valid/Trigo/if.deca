@@ -1,0 +1,20 @@
+
+// Description:
+//    appel a atan a l'interieur d'une if/else
+//
+// Resultats:
+//    1.0
+//
+// Historique:
+//    cree le 21/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+
+    if (m.atan(1.0f) > 0.0f) {
+        println("cos(0) = ", m.cos((float)(0)))
+    else{ 
+        println("sin(0) = ", m.sin((float)(0)));};
+    }
+}
