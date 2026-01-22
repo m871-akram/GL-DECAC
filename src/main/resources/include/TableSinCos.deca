@@ -1,5 +1,5 @@
 class TableSinCos{
-    
+
 float _getSinValue(int index) {
     if (index < 64) {
         if (index < 32) {
@@ -7,37 +7,61 @@ float _getSinValue(int index) {
                 if (index < 8) {
                     if (index < 4) {
                         if (index < 2) {
-                            if (index == 0) return 0.0f;
-                            else return 0.012271538f;  // 1
+                            if (index == 0) {
+                                return 0.0f;
+                            } else {
+                                return 0.012271538f;  // 1
+                            }
                         } else {
-                            if (index == 2) return 0.024541229f;
-                            else return 0.036807224f;  // 3
+                            if (index == 2) {
+                                return 0.024541229f;
+                            } else {
+                                return 0.036807224f;  // 3
+                            }
                         }
                     } else {
                         if (index < 6) {
-                            if (index == 4) return 0.049067676f;
-                            else return 0.06132074f;   // 5
+                            if (index == 4) {
+                                return 0.049067676f;
+                            } else {
+                                return 0.06132074f;   // 5
+                            }
                         } else {
-                            if (index == 6) return 0.07356457f;
-                            else return 0.08579731f;   // 7
+                            if (index == 6) {
+                                return 0.07356457f;
+                            } else {
+                                return 0.08579731f;   // 7
+                            }
                         }
                     }
                 } else {
                     if (index < 12) {
                         if (index < 10) {
-                            if (index == 8) return 0.09801714f;
-                            else return 0.110222205f;  // 9
+                            if (index == 8) {
+                                return 0.09801714f;
+                            } else {
+                                return 0.110222205f;  // 9
+                            }
                         } else {
-                            if (index == 10) return 0.12241068f;
-                            else return 0.1345807f;    // 11
+                            if (index == 10) {
+                                return 0.12241068f;
+                            } else {
+                                return 0.1345807f;    // 11
+                            }
                         }
                     } else {
                         if (index < 14) {
-                            if (index == 12) return 0.14673047f;
-                            else return 0.15885815f;   // 13
+                            if (index == 12) {
+                                return 0.14673047f;
+                            } else {
+                                return 0.15885815f;   // 13
+                            }
                         } else {
-                            if (index == 14) return 0.1709619f;
-                            else return 0.18303989f;   // 15
+                            if (index == 14) {
+                                return 0.1709619f;
+                            } else {
+                                return 0.18303989f;   // 15
+                            }
                         }
                     }
                 }
@@ -45,37 +69,61 @@ float _getSinValue(int index) {
                 if (index < 24) {
                     if (index < 20) {
                         if (index < 18) {
-                            if (index == 16) return 0.19509032f;
-                            else return 0.20711137f;   // 17
+                            if (index == 16) {
+                                return 0.19509032f;
+                            } else {
+                                return 0.20711137f;   // 17
+                            }
                         } else {
-                            if (index == 18) return 0.21910124f;
-                            else return 0.23105811f;   // 19
+                            if (index == 18) {
+                                return 0.21910124f;
+                            } else {
+                                return 0.23105811f;   // 19
+                            }
                         }
                     } else {
                         if (index < 22) {
-                            if (index == 20) return 0.24298018f;
-                            else return 0.25486565f;   // 21
+                            if (index == 20) {
+                                return 0.24298018f;
+                            } else {
+                                return 0.25486565f;   // 21
+                            }
                         } else {
-                            if (index == 22) return 0.26671276f;
-                            else return 0.2785197f;    // 23
+                            if (index == 22) {
+                                return 0.26671276f;
+                            } else {
+                                return 0.2785197f;    // 23
+                            }
                         }
                     }
                 } else {
                     if (index < 28) {
                         if (index < 26) {
-                            if (index == 24) return 0.29028466f;
-                            else return 0.30200595f;   // 25
+                            if (index == 24) {
+                                return 0.29028466f;
+                            } else {
+                                return 0.30200595f;   // 25
+                            }
                         } else {
-                            if (index == 26) return 0.31368175f;
-                            else return 0.3253103f;    // 27
+                            if (index == 26) {
+                                return 0.31368175f;
+                            } else {
+                                return 0.3253103f;    // 27
+                            }
                         }
                     } else {
                         if (index < 30) {
-                            if (index == 28) return 0.33688985f;
-                            else return 0.34841868f;   // 29
+                            if (index == 28) {
+                                return 0.33688985f;
+                            } else {
+                                return 0.34841868f;   // 29
+                            }
                         } else {
-                            if (index == 30) return 0.35989505f;
-                            else return 0.3713172f;    // 31
+                            if (index == 30) {
+                                return 0.35989505f;
+                            } else {
+                                return 0.3713172f;    // 31
+                            }
                         }
                     }
                 }
@@ -85,37 +133,61 @@ float _getSinValue(int index) {
                 if (index < 40) {
                     if (index < 36) {
                         if (index < 34) {
-                            if (index == 32) return 0.38268343f;
-                            else return 0.39399204f;   // 33
+                            if (index == 32) {
+                                return 0.38268343f;
+                            } else {
+                                return 0.39399204f;   // 33
+                            }
                         } else {
-                            if (index == 34) return 0.40524134f;
-                            else return 0.41642955f;   // 35
+                            if (index == 34) {
+                                return 0.40524134f;
+                            } else {
+                                return 0.41642955f;   // 35
+                            }
                         }
                     } else {
                         if (index < 38) {
-                            if (index == 36) return 0.42755508f;
-                            else return 0.43861624f;   // 37
+                            if (index == 36) {
+                                return 0.42755508f;
+                            } else {
+                                return 0.43861624f;   // 37
+                            }
                         } else {
-                            if (index == 38) return 0.44961134f;
-                            else return 0.4605387f;    // 39
+                            if (index == 38) {
+                                return 0.44961134f;
+                            } else {
+                                return 0.4605387f;    // 39
+                            }
                         }
                     }
                 } else {
                     if (index < 44) {
                         if (index < 42) {
-                            if (index == 40) return 0.47139674f;
-                            else return 0.48218396f;   // 41
+                            if (index == 40) {
+                                return 0.47139674f;
+                            } else {
+                                return 0.48218396f;   // 41
+                            }
                         } else {
-                            if (index == 42) return 0.49289823f;
-                            else return 0.5035384f;    // 43
+                            if (index == 42) {
+                                return 0.49289823f;
+                            } else {
+                                return 0.5035384f;    // 43
+                            }
                         }
                     } else {
                         if (index < 46) {
-                            if (index == 44) return 0.51410276f;
-                            else return 0.52458966f;   // 45
+                            if (index == 44) {
+                                return 0.51410276f;
+                            } else {
+                                return 0.52458966f;   // 45
+                            }
                         } else {
-                            if (index == 46) return 0.53499764f;
-                            else return 0.54532498f;   // 47
+                            if (index == 46) {
+                                return 0.53499764f;
+                            } else {
+                                return 0.54532498f;   // 47
+                            }
                         }
                     }
                 }
@@ -123,37 +195,61 @@ float _getSinValue(int index) {
                 if (index < 56) {
                     if (index < 52) {
                         if (index < 50) {
-                            if (index == 48) return 0.55557024f;
-                            else return 0.5657318f;    // 49
+                            if (index == 48) {
+                                return 0.55557024f;
+                            } else {
+                                return 0.5657318f;    // 49
+                            }
                         } else {
-                            if (index == 50) return 0.57580817f;
-                            else return 0.58579785f;   // 51
+                            if (index == 50) {
+                                return 0.57580817f;
+                            } else {
+                                return 0.58579785f;   // 51
+                            }
                         }
                     } else {
                         if (index < 54) {
-                            if (index == 52) return 0.5956993f;
-                            else return 0.605511f;     // 53
+                            if (index == 52) {
+                                return 0.5956993f;
+                            } else {
+                                return 0.605511f;      // 53
+                            }
                         } else {
-                            if (index == 54) return 0.61523163f;
-                            else return 0.6248595f;    // 55
+                            if (index == 54) {
+                                return 0.61523163f;
+                            } else {
+                                return 0.6248595f;     // 55
+                            }
                         }
                     }
                 } else {
                     if (index < 60) {
                         if (index < 58) {
-                            if (index == 56) return 0.6343933f;
-                            else return 0.64383156f;   // 57
+                            if (index == 56) {
+                                return 0.6343933f;
+                            } else {
+                                return 0.64383156f;   // 57
+                            }
                         } else {
-                            if (index == 58) return 0.65317285f;
-                            else return 0.6624158f;    // 59
+                            if (index == 58) {
+                                return 0.65317285f;
+                            } else {
+                                return 0.6624158f;     // 59
+                            }
                         }
                     } else {
                         if (index < 62) {
-                            if (index == 60) return 0.671559f;
-                            else return 0.680601f;     // 61
+                            if (index == 60) {
+                                return 0.671559f;
+                            } else {
+                                return 0.680601f;      // 61
+                            }
                         } else {
-                            if (index == 62) return 0.68954056f;
-                            else return 0.69837624f;   // 63
+                            if (index == 62) {
+                                return 0.68954056f;
+                            } else {
+                                return 0.69837624f;   // 63
+                            }
                         }
                     }
                 }
@@ -165,37 +261,61 @@ float _getSinValue(int index) {
                 if (index < 72) {
                     if (index < 68) {
                         if (index < 66) {
-                            if (index == 64) return 0.70710677f;
-                            else return 0.7157308f;    // 65
+                            if (index == 64) {
+                                return 0.70710677f;
+                            } else {
+                                return 0.7157308f;     // 65
+                            }
                         } else {
-                            if (index == 66) return 0.7242471f;
-                            else return 0.7326543f;    // 67
+                            if (index == 66) {
+                                return 0.7242471f;
+                            } else {
+                                return 0.7326543f;     // 67
+                            }
                         }
                     } else {
                         if (index < 70) {
-                            if (index == 68) return 0.7409511f;
-                            else return 0.7491364f;    // 69
+                            if (index == 68) {
+                                return 0.7409511f;
+                            } else {
+                                return 0.7491364f;     // 69
+                            }
                         } else {
-                            if (index == 70) return 0.7572088f;
-                            else return 0.7651673f;    // 71
+                            if (index == 70) {
+                                return 0.7572088f;
+                            } else {
+                                return 0.7651673f;     // 71
+                            }
                         }
                     }
                 } else {
                     if (index < 76) {
                         if (index < 74) {
-                            if (index == 72) return 0.77301043f;
-                            else return 0.7807372f;    // 73
+                            if (index == 72) {
+                                return 0.77301043f;
+                            } else {
+                                return 0.7807372f;     // 73
+                            }
                         } else {
-                            if (index == 74) return 0.7883464f;
-                            else return 0.7958369f;    // 75
+                            if (index == 74) {
+                                return 0.7883464f;
+                            } else {
+                                return 0.7958369f;     // 75
+                            }
                         }
                     } else {
                         if (index < 78) {
-                            if (index == 76) return 0.8032075f;
-                            else return 0.8104572f;    // 77
+                            if (index == 76) {
+                                return 0.8032075f;
+                            } else {
+                                return 0.8104572f;     // 77
+                            }
                         } else {
-                            if (index == 78) return 0.8175848f;
-                            else return 0.8245893f;    // 79
+                            if (index == 78) {
+                                return 0.8175848f;
+                            } else {
+                                return 0.8245893f;     // 79
+                            }
                         }
                     }
                 }
@@ -203,37 +323,61 @@ float _getSinValue(int index) {
                 if (index < 88) {
                     if (index < 84) {
                         if (index < 82) {
-                            if (index == 80) return 0.8314696f;
-                            else return 0.8382247f;    // 81
+                            if (index == 80) {
+                                return 0.8314696f;
+                            } else {
+                                return 0.8382247f;     // 81
+                            }
                         } else {
-                            if (index == 82) return 0.8448536f;
-                            else return 0.8513552f;    // 83
+                            if (index == 82) {
+                                return 0.8448536f;
+                            } else {
+                                return 0.8513552f;     // 83
+                            }
                         }
                     } else {
                         if (index < 86) {
-                            if (index == 84) return 0.8577286f;
-                            else return 0.86397284f;   // 85
+                            if (index == 84) {
+                                return 0.8577286f;
+                            } else {
+                                return 0.86397284f;    // 85
+                            }
                         } else {
-                            if (index == 86) return 0.87008697f;
-                            else return 0.8760701f;    // 87
+                            if (index == 86) {
+                                return 0.87008697f;
+                            } else {
+                                return 0.8760701f;     // 87
+                            }
                         }
                     }
                 } else {
                     if (index < 92) {
                         if (index < 90) {
-                            if (index == 88) return 0.8819213f;
-                            else return 0.88763964f;   // 89
+                            if (index == 88) {
+                                return 0.8819213f;
+                            } else {
+                                return 0.88763964f;    // 89
+                            }
                         } else {
-                            if (index == 90) return 0.8932243f;
-                            else return 0.8986745f;    // 91
+                            if (index == 90) {
+                                return 0.8932243f;
+                            } else {
+                                return 0.8986745f;     // 91
+                            }
                         }
                     } else {
                         if (index < 94) {
-                            if (index == 92) return 0.9039893f;
-                            else return 0.909168f;     // 93
+                            if (index == 92) {
+                                return 0.9039893f;
+                            } else {
+                                return 0.909168f;      // 93
+                            }
                         } else {
-                            if (index == 94) return 0.9142098f;
-                            else return 0.9191139f;    // 95
+                            if (index == 94) {
+                                return 0.9142098f;
+                            } else {
+                                return 0.9191139f;     // 95
+                            }
                         }
                     }
                 }
@@ -243,37 +387,61 @@ float _getSinValue(int index) {
                 if (index < 104) {
                     if (index < 100) {
                         if (index < 98) {
-                            if (index == 96) return 0.9238795f;
-                            else return 0.9285061f;    // 97
+                            if (index == 96) {
+                                return 0.9238795f;
+                            } else {
+                                return 0.9285061f;     // 97
+                            }
                         } else {
-                            if (index == 98) return 0.9329928f;
-                            else return 0.937339f;     // 99
+                            if (index == 98) {
+                                return 0.9329928f;
+                            } else {
+                                return 0.937339f;      // 99
+                            }
                         }
                     } else {
                         if (index < 102) {
-                            if (index == 100) return 0.94154406f;
-                            else return 0.9456073f;    // 101
+                            if (index == 100) {
+                                return 0.94154406f;
+                            } else {
+                                return 0.9456073f;     // 101
+                            }
                         } else {
-                            if (index == 102) return 0.94952816f;
-                            else return 0.953306f;     // 103
+                            if (index == 102) {
+                                return 0.94952816f;
+                            } else {
+                                return 0.953306f;      // 103
+                            }
                         }
                     }
                 } else {
                     if (index < 108) {
                         if (index < 106) {
-                            if (index == 104) return 0.95694035f;
-                            else return 0.9604305f;    // 105
+                            if (index == 104) {
+                                return 0.95694035f;
+                            } else {
+                                return 0.9604305f;     // 105
+                            }
                         } else {
-                            if (index == 106) return 0.96377605f;
-                            else return 0.96697647f;   // 107
+                            if (index == 106) {
+                                return 0.96377605f;
+                            } else {
+                                return 0.96697647f;    // 107
+                            }
                         }
                     } else {
                         if (index < 110) {
-                            if (index == 108) return 0.97003126f;
-                            else return 0.97293997f;   // 109
+                            if (index == 108) {
+                                return 0.97003126f;
+                            } else {
+                                return 0.97293997f;    // 109
+                            }
                         } else {
-                            if (index == 110) return 0.9757021f;
-                            else return 0.9783174f;    // 111
+                            if (index == 110) {
+                                return 0.9757021f;
+                            } else {
+                                return 0.9783174f;     // 111
+                            }
                         }
                     }
                 }
@@ -281,37 +449,61 @@ float _getSinValue(int index) {
                 if (index < 120) {
                     if (index < 116) {
                         if (index < 114) {
-                            if (index == 112) return 0.9807853f;
-                            else return 0.9831055f;    // 113
+                            if (index == 112) {
+                                return 0.9807853f;
+                            } else {
+                                return 0.9831055f;     // 113
+                            }
                         } else {
-                            if (index == 114) return 0.98527764f;
-                            else return 0.9873014f;    // 115
+                            if (index == 114) {
+                                return 0.98527764f;
+                            } else {
+                                return 0.9873014f;     // 115
+                            }
                         }
                     } else {
                         if (index < 118) {
-                            if (index == 116) return 0.9891765f;
-                            else return 0.99090266f;   // 117
+                            if (index == 116) {
+                                return 0.9891765f;
+                            } else {
+                                return 0.99090266f;    // 117
+                            }
                         } else {
-                            if (index == 118) return 0.99247956f;
-                            else return 0.99390697f;   // 119
+                            if (index == 118) {
+                                return 0.99247956f;
+                            } else {
+                                return 0.99390697f;    // 119
+                            }
                         }
                     }
                 } else {
                     if (index < 124) {
                         if (index < 122) {
-                            if (index == 120) return 0.9951847f;
-                            else return 0.9963126f;    // 121
+                            if (index == 120) {
+                                return 0.9951847f;
+                            } else {
+                                return 0.9963126f;     // 121
+                            }
                         } else {
-                            if (index == 122) return 0.99729043f;
-                            else return 0.9981181f;    // 123
+                            if (index == 122) {
+                                return 0.99729043f;
+                            } else {
+                                return 0.9981181f;     // 123
+                            }
                         }
                     } else {
                         if (index < 126) {
-                            if (index == 124) return 0.99879545f;
-                            else return 0.9993224f;    // 125
+                            if (index == 124) {
+                                return 0.99879545f;
+                            } else {
+                                return 0.9993224f;     // 125
+                            }
                         } else {
-                            if (index == 126) return 0.9996988f;
-                            else return 1.0f;          // 127
+                            if (index == 126) {
+                                return 0.9996988f;
+                            } else {
+                                return 1.0f;           // 127
+                            }
                         }
                     }
                 }
@@ -319,10 +511,6 @@ float _getSinValue(int index) {
         }
     }
 }
-
-
-
-
 float _getCosValue(int index) {
     if (index < 64) {
         if (index < 32) {
@@ -330,37 +518,61 @@ float _getCosValue(int index) {
                 if (index < 8) {
                     if (index < 4) {
                         if (index < 2) {
-                            if (index == 0) return 1.0f;
-                            else return 0.9999247f;    // 1
+                            if (index == 0) {
+                                return 1.0f;
+                            } else {
+                                return 0.9999247f;    // 1
+                            }
                         } else {
-                            if (index == 2) return 0.9996988f;
-                            else return 0.9993224f;    // 3
+                            if (index == 2) {
+                                return 0.9996988f;
+                            } else {
+                                return 0.9993224f;    // 3
+                            }
                         }
                     } else {
                         if (index < 6) {
-                            if (index == 4) return 0.99879545f;
-                            else return 0.9981181f;    // 5
+                            if (index == 4) {
+                                return 0.99879545f;
+                            } else {
+                                return 0.9981181f;    // 5
+                            }
                         } else {
-                            if (index == 6) return 0.99729043f;
-                            else return 0.9963126f;    // 7
+                            if (index == 6) {
+                                return 0.99729043f;
+                            } else {
+                                return 0.9963126f;    // 7
+                            }
                         }
                     }
                 } else {
                     if (index < 12) {
                         if (index < 10) {
-                            if (index == 8) return 0.9951847f;
-                            else return 0.99390697f;   // 9
+                            if (index == 8) {
+                                return 0.9951847f;
+                            } else {
+                                return 0.99390697f;   // 9
+                            }
                         } else {
-                            if (index == 10) return 0.99247956f;
-                            else return 0.99090266f;   // 11
+                            if (index == 10) {
+                                return 0.99247956f;
+                            } else {
+                                return 0.99090266f;   // 11
+                            }
                         }
                     } else {
                         if (index < 14) {
-                            if (index == 12) return 0.9891765f;
-                            else return 0.9873014f;    // 13
+                            if (index == 12) {
+                                return 0.9891765f;
+                            } else {
+                                return 0.9873014f;    // 13
+                            }
                         } else {
-                            if (index == 14) return 0.98527764f;
-                            else return 0.9831055f;    // 15
+                            if (index == 14) {
+                                return 0.98527764f;
+                            } else {
+                                return 0.9831055f;    // 15
+                            }
                         }
                     }
                 }
@@ -368,37 +580,61 @@ float _getCosValue(int index) {
                 if (index < 24) {
                     if (index < 20) {
                         if (index < 18) {
-                            if (index == 16) return 0.9807853f;
-                            else return 0.9783174f;    // 17
+                            if (index == 16) {
+                                return 0.9807853f;
+                            } else {
+                                return 0.9783174f;    // 17
+                            }
                         } else {
-                            if (index == 18) return 0.9757021f;
-                            else return 0.97293997f;   // 19
+                            if (index == 18) {
+                                return 0.9757021f;
+                            } else {
+                                return 0.97293997f;   // 19
+                            }
                         }
                     } else {
                         if (index < 22) {
-                            if (index == 20) return 0.97003126f;
-                            else return 0.96697647f;   // 21
+                            if (index == 20) {
+                                return 0.97003126f;
+                            } else {
+                                return 0.96697647f;   // 21
+                            }
                         } else {
-                            if (index == 22) return 0.96377605f;
-                            else return 0.9604305f;    // 23
+                            if (index == 22) {
+                                return 0.96377605f;
+                            } else {
+                                return 0.9604305f;    // 23
+                            }
                         }
                     }
                 } else {
                     if (index < 28) {
                         if (index < 26) {
-                            if (index == 24) return 0.95694035f;
-                            else return 0.953306f;     // 25
+                            if (index == 24) {
+                                return 0.95694035f;
+                            } else {
+                                return 0.953306f;      // 25
+                            }
                         } else {
-                            if (index == 26) return 0.94952816f;
-                            else return 0.9456073f;    // 27
+                            if (index == 26) {
+                                return 0.94952816f;
+                            } else {
+                                return 0.9456073f;    // 27
+                            }
                         }
                     } else {
                         if (index < 30) {
-                            if (index == 28) return 0.94154406f;
-                            else return 0.937339f;     // 29
+                            if (index == 28) {
+                                return 0.94154406f;
+                            } else {
+                                return 0.937339f;      // 29
+                            }
                         } else {
-                            if (index == 30) return 0.9329928f;
-                            else return 0.9285061f;    // 31
+                            if (index == 30) {
+                                return 0.9329928f;
+                            } else {
+                                return 0.9285061f;    // 31
+                            }
                         }
                     }
                 }
@@ -408,37 +644,61 @@ float _getCosValue(int index) {
                 if (index < 40) {
                     if (index < 36) {
                         if (index < 34) {
-                            if (index == 32) return 0.9238795f;
-                            else return 0.9191139f;    // 33
+                            if (index == 32) {
+                                return 0.9238795f;
+                            } else {
+                                return 0.9191139f;    // 33
+                            }
                         } else {
-                            if (index == 34) return 0.9142098f;
-                            else return 0.909168f;     // 35
+                            if (index == 34) {
+                                return 0.9142098f;
+                            } else {
+                                return 0.909168f;      // 35
+                            }
                         }
                     } else {
                         if (index < 38) {
-                            if (index == 36) return 0.9039893f;
-                            else return 0.8986745f;    // 37
+                            if (index == 36) {
+                                return 0.9039893f;
+                            } else {
+                                return 0.8986745f;    // 37
+                            }
                         } else {
-                            if (index == 38) return 0.8932243f;
-                            else return 0.88763964f;   // 39
+                            if (index == 38) {
+                                return 0.8932243f;
+                            } else {
+                                return 0.88763964f;   // 39
+                            }
                         }
                     }
                 } else {
                     if (index < 44) {
                         if (index < 42) {
-                            if (index == 40) return 0.8819213f;
-                            else return 0.8760701f;    // 41
+                            if (index == 40) {
+                                return 0.8819213f;
+                            } else {
+                                return 0.8760701f;    // 41
+                            }
                         } else {
-                            if (index == 42) return 0.87008697f;
-                            else return 0.86397284f;   // 43
+                            if (index == 42) {
+                                return 0.87008697f;
+                            } else {
+                                return 0.86397284f;   // 43
+                            }
                         }
                     } else {
                         if (index < 46) {
-                            if (index == 44) return 0.8577286f;
-                            else return 0.8513552f;    // 45
+                            if (index == 44) {
+                                return 0.8577286f;
+                            } else {
+                                return 0.8513552f;    // 45
+                            }
                         } else {
-                            if (index == 46) return 0.8448536f;
-                            else return 0.8382247f;    // 47
+                            if (index == 46) {
+                                return 0.8448536f;
+                            } else {
+                                return 0.8382247f;    // 47
+                            }
                         }
                     }
                 }
@@ -446,37 +706,61 @@ float _getCosValue(int index) {
                 if (index < 56) {
                     if (index < 52) {
                         if (index < 50) {
-                            if (index == 48) return 0.8314696f;
-                            else return 0.8245893f;    // 49
+                            if (index == 48) {
+                                return 0.8314696f;
+                            } else {
+                                return 0.8245893f;    // 49
+                            }
                         } else {
-                            if (index == 50) return 0.8175848f;
-                            else return 0.8104572f;    // 51
+                            if (index == 50) {
+                                return 0.8175848f;
+                            } else {
+                                return 0.8104572f;    // 51
+                            }
                         }
                     } else {
                         if (index < 54) {
-                            if (index == 52) return 0.8032075f;
-                            else return 0.7958369f;    // 53
+                            if (index == 52) {
+                                return 0.8032075f;
+                            } else {
+                                return 0.7958369f;    // 53
+                            }
                         } else {
-                            if (index == 54) return 0.7883464f;
-                            else return 0.7807372f;    // 55
+                            if (index == 54) {
+                                return 0.7883464f;
+                            } else {
+                                return 0.7807372f;    // 55
+                            }
                         }
                     }
                 } else {
                     if (index < 60) {
                         if (index < 58) {
-                            if (index == 56) return 0.77301043f;
-                            else return 0.7651673f;    // 57
+                            if (index == 56) {
+                                return 0.77301043f;
+                            } else {
+                                return 0.7651673f;    // 57
+                            }
                         } else {
-                            if (index == 58) return 0.7572088f;
-                            else return 0.7491364f;    // 59
+                            if (index == 58) {
+                                return 0.7572088f;
+                            } else {
+                                return 0.7491364f;    // 59
+                            }
                         }
                     } else {
                         if (index < 62) {
-                            if (index == 60) return 0.7409511f;
-                            else return 0.7326543f;    // 61
+                            if (index == 60) {
+                                return 0.7409511f;
+                            } else {
+                                return 0.7326543f;    // 61
+                            }
                         } else {
-                            if (index == 62) return 0.7242471f;
-                            else return 0.7157308f;    // 63
+                            if (index == 62) {
+                                return 0.7242471f;
+                            } else {
+                                return 0.7157308f;    // 63
+                            }
                         }
                     }
                 }
@@ -488,37 +772,61 @@ float _getCosValue(int index) {
                 if (index < 72) {
                     if (index < 68) {
                         if (index < 66) {
-                            if (index == 64) return 0.70710677f;
-                            else return 0.69837624f;   // 65
+                            if (index == 64) {
+                                return 0.70710677f;
+                            } else {
+                                return 0.69837624f;   // 65
+                            }
                         } else {
-                            if (index == 66) return 0.68954056f;
-                            else return 0.680601f;     // 67
+                            if (index == 66) {
+                                return 0.68954056f;
+                            } else {
+                                return 0.680601f;      // 67
+                            }
                         }
                     } else {
                         if (index < 70) {
-                            if (index == 68) return 0.671559f;
-                            else return 0.6624158f;    // 69
+                            if (index == 68) {
+                                return 0.671559f;
+                            } else {
+                                return 0.6624158f;    // 69
+                            }
                         } else {
-                            if (index == 70) return 0.65317285f;
-                            else return 0.64383156f;   // 71
+                            if (index == 70) {
+                                return 0.65317285f;
+                            } else {
+                                return 0.64383156f;   // 71
+                            }
                         }
                     }
                 } else {
                     if (index < 76) {
                         if (index < 74) {
-                            if (index == 72) return 0.6343933f;
-                            else return 0.6248595f;    // 73
+                            if (index == 72) {
+                                return 0.6343933f;
+                            } else {
+                                return 0.6248595f;    // 73
+                            }
                         } else {
-                            if (index == 74) return 0.61523163f;
-                            else return 0.605511f;     // 75
+                            if (index == 74) {
+                                return 0.61523163f;
+                            } else {
+                                return 0.605511f;      // 75
+                            }
                         }
                     } else {
                         if (index < 78) {
-                            if (index == 76) return 0.5956993f;
-                            else return 0.58579785f;   // 77
+                            if (index == 76) {
+                                return 0.5956993f;
+                            } else {
+                                return 0.58579785f;   // 77
+                            }
                         } else {
-                            if (index == 78) return 0.57580817f;
-                            else return 0.5657318f;    // 79
+                            if (index == 78) {
+                                return 0.57580817f;
+                            } else {
+                                return 0.5657318f;    // 79
+                            }
                         }
                     }
                 }
@@ -526,37 +834,61 @@ float _getCosValue(int index) {
                 if (index < 88) {
                     if (index < 84) {
                         if (index < 82) {
-                            if (index == 80) return 0.55557024f;
-                            else return 0.54532498f;   // 81
+                            if (index == 80) {
+                                return 0.55557024f;
+                            } else {
+                                return 0.54532498f;   // 81
+                            }
                         } else {
-                            if (index == 82) return 0.53499764f;
-                            else return 0.52458966f;   // 83
+                            if (index == 82) {
+                                return 0.53499764f;
+                            } else {
+                                return 0.52458966f;   // 83
+                            }
                         }
                     } else {
                         if (index < 86) {
-                            if (index == 84) return 0.51410276f;
-                            else return 0.5035384f;    // 85
+                            if (index == 84) {
+                                return 0.51410276f;
+                            } else {
+                                return 0.5035384f;    // 85
+                            }
                         } else {
-                            if (index == 86) return 0.49289823f;
-                            else return 0.48218396f;   // 87
+                            if (index == 86) {
+                                return 0.49289823f;
+                            } else {
+                                return 0.48218396f;   // 87
+                            }
                         }
                     }
                 } else {
                     if (index < 92) {
                         if (index < 90) {
-                            if (index == 88) return 0.47139674f;
-                            else return 0.4605387f;    // 89
+                            if (index == 88) {
+                                return 0.47139674f;
+                            } else {
+                                return 0.4605387f;    // 89
+                            }
                         } else {
-                            if (index == 90) return 0.44961134f;
-                            else return 0.43861624f;   // 91
+                            if (index == 90) {
+                                return 0.44961134f;
+                            } else {
+                                return 0.43861624f;   // 91
+                            }
                         }
                     } else {
                         if (index < 94) {
-                            if (index == 92) return 0.42755508f;
-                            else return 0.41642955f;   // 93
+                            if (index == 92) {
+                                return 0.42755508f;
+                            } else {
+                                return 0.41642955f;   // 93
+                            }
                         } else {
-                            if (index == 94) return 0.40524134f;
-                            else return 0.39399204f;   // 95
+                            if (index == 94) {
+                                return 0.40524134f;
+                            } else {
+                                return 0.39399204f;   // 95
+                            }
                         }
                     }
                 }
@@ -566,37 +898,61 @@ float _getCosValue(int index) {
                 if (index < 104) {
                     if (index < 100) {
                         if (index < 98) {
-                            if (index == 96) return 0.38268343f;
-                            else return 0.3713172f;    // 97
+                            if (index == 96) {
+                                return 0.38268343f;
+                            } else {
+                                return 0.3713172f;    // 97
+                            }
                         } else {
-                            if (index == 98) return 0.35989505f;
-                            else return 0.34841868f;   // 99
+                            if (index == 98) {
+                                return 0.35989505f;
+                            } else {
+                                return 0.34841868f;   // 99
+                            }
                         }
                     } else {
                         if (index < 102) {
-                            if (index == 100) return 0.33688985f;
-                            else return 0.3253103f;    // 101
+                            if (index == 100) {
+                                return 0.33688985f;
+                            } else {
+                                return 0.3253103f;    // 101
+                            }
                         } else {
-                            if (index == 102) return 0.31368175f;
-                            else return 0.30200595f;   // 103
+                            if (index == 102) {
+                                return 0.31368175f;
+                            } else {
+                                return 0.30200595f;   // 103
+                            }
                         }
                     }
                 } else {
                     if (index < 108) {
                         if (index < 106) {
-                            if (index == 104) return 0.29028466f;
-                            else return 0.2785197f;    // 105
+                            if (index == 104) {
+                                return 0.29028466f;
+                            } else {
+                                return 0.2785197f;    // 105
+                            }
                         } else {
-                            if (index == 106) return 0.26671276f;
-                            else return 0.25486565f;   // 107
+                            if (index == 106) {
+                                return 0.26671276f;
+                            } else {
+                                return 0.25486565f;   // 107
+                            }
                         }
                     } else {
                         if (index < 110) {
-                            if (index == 108) return 0.24298018f;
-                            else return 0.23105811f;   // 109
+                            if (index == 108) {
+                                return 0.24298018f;
+                            } else {
+                                return 0.23105811f;   // 109
+                            }
                         } else {
-                            if (index == 110) return 0.21910124f;
-                            else return 0.20711137f;   // 111
+                            if (index == 110) {
+                                return 0.21910124f;
+                            } else {
+                                return 0.20711137f;   // 111
+                            }
                         }
                     }
                 }
@@ -604,37 +960,61 @@ float _getCosValue(int index) {
                 if (index < 120) {
                     if (index < 116) {
                         if (index < 114) {
-                            if (index == 112) return 0.19509032f;
-                            else return 0.18303989f;   // 113
+                            if (index == 112) {
+                                return 0.19509032f;
+                            } else {
+                                return 0.18303989f;   // 113
+                            }
                         } else {
-                            if (index == 114) return 0.1709619f;
-                            else return 0.15885815f;   // 115
+                            if (index == 114) {
+                                return 0.1709619f;
+                            } else {
+                                return 0.15885815f;   // 115
+                            }
                         }
                     } else {
                         if (index < 118) {
-                            if (index == 116) return 0.14673047f;
-                            else return 0.1345807f;    // 117
+                            if (index == 116) {
+                                return 0.14673047f;
+                            } else {
+                                return 0.1345807f;    // 117
+                            }
                         } else {
-                            if (index == 118) return 0.12241068f;
-                            else return 0.110222205f;  // 119
+                            if (index == 118) {
+                                return 0.12241068f;
+                            } else {
+                                return 0.110222205f;  // 119
+                            }
                         }
                     }
                 } else {
                     if (index < 124) {
                         if (index < 122) {
-                            if (index == 120) return 0.09801714f;
-                            else return 0.08579731f;   // 121
+                            if (index == 120) {
+                                return 0.09801714f;
+                            } else {
+                                return 0.08579731f;   // 121
+                            }
                         } else {
-                            if (index == 122) return 0.07356457f;
-                            else return 0.06132074f;   // 123
+                            if (index == 122) {
+                                return 0.07356457f;
+                            } else {
+                                return 0.06132074f;   // 123
+                            }
                         }
                     } else {
                         if (index < 126) {
-                            if (index == 124) return 0.049067676f;
-                            else return 0.036807224f;  // 125
+                            if (index == 124) {
+                                return 0.049067676f;
+                            } else {
+                                return 0.036807224f;  // 125
+                            }
                         } else {
-                            if (index == 126) return 0.024541229f;
-                            else return 0.012271538f;  // 127
+                            if (index == 126) {
+                                return 0.024541229f;
+                            } else {
+                                return 0.012271538f;  // 127
+                            }
                         }
                     }
                 }
