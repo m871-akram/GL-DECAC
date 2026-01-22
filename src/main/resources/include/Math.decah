@@ -125,7 +125,7 @@ class Math {
         }
         
         if (inverse) {
-            return x;             // x,y = cos(pi/2-angle), sin(pi/2-angle)
+            return x;      
         }
         
         return y;
@@ -279,12 +279,7 @@ class Math {
         // Methode 2 : avec la racine1 (autre implementation de la racine ), et apres on inverse
         //x2 = f * f;
         //denom = _sqrt1(1.0f - x2);
-        //return atan(f / denom);*/
-
-
-        //Methode 3 : avec la racine inverse directement
-        ///x2 = f * f;
-        //denom = _sqrt(1.0f - x2);*/
+        //return atan(f / denom);
         
         return atan(f / denom);
     }
