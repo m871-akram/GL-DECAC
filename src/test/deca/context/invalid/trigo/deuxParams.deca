@@ -11,5 +11,5 @@
 {
     Math m = new Math();
 
-    println("asin(1.9 , 3.5) = ", m.asinn(1.9 , 3.5));
+    println("asin(1.9 , 3.5) = ", m.asin(1.9 , 3.5));
 }
