@@ -1,7 +1,7 @@
 // Description:
-//    Instruction placée hors bloc
+//    declaration apres instruction
 // Resultat:
-//    Erreur  ligne 7
+//    Erreur  ligne 12
 // Historique:
 //    cree le 22/01/2026
 
@@ -9,4 +9,5 @@
 {
     Math m = new Math();
     m.sin(4.0f);
+    float x=1.4f;
 }
