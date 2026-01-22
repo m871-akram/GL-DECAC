@@ -1,0 +1,16 @@
+// Description:
+//    methode manquante
+//
+// Resultats:
+//    
+//
+// Historique:
+//    cree le 22/01/2026
+class Hello{
+        
+}
+{
+        Hello A =  Hello();
+        A.hello();
+        println("world");
+}

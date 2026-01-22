@@ -1,0 +1,14 @@
+// Description:
+//    Hello WORLD
+//
+// Resultats:
+//    hello world
+//
+// Historique:
+//    cree le 22/01/2026
+#include "demo_1.import"
+{
+        Hello A = new Hello();
+        A.hello();
+        println("world");
+}

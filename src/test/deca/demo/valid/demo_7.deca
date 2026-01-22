@@ -1,0 +1,33 @@
+// Description:
+//    Test while
+//
+// Resultats:
+//    0 
+//    1 1 
+//    2 1 2 
+//    3 1 2 3 
+//    4 1 2 3 4 
+//    5 1 2 3 4 5 
+//
+// Historique:
+//    cree le 22/01/2026
+
+{
+    int i = 0;
+    int j = 1;
+    int r = 1;
+    println(i, " ");
+
+    while( i < 5){
+        i=i+1;
+        print(i, " ");
+        j= 1;
+        while (j <= i){
+            print(j, " ");
+            j=j+1;
+        }
+        println();
+
+        
+    }
+}

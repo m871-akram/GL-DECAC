@@ -1,0 +1,66 @@
+; start main program
+	BRA main_start
+; Construction des tables des methodes
+; init objets
+; Code des méthodes
+main_start:
+; Main program
+; Beginning of main declarations:
+	LOAD #0, R2
+	STORE R2, 1(LB)
+	LOAD #1, R2
+	STORE R2, 2(LB)
+	LOAD #1, R2
+	STORE R2, 3(LB)
+	TSTO #3
+	BOV stack_overflow_isr
+	ADDSP #3
+; Beginning of main instructions:
+	LOAD 1(LB), R1
+	WINT
+	WSTR " "
+	WNL
+	BRA while_cond_2
+loop_start_0:
+	LOAD 1(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 1(LB)
+	LOAD 1(LB), R1
+	WINT
+	WSTR " "
+	LOAD #1, R2
+	STORE R2, 2(LB)
+	BRA while_cond_5
+loop_start_3:
+	LOAD 2(LB), R1
+	WINT
+	WSTR " "
+	LOAD 2(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 2(LB)
+while_cond_5:
+	LOAD 2(LB), R2
+	LOAD 1(LB), R3
+	CMP R3, R2
+	SLE R2
+	CMP #0, R2
+	BNE loop_start_3
+loop_exit_4:
+	WNL
+while_cond_2:
+	LOAD 1(LB), R2
+	LOAD #5, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_0
+loop_exit_1:
+	HALT
+; --- Interrupt Service Routines (ISR) ---
+stack_overflow_isr:
+	WSTR "Erreur : Pile pleine"
+	WNL
+	ERROR
+; end main program

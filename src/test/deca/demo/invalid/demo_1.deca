@@ -1,0 +1,14 @@
+// Description:
+//    erreur type
+//
+// Resultats:
+//    type non existant
+//
+// Historique:
+//    cree le 22/01/2026
+#include "demo_1.import"
+{
+        Hell A = new Hello();
+        A.hello();
+        println("world");
+}

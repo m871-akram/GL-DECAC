@@ -1,0 +1,12 @@
+// Description:
+//    hello
+//
+// Resultats:
+//    
+//
+// Historique:
+//    cree le 22/01/2026
+{
+        float b = 1;
+        int a = 1.0;
+}

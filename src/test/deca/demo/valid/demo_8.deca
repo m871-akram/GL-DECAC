@@ -1,0 +1,42 @@
+// Description:
+//    Test while
+//
+// Resultats:
+//    0 
+//    1 1 
+//    2 1 2 
+//    3 1 2 3 
+//    4 1 2 3 4 
+//    5 1 2 3 4 5 
+//
+// Historique:
+//    cree le 22/01/2026
+
+{
+    int i =1;
+    int j =0;
+    int s =2;
+    int rng;
+
+    println("donne un nombre");
+    rng=readInt();
+
+    println("on va jouer a un jeux donne 1, 2, ou 3 pour pierre, papier, ciseaux");
+    while( i <= 5){
+        println();
+        println("   round :", i);
+        println();
+        rng = (rng * 251 + 13) % 65521;
+        s =( rng %3) +1;
+        j = readInt();
+        rng =rng +j;
+        if(j == s){
+            println("egalité");
+        } else if ((j == 1 && s == 3) || (j == 2 && s == 1) || (j == 3 && s == 2)){
+            println("victoire joueur!!!!!!");
+        } else {
+            println("dommage?");
+        }
+        i=i+1;
+    }
+}

@@ -1,0 +1,14 @@
+// Description:
+//    hello
+//
+// Resultats:
+//    
+//
+// Historique:
+//    cree le 22/01/2026
+
+class Hello {
+        void hello(){
+                print("hello ");
+        }
+}
