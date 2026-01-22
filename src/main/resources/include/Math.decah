@@ -342,13 +342,7 @@ class Math {
         float curr_x , curr_y , angle_accumulee, pow2i , cordici ;
         int i;
         
-        boolean negative , inverted;
-        float x , val , x_old , res;
-        float curr_x , curr_y , angle_accumulee, pow2i , cordici ;
-        int i;
-        
-
-
+     
         negative = false;
         x = f;
         if (x < 0.0f) {

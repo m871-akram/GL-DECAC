@@ -1,0 +1,5706 @@
+; start main program
+	BRA main_start
+; Construction des tables des methodes
+; Classe CordicTable
+; Table des méthodes de CordicTable à l'adresse 1(GB)
+	LOAD #0, R0
+	STORE R0, 1(GB)
+	LOAD code.CordicTable._getPow2, R0
+	STORE R0, 2(GB)
+	LOAD code.CordicTable._getCordic, R0
+	STORE R0, 3(GB)
+; Classe TableSinCos
+; Table des méthodes de TableSinCos à l'adresse 4(GB)
+	LOAD #0, R0
+	STORE R0, 4(GB)
+	LOAD code.TableSinCos._getSinValue, R0
+	STORE R0, 5(GB)
+	LOAD code.TableSinCos._getCosValue, R0
+	STORE R0, 6(GB)
+; Classe Math
+; Table des méthodes de Math à l'adresse 7(GB)
+	LOAD #0, R0
+	STORE R0, 7(GB)
+	LOAD code.Math._fma, R0
+	STORE R0, 8(GB)
+	LOAD code.Math.sin, R0
+	STORE R0, 9(GB)
+	LOAD code.Math._cordicSin, R0
+	STORE R0, 10(GB)
+	LOAD code.Math._cordicCos, R0
+	STORE R0, 11(GB)
+	LOAD code.Math._abs, R0
+	STORE R0, 12(GB)
+	LOAD code.Math._tableSin, R0
+	STORE R0, 13(GB)
+	LOAD code.Math._tableCos, R0
+	STORE R0, 14(GB)
+	LOAD code.Math.cos, R0
+	STORE R0, 15(GB)
+	LOAD code.Math.asin, R0
+	STORE R0, 16(GB)
+	LOAD code.Math.acos, R0
+	STORE R0, 17(GB)
+	LOAD code.Math.atan, R0
+	STORE R0, 18(GB)
+	LOAD code.Math.ulp, R0
+	STORE R0, 19(GB)
+	LOAD code.Math._reduction2PIRecursive, R0
+	STORE R0, 20(GB)
+	LOAD code.Math._sqrt, R0
+	STORE R0, 21(GB)
+	LOAD code.Math._sqrt1, R0
+	STORE R0, 22(GB)
+; init objets
+init.CordicTable:
+; Initialisation des champs de CordicTable
+	PUSH R1
+	LOAD -2(LB), R1
+	POP R1
+	RTS
+init.TableSinCos:
+; Initialisation des champs de TableSinCos
+	PUSH R1
+	LOAD -2(LB), R1
+	POP R1
+	RTS
+init.Math:
+; Initialisation des champs de Math
+	PUSH R1
+	LOAD -2(LB), R1
+	LOAD #0x1.921fb6p1, R2
+	STORE R2, 1(R1)
+	LOAD #0x1.921fb6p2, R2
+	STORE R2, 2(R1)
+	LOAD #0x1.921fb6p0, R2
+	STORE R2, 3(R1)
+	LOAD #0x1.921fb6p-1, R2
+	STORE R2, 4(R1)
+	LOAD #0x1.36e9dcp-1, R2
+	STORE R2, 5(R1)
+	LOAD #512, R2
+	STORE R2, 6(R1)
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD -2(LB), R3
+	LOAD 6(R3), R3
+	LOAD #1, R4
+	SUB R4, R3
+	FLOAT R3, R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 7(R1)
+	LOAD #32, R2
+	STORE R2, 8(R1)
+	LOAD #0x1.0624dep-10, R2
+	STORE R2, 9(R1)
+	LOAD #0x1.99999ap-4, R2
+	STORE R2, 10(R1)
+	LOAD #0x1.78d4fep0, R2
+	STORE R2, 11(R1)
+	POP R1
+	RTS
+; Code des méthodes
+; Méthodes de la classe CordicTable
+code.CordicTable._getPow2:
+; Méthode _getPow2
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_0
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_2
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_4
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_6
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_8
+	LOAD #0x1.0p0, R0
+	RTS
+	BRA end_if_9
+else_8:
+	LOAD #0x1.0p-1, R0
+	RTS
+end_if_9:
+	BRA end_if_7
+else_6:
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_10
+	LOAD #0x1.0p-2, R0
+	RTS
+	BRA end_if_11
+else_10:
+	LOAD #0x1.0p-3, R0
+	RTS
+end_if_11:
+end_if_7:
+	BRA end_if_5
+else_4:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_12
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_14
+	LOAD #0x1.0p-4, R0
+	RTS
+	BRA end_if_15
+else_14:
+	LOAD #0x1.0p-5, R0
+	RTS
+end_if_15:
+	BRA end_if_13
+else_12:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_16
+	LOAD #0x1.0p-6, R0
+	RTS
+	BRA end_if_17
+else_16:
+	LOAD #0x1.0p-7, R0
+	RTS
+end_if_17:
+end_if_13:
+end_if_5:
+	BRA end_if_3
+else_2:
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_18
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_20
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_22
+	LOAD #0x1.0p-8, R0
+	RTS
+	BRA end_if_23
+else_22:
+	LOAD #0x1.0p-9, R0
+	RTS
+end_if_23:
+	BRA end_if_21
+else_20:
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_24
+	LOAD #0x1.0p-10, R0
+	RTS
+	BRA end_if_25
+else_24:
+	LOAD #0x1.0p-11, R0
+	RTS
+end_if_25:
+end_if_21:
+	BRA end_if_19
+else_18:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_26
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_28
+	LOAD #0x1.0p-12, R0
+	RTS
+	BRA end_if_29
+else_28:
+	LOAD #0x1.0p-13, R0
+	RTS
+end_if_29:
+	BRA end_if_27
+else_26:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_30
+	LOAD #0x1.0p-14, R0
+	RTS
+	BRA end_if_31
+else_30:
+	LOAD #0x1.0p-15, R0
+	RTS
+end_if_31:
+end_if_27:
+end_if_19:
+end_if_3:
+	BRA end_if_1
+else_0:
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_32
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_34
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_36
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_38
+	LOAD #0x1.0p-16, R0
+	RTS
+	BRA end_if_39
+else_38:
+	LOAD #0x1.0p-17, R0
+	RTS
+end_if_39:
+	BRA end_if_37
+else_36:
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_40
+	LOAD #0x1.0p-18, R0
+	RTS
+	BRA end_if_41
+else_40:
+	LOAD #0x1.0p-19, R0
+	RTS
+end_if_41:
+end_if_37:
+	BRA end_if_35
+else_34:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_42
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_44
+	LOAD #0x1.0p-20, R0
+	RTS
+	BRA end_if_45
+else_44:
+	LOAD #0x1.0p-21, R0
+	RTS
+end_if_45:
+	BRA end_if_43
+else_42:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_46
+	LOAD #0x1.0p-22, R0
+	RTS
+	BRA end_if_47
+else_46:
+	LOAD #0x1.0p-23, R0
+	RTS
+end_if_47:
+end_if_43:
+end_if_35:
+	BRA end_if_33
+else_32:
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_48
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_50
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_52
+	LOAD #0x1.0p-24, R0
+	RTS
+	BRA end_if_53
+else_52:
+	LOAD #0x1.0p-25, R0
+	RTS
+end_if_53:
+	BRA end_if_51
+else_50:
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_54
+	LOAD #0x1.0p-26, R0
+	RTS
+	BRA end_if_55
+else_54:
+	LOAD #0x1.0p-27, R0
+	RTS
+end_if_55:
+end_if_51:
+	BRA end_if_49
+else_48:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_56
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_58
+	LOAD #0x1.0p-28, R0
+	RTS
+	BRA end_if_59
+else_58:
+	LOAD #0x1.0p-29, R0
+	RTS
+end_if_59:
+	BRA end_if_57
+else_56:
+	LOAD #0x1.0p-30, R0
+	RTS
+end_if_57:
+end_if_49:
+end_if_33:
+end_if_1:
+	BOV missing_ret
+code.CordicTable._getCordic:
+; Méthode _getCordic
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE end_or_62
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_60
+end_or_62:
+	LOAD #0x0.0p0, R0
+	RTS
+	BRA end_if_61
+else_60:
+end_if_61:
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_63
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_65
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_67
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_69
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_71
+	LOAD #0x1.921fb6p-1, R0
+	RTS
+	BRA end_if_72
+else_71:
+	LOAD #0x1.dac67p-2, R0
+	RTS
+end_if_72:
+	BRA end_if_70
+else_69:
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_73
+	LOAD #0x1.f5b76p-3, R0
+	RTS
+	BRA end_if_74
+else_73:
+	LOAD #0x1.fd5baap-4, R0
+	RTS
+end_if_74:
+end_if_70:
+	BRA end_if_68
+else_67:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_75
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_77
+	LOAD #0x1.ff55bcp-5, R0
+	RTS
+	BRA end_if_78
+else_77:
+	LOAD #0x1.ffd55cp-6, R0
+	RTS
+end_if_78:
+	BRA end_if_76
+else_75:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_79
+	LOAD #0x1.fff556p-7, R0
+	RTS
+	BRA end_if_80
+else_79:
+	LOAD #0x1.fffd56p-8, R0
+	RTS
+end_if_80:
+end_if_76:
+end_if_68:
+	BRA end_if_66
+else_65:
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_81
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_83
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_85
+	LOAD #0x1.ffff56p-9, R0
+	RTS
+	BRA end_if_86
+else_85:
+	LOAD #0x1.ffffd6p-10, R0
+	RTS
+end_if_86:
+	BRA end_if_84
+else_83:
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_87
+	LOAD #0x1.fffff6p-11, R0
+	RTS
+	BRA end_if_88
+else_87:
+	LOAD #0x1.fffffep-12, R0
+	RTS
+end_if_88:
+end_if_84:
+	BRA end_if_82
+else_81:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_89
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_91
+	LOAD #0x1.0p-12, R0
+	RTS
+	BRA end_if_92
+else_91:
+	LOAD #0x1.0p-13, R0
+	RTS
+end_if_92:
+	BRA end_if_90
+else_89:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_93
+	LOAD #0x1.0p-14, R0
+	RTS
+	BRA end_if_94
+else_93:
+	LOAD #0x1.0p-15, R0
+	RTS
+end_if_94:
+end_if_90:
+end_if_82:
+end_if_66:
+	BRA end_if_64
+else_63:
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_95
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_97
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_99
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_101
+	LOAD #0x1.0p-16, R0
+	RTS
+	BRA end_if_102
+else_101:
+	LOAD #0x1.0p-17, R0
+	RTS
+end_if_102:
+	BRA end_if_100
+else_99:
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_103
+	LOAD #0x1.0p-18, R0
+	RTS
+	BRA end_if_104
+else_103:
+	LOAD #0x1.0p-19, R0
+	RTS
+end_if_104:
+end_if_100:
+	BRA end_if_98
+else_97:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_105
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_107
+	LOAD #0x1.0p-20, R0
+	RTS
+	BRA end_if_108
+else_107:
+	LOAD #0x1.0p-21, R0
+	RTS
+end_if_108:
+	BRA end_if_106
+else_105:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_109
+	LOAD #0x1.0p-22, R0
+	RTS
+	BRA end_if_110
+else_109:
+	LOAD #0x1.0p-23, R0
+	RTS
+end_if_110:
+end_if_106:
+end_if_98:
+	BRA end_if_96
+else_95:
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_111
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_113
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_115
+	LOAD #0x1.0p-24, R0
+	RTS
+	BRA end_if_116
+else_115:
+	LOAD #0x1.0p-25, R0
+	RTS
+end_if_116:
+	BRA end_if_114
+else_113:
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_117
+	LOAD #0x1.0p-26, R0
+	RTS
+	BRA end_if_118
+else_117:
+	LOAD #0x1.0p-27, R0
+	RTS
+end_if_118:
+end_if_114:
+	BRA end_if_112
+else_111:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_119
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_121
+	LOAD #0x1.0p-28, R0
+	RTS
+	BRA end_if_122
+else_121:
+	LOAD #0x1.0p-29, R0
+	RTS
+end_if_122:
+	BRA end_if_120
+else_119:
+	LOAD #0x1.0p-30, R0
+	RTS
+end_if_120:
+end_if_112:
+end_if_96:
+end_if_64:
+	BOV missing_ret
+; Méthodes de la classe TableSinCos
+code.TableSinCos._getSinValue:
+; Méthode _getSinValue
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #64, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_123
+	LOAD -3(LB), R2
+	LOAD #32, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_125
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_127
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_129
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_131
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_133
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_135
+	LOAD #0x0.0p0, R0
+	RTS
+	BRA end_if_136
+else_135:
+	LOAD #0x1.921d2p-7, R0
+	RTS
+end_if_136:
+	BRA end_if_134
+else_133:
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_137
+	LOAD #0x1.92156p-6, R0
+	RTS
+	BRA end_if_138
+else_137:
+	LOAD #0x1.2d8658p-5, R0
+	RTS
+end_if_138:
+end_if_134:
+	BRA end_if_132
+else_131:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_139
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_141
+	LOAD #0x1.91f66p-5, R0
+	RTS
+	BRA end_if_142
+else_141:
+	LOAD #0x1.f656eap-5, R0
+	RTS
+end_if_142:
+	BRA end_if_140
+else_139:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_143
+	LOAD #0x1.2d520ap-4, R0
+	RTS
+	BRA end_if_144
+else_143:
+	LOAD #0x1.5f6dp-4, R0
+	RTS
+end_if_144:
+end_if_140:
+end_if_132:
+	BRA end_if_130
+else_129:
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_145
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_147
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_149
+	LOAD #0x1.917a6cp-4, R0
+	RTS
+	BRA end_if_150
+else_149:
+	LOAD #0x1.c3785cp-4, R0
+	RTS
+end_if_150:
+	BRA end_if_148
+else_147:
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_151
+	LOAD #0x1.f564e6p-4, R0
+	RTS
+	BRA end_if_152
+else_151:
+	LOAD #0x1.139f0cp-3, R0
+	RTS
+end_if_152:
+end_if_148:
+	BRA end_if_146
+else_145:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_153
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_155
+	LOAD #0x1.2c8106p-3, R0
+	RTS
+	BRA end_if_156
+else_155:
+	LOAD #0x1.45576cp-3, R0
+	RTS
+end_if_156:
+	BRA end_if_154
+else_153:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_157
+	LOAD #0x1.5e2146p-3, R0
+	RTS
+	BRA end_if_158
+else_157:
+	LOAD #0x1.76dd9ep-3, R0
+	RTS
+end_if_158:
+end_if_154:
+end_if_146:
+end_if_130:
+	BRA end_if_128
+else_127:
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_159
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_161
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_163
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_165
+	LOAD #0x1.8f8b84p-3, R0
+	RTS
+	BRA end_if_166
+else_165:
+	LOAD #0x1.a82a02p-3, R0
+	RTS
+end_if_166:
+	BRA end_if_164
+else_163:
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_167
+	LOAD #0x1.c0b826p-3, R0
+	RTS
+	BRA end_if_168
+else_167:
+	LOAD #0x1.d934fep-3, R0
+	RTS
+end_if_168:
+end_if_164:
+	BRA end_if_162
+else_161:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_169
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_171
+	LOAD #0x1.f19f98p-3, R0
+	RTS
+	BRA end_if_172
+else_171:
+	LOAD #0x1.04fb8p-2, R0
+	RTS
+end_if_172:
+	BRA end_if_170
+else_169:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_173
+	LOAD #0x1.111d26p-2, R0
+	RTS
+	BRA end_if_174
+else_173:
+	LOAD #0x1.1d3444p-2, R0
+	RTS
+end_if_174:
+end_if_170:
+end_if_162:
+	BRA end_if_160
+else_159:
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_175
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_177
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_179
+	LOAD #0x1.294062p-2, R0
+	RTS
+	BRA end_if_180
+else_179:
+	LOAD #0x1.35410cp-2, R0
+	RTS
+end_if_180:
+	BRA end_if_178
+else_177:
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_181
+	LOAD #0x1.4135cap-2, R0
+	RTS
+	BRA end_if_182
+else_181:
+	LOAD #0x1.4d1e24p-2, R0
+	RTS
+end_if_182:
+end_if_178:
+	BRA end_if_176
+else_175:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_183
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_185
+	LOAD #0x1.58f9a8p-2, R0
+	RTS
+	BRA end_if_186
+else_185:
+	LOAD #0x1.64c7dep-2, R0
+	RTS
+end_if_186:
+	BRA end_if_184
+else_183:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_187
+	LOAD #0x1.708854p-2, R0
+	RTS
+	BRA end_if_188
+else_187:
+	LOAD #0x1.7c3a94p-2, R0
+	RTS
+end_if_188:
+end_if_184:
+end_if_176:
+end_if_160:
+end_if_128:
+	BRA end_if_126
+else_125:
+	LOAD -3(LB), R2
+	LOAD #48, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_189
+	LOAD -3(LB), R2
+	LOAD #40, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_191
+	LOAD -3(LB), R2
+	LOAD #36, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_193
+	LOAD -3(LB), R2
+	LOAD #34, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_195
+	LOAD -3(LB), R2
+	LOAD #32, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_197
+	LOAD #0x1.87de2ap-2, R0
+	RTS
+	BRA end_if_198
+else_197:
+	LOAD #0x1.9372a6p-2, R0
+	RTS
+end_if_198:
+	BRA end_if_196
+else_195:
+	LOAD -3(LB), R2
+	LOAD #34, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_199
+	LOAD #0x1.9ef796p-2, R0
+	RTS
+	BRA end_if_200
+else_199:
+	LOAD #0x1.aa6c82p-2, R0
+	RTS
+end_if_200:
+end_if_196:
+	BRA end_if_194
+else_193:
+	LOAD -3(LB), R2
+	LOAD #38, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_201
+	LOAD -3(LB), R2
+	LOAD #36, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_203
+	LOAD #0x1.b5d1p-2, R0
+	RTS
+	BRA end_if_204
+else_203:
+	LOAD #0x1.c1249ep-2, R0
+	RTS
+end_if_204:
+	BRA end_if_202
+else_201:
+	LOAD -3(LB), R2
+	LOAD #38, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_205
+	LOAD #0x1.cc66eap-2, R0
+	RTS
+	BRA end_if_206
+else_205:
+	LOAD #0x1.d79774p-2, R0
+	RTS
+end_if_206:
+end_if_202:
+end_if_194:
+	BRA end_if_192
+else_191:
+	LOAD -3(LB), R2
+	LOAD #44, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_207
+	LOAD -3(LB), R2
+	LOAD #42, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_209
+	LOAD -3(LB), R2
+	LOAD #40, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_211
+	LOAD #0x1.e2b5d4p-2, R0
+	RTS
+	BRA end_if_212
+else_211:
+	LOAD #0x1.edc1a2p-2, R0
+	RTS
+end_if_212:
+	BRA end_if_210
+else_209:
+	LOAD -3(LB), R2
+	LOAD #42, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_213
+	LOAD #0x1.f8ba5p-2, R0
+	RTS
+	BRA end_if_214
+else_213:
+	LOAD #0x1.01cfcap-1, R0
+	RTS
+end_if_214:
+end_if_210:
+	BRA end_if_208
+else_207:
+	LOAD -3(LB), R2
+	LOAD #46, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_215
+	LOAD -3(LB), R2
+	LOAD #44, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_217
+	LOAD #0x1.07387ap-1, R0
+	RTS
+	BRA end_if_218
+else_217:
+	LOAD #0x1.0c9704p-1, R0
+	RTS
+end_if_218:
+	BRA end_if_216
+else_215:
+	LOAD -3(LB), R2
+	LOAD #46, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_219
+	LOAD #0x1.11eb36p-1, R0
+	RTS
+	BRA end_if_220
+else_219:
+	LOAD #0x1.1734d6p-1, R0
+	RTS
+end_if_220:
+end_if_216:
+end_if_208:
+end_if_192:
+	BRA end_if_190
+else_189:
+	LOAD -3(LB), R2
+	LOAD #56, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_221
+	LOAD -3(LB), R2
+	LOAD #52, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_223
+	LOAD -3(LB), R2
+	LOAD #50, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_225
+	LOAD -3(LB), R2
+	LOAD #48, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_227
+	LOAD #0x1.1c73b4p-1, R0
+	RTS
+	BRA end_if_228
+else_227:
+	LOAD #0x1.21a79ap-1, R0
+	RTS
+end_if_228:
+	BRA end_if_226
+else_225:
+	LOAD -3(LB), R2
+	LOAD #50, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_229
+	LOAD #0x1.26d054p-1, R0
+	RTS
+	BRA end_if_230
+else_229:
+	LOAD #0x1.2bedb2p-1, R0
+	RTS
+end_if_230:
+end_if_226:
+	BRA end_if_224
+else_223:
+	LOAD -3(LB), R2
+	LOAD #54, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_231
+	LOAD -3(LB), R2
+	LOAD #52, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_233
+	LOAD #0x1.30ff8p-1, R0
+	RTS
+	BRA end_if_234
+else_233:
+	LOAD #0x1.36058ap-1, R0
+	RTS
+end_if_234:
+	BRA end_if_232
+else_231:
+	LOAD -3(LB), R2
+	LOAD #54, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_235
+	LOAD #0x1.3affa4p-1, R0
+	RTS
+	BRA end_if_236
+else_235:
+	LOAD #0x1.3fed96p-1, R0
+	RTS
+end_if_236:
+end_if_232:
+end_if_224:
+	BRA end_if_222
+else_221:
+	LOAD -3(LB), R2
+	LOAD #60, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_237
+	LOAD -3(LB), R2
+	LOAD #58, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_239
+	LOAD -3(LB), R2
+	LOAD #56, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_241
+	LOAD #0x1.44cf32p-1, R0
+	RTS
+	BRA end_if_242
+else_241:
+	LOAD #0x1.49a44ap-1, R0
+	RTS
+end_if_242:
+	BRA end_if_240
+else_239:
+	LOAD -3(LB), R2
+	LOAD #58, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_243
+	LOAD #0x1.4e6cacp-1, R0
+	RTS
+	BRA end_if_244
+else_243:
+	LOAD #0x1.53282ap-1, R0
+	RTS
+end_if_244:
+end_if_240:
+	BRA end_if_238
+else_237:
+	LOAD -3(LB), R2
+	LOAD #62, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_245
+	LOAD -3(LB), R2
+	LOAD #60, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_247
+	LOAD #0x1.57d694p-1, R0
+	RTS
+	BRA end_if_248
+else_247:
+	LOAD #0x1.5c77bcp-1, R0
+	RTS
+end_if_248:
+	BRA end_if_246
+else_245:
+	LOAD -3(LB), R2
+	LOAD #62, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_249
+	LOAD #0x1.610b76p-1, R0
+	RTS
+	BRA end_if_250
+else_249:
+	LOAD #0x1.659192p-1, R0
+	RTS
+end_if_250:
+end_if_246:
+end_if_238:
+end_if_222:
+end_if_190:
+end_if_126:
+	BRA end_if_124
+else_123:
+	LOAD -3(LB), R2
+	LOAD #96, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_251
+	LOAD -3(LB), R2
+	LOAD #80, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_253
+	LOAD -3(LB), R2
+	LOAD #72, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_255
+	LOAD -3(LB), R2
+	LOAD #68, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_257
+	LOAD -3(LB), R2
+	LOAD #66, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_259
+	LOAD -3(LB), R2
+	LOAD #64, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_261
+	LOAD #0x1.6a09e6p-1, R0
+	RTS
+	BRA end_if_262
+else_261:
+	LOAD #0x1.6e7444p-1, R0
+	RTS
+end_if_262:
+	BRA end_if_260
+else_259:
+	LOAD -3(LB), R2
+	LOAD #66, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_263
+	LOAD #0x1.72d084p-1, R0
+	RTS
+	BRA end_if_264
+else_263:
+	LOAD #0x1.771e76p-1, R0
+	RTS
+end_if_264:
+end_if_260:
+	BRA end_if_258
+else_257:
+	LOAD -3(LB), R2
+	LOAD #70, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_265
+	LOAD -3(LB), R2
+	LOAD #68, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_267
+	LOAD #0x1.7b5df2p-1, R0
+	RTS
+	BRA end_if_268
+else_267:
+	LOAD #0x1.7f8ecep-1, R0
+	RTS
+end_if_268:
+	BRA end_if_266
+else_265:
+	LOAD -3(LB), R2
+	LOAD #70, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_269
+	LOAD #0x1.83b0ep-1, R0
+	RTS
+	BRA end_if_270
+else_269:
+	LOAD #0x1.87c402p-1, R0
+	RTS
+end_if_270:
+end_if_266:
+end_if_258:
+	BRA end_if_256
+else_255:
+	LOAD -3(LB), R2
+	LOAD #76, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_271
+	LOAD -3(LB), R2
+	LOAD #74, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_273
+	LOAD -3(LB), R2
+	LOAD #72, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_275
+	LOAD #0x1.8bc806p-1, R0
+	RTS
+	BRA end_if_276
+else_275:
+	LOAD #0x1.8fbccap-1, R0
+	RTS
+end_if_276:
+	BRA end_if_274
+else_273:
+	LOAD -3(LB), R2
+	LOAD #74, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_277
+	LOAD #0x1.93a224p-1, R0
+	RTS
+	BRA end_if_278
+else_277:
+	LOAD #0x1.9777fp-1, R0
+	RTS
+end_if_278:
+end_if_274:
+	BRA end_if_272
+else_271:
+	LOAD -3(LB), R2
+	LOAD #78, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_279
+	LOAD -3(LB), R2
+	LOAD #76, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_281
+	LOAD #0x1.9b3e04p-1, R0
+	RTS
+	BRA end_if_282
+else_281:
+	LOAD #0x1.9ef44p-1, R0
+	RTS
+end_if_282:
+	BRA end_if_280
+else_279:
+	LOAD -3(LB), R2
+	LOAD #78, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_283
+	LOAD #0x1.a29a7ap-1, R0
+	RTS
+	BRA end_if_284
+else_283:
+	LOAD #0x1.a63092p-1, R0
+	RTS
+end_if_284:
+end_if_280:
+end_if_272:
+end_if_256:
+	BRA end_if_254
+else_253:
+	LOAD -3(LB), R2
+	LOAD #88, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_285
+	LOAD -3(LB), R2
+	LOAD #84, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_287
+	LOAD -3(LB), R2
+	LOAD #82, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_289
+	LOAD -3(LB), R2
+	LOAD #80, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_291
+	LOAD #0x1.a9b662p-1, R0
+	RTS
+	BRA end_if_292
+else_291:
+	LOAD #0x1.ad2bcap-1, R0
+	RTS
+end_if_292:
+	BRA end_if_290
+else_289:
+	LOAD -3(LB), R2
+	LOAD #82, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_293
+	LOAD #0x1.b090a6p-1, R0
+	RTS
+	BRA end_if_294
+else_293:
+	LOAD #0x1.b3e4d4p-1, R0
+	RTS
+end_if_294:
+end_if_290:
+	BRA end_if_288
+else_287:
+	LOAD -3(LB), R2
+	LOAD #86, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_295
+	LOAD -3(LB), R2
+	LOAD #84, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_297
+	LOAD #0x1.b72834p-1, R0
+	RTS
+	BRA end_if_298
+else_297:
+	LOAD #0x1.ba5aa6p-1, R0
+	RTS
+end_if_298:
+	BRA end_if_296
+else_295:
+	LOAD -3(LB), R2
+	LOAD #86, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_299
+	LOAD #0x1.bd7c0ap-1, R0
+	RTS
+	BRA end_if_300
+else_299:
+	LOAD #0x1.c08c42p-1, R0
+	RTS
+end_if_300:
+end_if_296:
+end_if_288:
+	BRA end_if_286
+else_285:
+	LOAD -3(LB), R2
+	LOAD #92, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_301
+	LOAD -3(LB), R2
+	LOAD #90, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_303
+	LOAD -3(LB), R2
+	LOAD #88, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_305
+	LOAD #0x1.c38b3p-1, R0
+	RTS
+	BRA end_if_306
+else_305:
+	LOAD #0x1.c678b4p-1, R0
+	RTS
+end_if_306:
+	BRA end_if_304
+else_303:
+	LOAD -3(LB), R2
+	LOAD #90, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_307
+	LOAD #0x1.c954b2p-1, R0
+	RTS
+	BRA end_if_308
+else_307:
+	LOAD #0x1.cc1f1p-1, R0
+	RTS
+end_if_308:
+end_if_304:
+	BRA end_if_302
+else_301:
+	LOAD -3(LB), R2
+	LOAD #94, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_309
+	LOAD -3(LB), R2
+	LOAD #92, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_311
+	LOAD #0x1.ced7bp-1, R0
+	RTS
+	BRA end_if_312
+else_311:
+	LOAD #0x1.d17e78p-1, R0
+	RTS
+end_if_312:
+	BRA end_if_310
+else_309:
+	LOAD -3(LB), R2
+	LOAD #94, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_313
+	LOAD #0x1.d4134ep-1, R0
+	RTS
+	BRA end_if_314
+else_313:
+	LOAD #0x1.d69618p-1, R0
+	RTS
+end_if_314:
+end_if_310:
+end_if_302:
+end_if_286:
+end_if_254:
+	BRA end_if_252
+else_251:
+	LOAD -3(LB), R2
+	LOAD #112, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_315
+	LOAD -3(LB), R2
+	LOAD #104, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_317
+	LOAD -3(LB), R2
+	LOAD #100, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_319
+	LOAD -3(LB), R2
+	LOAD #98, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_321
+	LOAD -3(LB), R2
+	LOAD #96, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_323
+	LOAD #0x1.d906bcp-1, R0
+	RTS
+	BRA end_if_324
+else_323:
+	LOAD #0x1.db6526p-1, R0
+	RTS
+end_if_324:
+	BRA end_if_322
+else_321:
+	LOAD -3(LB), R2
+	LOAD #98, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_325
+	LOAD #0x1.ddb13cp-1, R0
+	RTS
+	BRA end_if_326
+else_325:
+	LOAD #0x1.dfeae6p-1, R0
+	RTS
+end_if_326:
+end_if_322:
+	BRA end_if_320
+else_319:
+	LOAD -3(LB), R2
+	LOAD #102, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_327
+	LOAD -3(LB), R2
+	LOAD #100, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_329
+	LOAD #0x1.e2121p-1, R0
+	RTS
+	BRA end_if_330
+else_329:
+	LOAD #0x1.e426a4p-1, R0
+	RTS
+end_if_330:
+	BRA end_if_328
+else_327:
+	LOAD -3(LB), R2
+	LOAD #102, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_331
+	LOAD #0x1.e6288ep-1, R0
+	RTS
+	BRA end_if_332
+else_331:
+	LOAD #0x1.e817bap-1, R0
+	RTS
+end_if_332:
+end_if_328:
+end_if_320:
+	BRA end_if_318
+else_317:
+	LOAD -3(LB), R2
+	LOAD #108, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_333
+	LOAD -3(LB), R2
+	LOAD #106, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_335
+	LOAD -3(LB), R2
+	LOAD #104, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_337
+	LOAD #0x1.e9f416p-1, R0
+	RTS
+	BRA end_if_338
+else_337:
+	LOAD #0x1.ebbd8cp-1, R0
+	RTS
+end_if_338:
+	BRA end_if_336
+else_335:
+	LOAD -3(LB), R2
+	LOAD #106, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_339
+	LOAD #0x1.ed740ep-1, R0
+	RTS
+	BRA end_if_340
+else_339:
+	LOAD #0x1.ef178ap-1, R0
+	RTS
+end_if_340:
+end_if_336:
+	BRA end_if_334
+else_333:
+	LOAD -3(LB), R2
+	LOAD #110, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_341
+	LOAD -3(LB), R2
+	LOAD #108, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_343
+	LOAD #0x1.f0a7fp-1, R0
+	RTS
+	BRA end_if_344
+else_343:
+	LOAD #0x1.f2253p-1, R0
+	RTS
+end_if_344:
+	BRA end_if_342
+else_341:
+	LOAD -3(LB), R2
+	LOAD #110, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_345
+	LOAD #0x1.f38f3ap-1, R0
+	RTS
+	BRA end_if_346
+else_345:
+	LOAD #0x1.f4e604p-1, R0
+	RTS
+end_if_346:
+end_if_342:
+end_if_334:
+end_if_318:
+	BRA end_if_316
+else_315:
+	LOAD -3(LB), R2
+	LOAD #120, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_347
+	LOAD -3(LB), R2
+	LOAD #116, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_349
+	LOAD -3(LB), R2
+	LOAD #114, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_351
+	LOAD -3(LB), R2
+	LOAD #112, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_353
+	LOAD #0x1.f6297ep-1, R0
+	RTS
+	BRA end_if_354
+else_353:
+	LOAD #0x1.f7599ap-1, R0
+	RTS
+end_if_354:
+	BRA end_if_352
+else_351:
+	LOAD -3(LB), R2
+	LOAD #114, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_355
+	LOAD #0x1.f8765p-1, R0
+	RTS
+	BRA end_if_356
+else_355:
+	LOAD #0x1.f97f92p-1, R0
+	RTS
+end_if_356:
+end_if_352:
+	BRA end_if_350
+else_349:
+	LOAD -3(LB), R2
+	LOAD #118, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_357
+	LOAD -3(LB), R2
+	LOAD #116, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_359
+	LOAD #0x1.fa7558p-1, R0
+	RTS
+	BRA end_if_360
+else_359:
+	LOAD #0x1.fb5798p-1, R0
+	RTS
+end_if_360:
+	BRA end_if_358
+else_357:
+	LOAD -3(LB), R2
+	LOAD #118, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_361
+	LOAD #0x1.fc2648p-1, R0
+	RTS
+	BRA end_if_362
+else_361:
+	LOAD #0x1.fce16p-1, R0
+	RTS
+end_if_362:
+end_if_358:
+end_if_350:
+	BRA end_if_348
+else_347:
+	LOAD -3(LB), R2
+	LOAD #124, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_363
+	LOAD -3(LB), R2
+	LOAD #122, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_365
+	LOAD -3(LB), R2
+	LOAD #120, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_367
+	LOAD #0x1.fd88dap-1, R0
+	RTS
+	BRA end_if_368
+else_367:
+	LOAD #0x1.fe1cbp-1, R0
+	RTS
+end_if_368:
+	BRA end_if_366
+else_365:
+	LOAD -3(LB), R2
+	LOAD #122, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_369
+	LOAD #0x1.fe9cdap-1, R0
+	RTS
+	BRA end_if_370
+else_369:
+	LOAD #0x1.ff0956p-1, R0
+	RTS
+end_if_370:
+end_if_366:
+	BRA end_if_364
+else_363:
+	LOAD -3(LB), R2
+	LOAD #126, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_371
+	LOAD -3(LB), R2
+	LOAD #124, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_373
+	LOAD #0x1.ff621ep-1, R0
+	RTS
+	BRA end_if_374
+else_373:
+	LOAD #0x1.ffa73p-1, R0
+	RTS
+end_if_374:
+	BRA end_if_372
+else_371:
+	LOAD -3(LB), R2
+	LOAD #126, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_375
+	LOAD #0x1.ffd886p-1, R0
+	RTS
+	BRA end_if_376
+else_375:
+	LOAD #0x1.0p0, R0
+	RTS
+end_if_376:
+end_if_372:
+end_if_364:
+end_if_348:
+end_if_316:
+end_if_252:
+end_if_124:
+	BOV missing_ret
+code.TableSinCos._getCosValue:
+; Méthode _getCosValue
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #64, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_377
+	LOAD -3(LB), R2
+	LOAD #32, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_379
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_381
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_383
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_385
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_387
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_389
+	LOAD #0x1.0p0, R0
+	RTS
+	BRA end_if_390
+else_389:
+	LOAD #0x1.fff622p-1, R0
+	RTS
+end_if_390:
+	BRA end_if_388
+else_387:
+	LOAD -3(LB), R2
+	LOAD #2, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_391
+	LOAD #0x1.ffd886p-1, R0
+	RTS
+	BRA end_if_392
+else_391:
+	LOAD #0x1.ffa73p-1, R0
+	RTS
+end_if_392:
+end_if_388:
+	BRA end_if_386
+else_385:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_393
+	LOAD -3(LB), R2
+	LOAD #4, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_395
+	LOAD #0x1.ff621ep-1, R0
+	RTS
+	BRA end_if_396
+else_395:
+	LOAD #0x1.ff0956p-1, R0
+	RTS
+end_if_396:
+	BRA end_if_394
+else_393:
+	LOAD -3(LB), R2
+	LOAD #6, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_397
+	LOAD #0x1.fe9cdap-1, R0
+	RTS
+	BRA end_if_398
+else_397:
+	LOAD #0x1.fe1cbp-1, R0
+	RTS
+end_if_398:
+end_if_394:
+end_if_386:
+	BRA end_if_384
+else_383:
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_399
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_401
+	LOAD -3(LB), R2
+	LOAD #8, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_403
+	LOAD #0x1.fd88dap-1, R0
+	RTS
+	BRA end_if_404
+else_403:
+	LOAD #0x1.fce16p-1, R0
+	RTS
+end_if_404:
+	BRA end_if_402
+else_401:
+	LOAD -3(LB), R2
+	LOAD #10, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_405
+	LOAD #0x1.fc2648p-1, R0
+	RTS
+	BRA end_if_406
+else_405:
+	LOAD #0x1.fb5798p-1, R0
+	RTS
+end_if_406:
+end_if_402:
+	BRA end_if_400
+else_399:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_407
+	LOAD -3(LB), R2
+	LOAD #12, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_409
+	LOAD #0x1.fa7558p-1, R0
+	RTS
+	BRA end_if_410
+else_409:
+	LOAD #0x1.f97f92p-1, R0
+	RTS
+end_if_410:
+	BRA end_if_408
+else_407:
+	LOAD -3(LB), R2
+	LOAD #14, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_411
+	LOAD #0x1.f8765p-1, R0
+	RTS
+	BRA end_if_412
+else_411:
+	LOAD #0x1.f7599ap-1, R0
+	RTS
+end_if_412:
+end_if_408:
+end_if_400:
+end_if_384:
+	BRA end_if_382
+else_381:
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_413
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_415
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_417
+	LOAD -3(LB), R2
+	LOAD #16, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_419
+	LOAD #0x1.f6297ep-1, R0
+	RTS
+	BRA end_if_420
+else_419:
+	LOAD #0x1.f4e604p-1, R0
+	RTS
+end_if_420:
+	BRA end_if_418
+else_417:
+	LOAD -3(LB), R2
+	LOAD #18, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_421
+	LOAD #0x1.f38f3ap-1, R0
+	RTS
+	BRA end_if_422
+else_421:
+	LOAD #0x1.f2253p-1, R0
+	RTS
+end_if_422:
+end_if_418:
+	BRA end_if_416
+else_415:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_423
+	LOAD -3(LB), R2
+	LOAD #20, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_425
+	LOAD #0x1.f0a7fp-1, R0
+	RTS
+	BRA end_if_426
+else_425:
+	LOAD #0x1.ef178ap-1, R0
+	RTS
+end_if_426:
+	BRA end_if_424
+else_423:
+	LOAD -3(LB), R2
+	LOAD #22, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_427
+	LOAD #0x1.ed740ep-1, R0
+	RTS
+	BRA end_if_428
+else_427:
+	LOAD #0x1.ebbd8cp-1, R0
+	RTS
+end_if_428:
+end_if_424:
+end_if_416:
+	BRA end_if_414
+else_413:
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_429
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_431
+	LOAD -3(LB), R2
+	LOAD #24, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_433
+	LOAD #0x1.e9f416p-1, R0
+	RTS
+	BRA end_if_434
+else_433:
+	LOAD #0x1.e817bap-1, R0
+	RTS
+end_if_434:
+	BRA end_if_432
+else_431:
+	LOAD -3(LB), R2
+	LOAD #26, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_435
+	LOAD #0x1.e6288ep-1, R0
+	RTS
+	BRA end_if_436
+else_435:
+	LOAD #0x1.e426a4p-1, R0
+	RTS
+end_if_436:
+end_if_432:
+	BRA end_if_430
+else_429:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_437
+	LOAD -3(LB), R2
+	LOAD #28, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_439
+	LOAD #0x1.e2121p-1, R0
+	RTS
+	BRA end_if_440
+else_439:
+	LOAD #0x1.dfeae6p-1, R0
+	RTS
+end_if_440:
+	BRA end_if_438
+else_437:
+	LOAD -3(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_441
+	LOAD #0x1.ddb13cp-1, R0
+	RTS
+	BRA end_if_442
+else_441:
+	LOAD #0x1.db6526p-1, R0
+	RTS
+end_if_442:
+end_if_438:
+end_if_430:
+end_if_414:
+end_if_382:
+	BRA end_if_380
+else_379:
+	LOAD -3(LB), R2
+	LOAD #48, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_443
+	LOAD -3(LB), R2
+	LOAD #40, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_445
+	LOAD -3(LB), R2
+	LOAD #36, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_447
+	LOAD -3(LB), R2
+	LOAD #34, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_449
+	LOAD -3(LB), R2
+	LOAD #32, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_451
+	LOAD #0x1.d906bcp-1, R0
+	RTS
+	BRA end_if_452
+else_451:
+	LOAD #0x1.d69618p-1, R0
+	RTS
+end_if_452:
+	BRA end_if_450
+else_449:
+	LOAD -3(LB), R2
+	LOAD #34, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_453
+	LOAD #0x1.d4134ep-1, R0
+	RTS
+	BRA end_if_454
+else_453:
+	LOAD #0x1.d17e78p-1, R0
+	RTS
+end_if_454:
+end_if_450:
+	BRA end_if_448
+else_447:
+	LOAD -3(LB), R2
+	LOAD #38, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_455
+	LOAD -3(LB), R2
+	LOAD #36, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_457
+	LOAD #0x1.ced7bp-1, R0
+	RTS
+	BRA end_if_458
+else_457:
+	LOAD #0x1.cc1f1p-1, R0
+	RTS
+end_if_458:
+	BRA end_if_456
+else_455:
+	LOAD -3(LB), R2
+	LOAD #38, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_459
+	LOAD #0x1.c954b2p-1, R0
+	RTS
+	BRA end_if_460
+else_459:
+	LOAD #0x1.c678b4p-1, R0
+	RTS
+end_if_460:
+end_if_456:
+end_if_448:
+	BRA end_if_446
+else_445:
+	LOAD -3(LB), R2
+	LOAD #44, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_461
+	LOAD -3(LB), R2
+	LOAD #42, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_463
+	LOAD -3(LB), R2
+	LOAD #40, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_465
+	LOAD #0x1.c38b3p-1, R0
+	RTS
+	BRA end_if_466
+else_465:
+	LOAD #0x1.c08c42p-1, R0
+	RTS
+end_if_466:
+	BRA end_if_464
+else_463:
+	LOAD -3(LB), R2
+	LOAD #42, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_467
+	LOAD #0x1.bd7c0ap-1, R0
+	RTS
+	BRA end_if_468
+else_467:
+	LOAD #0x1.ba5aa6p-1, R0
+	RTS
+end_if_468:
+end_if_464:
+	BRA end_if_462
+else_461:
+	LOAD -3(LB), R2
+	LOAD #46, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_469
+	LOAD -3(LB), R2
+	LOAD #44, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_471
+	LOAD #0x1.b72834p-1, R0
+	RTS
+	BRA end_if_472
+else_471:
+	LOAD #0x1.b3e4d4p-1, R0
+	RTS
+end_if_472:
+	BRA end_if_470
+else_469:
+	LOAD -3(LB), R2
+	LOAD #46, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_473
+	LOAD #0x1.b090a6p-1, R0
+	RTS
+	BRA end_if_474
+else_473:
+	LOAD #0x1.ad2bcap-1, R0
+	RTS
+end_if_474:
+end_if_470:
+end_if_462:
+end_if_446:
+	BRA end_if_444
+else_443:
+	LOAD -3(LB), R2
+	LOAD #56, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_475
+	LOAD -3(LB), R2
+	LOAD #52, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_477
+	LOAD -3(LB), R2
+	LOAD #50, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_479
+	LOAD -3(LB), R2
+	LOAD #48, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_481
+	LOAD #0x1.a9b662p-1, R0
+	RTS
+	BRA end_if_482
+else_481:
+	LOAD #0x1.a63092p-1, R0
+	RTS
+end_if_482:
+	BRA end_if_480
+else_479:
+	LOAD -3(LB), R2
+	LOAD #50, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_483
+	LOAD #0x1.a29a7ap-1, R0
+	RTS
+	BRA end_if_484
+else_483:
+	LOAD #0x1.9ef44p-1, R0
+	RTS
+end_if_484:
+end_if_480:
+	BRA end_if_478
+else_477:
+	LOAD -3(LB), R2
+	LOAD #54, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_485
+	LOAD -3(LB), R2
+	LOAD #52, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_487
+	LOAD #0x1.9b3e04p-1, R0
+	RTS
+	BRA end_if_488
+else_487:
+	LOAD #0x1.9777fp-1, R0
+	RTS
+end_if_488:
+	BRA end_if_486
+else_485:
+	LOAD -3(LB), R2
+	LOAD #54, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_489
+	LOAD #0x1.93a224p-1, R0
+	RTS
+	BRA end_if_490
+else_489:
+	LOAD #0x1.8fbccap-1, R0
+	RTS
+end_if_490:
+end_if_486:
+end_if_478:
+	BRA end_if_476
+else_475:
+	LOAD -3(LB), R2
+	LOAD #60, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_491
+	LOAD -3(LB), R2
+	LOAD #58, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_493
+	LOAD -3(LB), R2
+	LOAD #56, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_495
+	LOAD #0x1.8bc806p-1, R0
+	RTS
+	BRA end_if_496
+else_495:
+	LOAD #0x1.87c402p-1, R0
+	RTS
+end_if_496:
+	BRA end_if_494
+else_493:
+	LOAD -3(LB), R2
+	LOAD #58, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_497
+	LOAD #0x1.83b0ep-1, R0
+	RTS
+	BRA end_if_498
+else_497:
+	LOAD #0x1.7f8ecep-1, R0
+	RTS
+end_if_498:
+end_if_494:
+	BRA end_if_492
+else_491:
+	LOAD -3(LB), R2
+	LOAD #62, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_499
+	LOAD -3(LB), R2
+	LOAD #60, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_501
+	LOAD #0x1.7b5df2p-1, R0
+	RTS
+	BRA end_if_502
+else_501:
+	LOAD #0x1.771e76p-1, R0
+	RTS
+end_if_502:
+	BRA end_if_500
+else_499:
+	LOAD -3(LB), R2
+	LOAD #62, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_503
+	LOAD #0x1.72d084p-1, R0
+	RTS
+	BRA end_if_504
+else_503:
+	LOAD #0x1.6e7444p-1, R0
+	RTS
+end_if_504:
+end_if_500:
+end_if_492:
+end_if_476:
+end_if_444:
+end_if_380:
+	BRA end_if_378
+else_377:
+	LOAD -3(LB), R2
+	LOAD #96, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_505
+	LOAD -3(LB), R2
+	LOAD #80, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_507
+	LOAD -3(LB), R2
+	LOAD #72, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_509
+	LOAD -3(LB), R2
+	LOAD #68, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_511
+	LOAD -3(LB), R2
+	LOAD #66, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_513
+	LOAD -3(LB), R2
+	LOAD #64, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_515
+	LOAD #0x1.6a09e6p-1, R0
+	RTS
+	BRA end_if_516
+else_515:
+	LOAD #0x1.659192p-1, R0
+	RTS
+end_if_516:
+	BRA end_if_514
+else_513:
+	LOAD -3(LB), R2
+	LOAD #66, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_517
+	LOAD #0x1.610b76p-1, R0
+	RTS
+	BRA end_if_518
+else_517:
+	LOAD #0x1.5c77bcp-1, R0
+	RTS
+end_if_518:
+end_if_514:
+	BRA end_if_512
+else_511:
+	LOAD -3(LB), R2
+	LOAD #70, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_519
+	LOAD -3(LB), R2
+	LOAD #68, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_521
+	LOAD #0x1.57d694p-1, R0
+	RTS
+	BRA end_if_522
+else_521:
+	LOAD #0x1.53282ap-1, R0
+	RTS
+end_if_522:
+	BRA end_if_520
+else_519:
+	LOAD -3(LB), R2
+	LOAD #70, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_523
+	LOAD #0x1.4e6cacp-1, R0
+	RTS
+	BRA end_if_524
+else_523:
+	LOAD #0x1.49a44ap-1, R0
+	RTS
+end_if_524:
+end_if_520:
+end_if_512:
+	BRA end_if_510
+else_509:
+	LOAD -3(LB), R2
+	LOAD #76, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_525
+	LOAD -3(LB), R2
+	LOAD #74, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_527
+	LOAD -3(LB), R2
+	LOAD #72, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_529
+	LOAD #0x1.44cf32p-1, R0
+	RTS
+	BRA end_if_530
+else_529:
+	LOAD #0x1.3fed96p-1, R0
+	RTS
+end_if_530:
+	BRA end_if_528
+else_527:
+	LOAD -3(LB), R2
+	LOAD #74, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_531
+	LOAD #0x1.3affa4p-1, R0
+	RTS
+	BRA end_if_532
+else_531:
+	LOAD #0x1.36058ap-1, R0
+	RTS
+end_if_532:
+end_if_528:
+	BRA end_if_526
+else_525:
+	LOAD -3(LB), R2
+	LOAD #78, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_533
+	LOAD -3(LB), R2
+	LOAD #76, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_535
+	LOAD #0x1.30ff8p-1, R0
+	RTS
+	BRA end_if_536
+else_535:
+	LOAD #0x1.2bedb2p-1, R0
+	RTS
+end_if_536:
+	BRA end_if_534
+else_533:
+	LOAD -3(LB), R2
+	LOAD #78, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_537
+	LOAD #0x1.26d054p-1, R0
+	RTS
+	BRA end_if_538
+else_537:
+	LOAD #0x1.21a79ap-1, R0
+	RTS
+end_if_538:
+end_if_534:
+end_if_526:
+end_if_510:
+	BRA end_if_508
+else_507:
+	LOAD -3(LB), R2
+	LOAD #88, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_539
+	LOAD -3(LB), R2
+	LOAD #84, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_541
+	LOAD -3(LB), R2
+	LOAD #82, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_543
+	LOAD -3(LB), R2
+	LOAD #80, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_545
+	LOAD #0x1.1c73b4p-1, R0
+	RTS
+	BRA end_if_546
+else_545:
+	LOAD #0x1.1734d6p-1, R0
+	RTS
+end_if_546:
+	BRA end_if_544
+else_543:
+	LOAD -3(LB), R2
+	LOAD #82, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_547
+	LOAD #0x1.11eb36p-1, R0
+	RTS
+	BRA end_if_548
+else_547:
+	LOAD #0x1.0c9704p-1, R0
+	RTS
+end_if_548:
+end_if_544:
+	BRA end_if_542
+else_541:
+	LOAD -3(LB), R2
+	LOAD #86, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_549
+	LOAD -3(LB), R2
+	LOAD #84, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_551
+	LOAD #0x1.07387ap-1, R0
+	RTS
+	BRA end_if_552
+else_551:
+	LOAD #0x1.01cfcap-1, R0
+	RTS
+end_if_552:
+	BRA end_if_550
+else_549:
+	LOAD -3(LB), R2
+	LOAD #86, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_553
+	LOAD #0x1.f8ba5p-2, R0
+	RTS
+	BRA end_if_554
+else_553:
+	LOAD #0x1.edc1a2p-2, R0
+	RTS
+end_if_554:
+end_if_550:
+end_if_542:
+	BRA end_if_540
+else_539:
+	LOAD -3(LB), R2
+	LOAD #92, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_555
+	LOAD -3(LB), R2
+	LOAD #90, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_557
+	LOAD -3(LB), R2
+	LOAD #88, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_559
+	LOAD #0x1.e2b5d4p-2, R0
+	RTS
+	BRA end_if_560
+else_559:
+	LOAD #0x1.d79774p-2, R0
+	RTS
+end_if_560:
+	BRA end_if_558
+else_557:
+	LOAD -3(LB), R2
+	LOAD #90, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_561
+	LOAD #0x1.cc66eap-2, R0
+	RTS
+	BRA end_if_562
+else_561:
+	LOAD #0x1.c1249ep-2, R0
+	RTS
+end_if_562:
+end_if_558:
+	BRA end_if_556
+else_555:
+	LOAD -3(LB), R2
+	LOAD #94, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_563
+	LOAD -3(LB), R2
+	LOAD #92, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_565
+	LOAD #0x1.b5d1p-2, R0
+	RTS
+	BRA end_if_566
+else_565:
+	LOAD #0x1.aa6c82p-2, R0
+	RTS
+end_if_566:
+	BRA end_if_564
+else_563:
+	LOAD -3(LB), R2
+	LOAD #94, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_567
+	LOAD #0x1.9ef796p-2, R0
+	RTS
+	BRA end_if_568
+else_567:
+	LOAD #0x1.9372a6p-2, R0
+	RTS
+end_if_568:
+end_if_564:
+end_if_556:
+end_if_540:
+end_if_508:
+	BRA end_if_506
+else_505:
+	LOAD -3(LB), R2
+	LOAD #112, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_569
+	LOAD -3(LB), R2
+	LOAD #104, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_571
+	LOAD -3(LB), R2
+	LOAD #100, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_573
+	LOAD -3(LB), R2
+	LOAD #98, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_575
+	LOAD -3(LB), R2
+	LOAD #96, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_577
+	LOAD #0x1.87de2ap-2, R0
+	RTS
+	BRA end_if_578
+else_577:
+	LOAD #0x1.7c3a94p-2, R0
+	RTS
+end_if_578:
+	BRA end_if_576
+else_575:
+	LOAD -3(LB), R2
+	LOAD #98, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_579
+	LOAD #0x1.708854p-2, R0
+	RTS
+	BRA end_if_580
+else_579:
+	LOAD #0x1.64c7dep-2, R0
+	RTS
+end_if_580:
+end_if_576:
+	BRA end_if_574
+else_573:
+	LOAD -3(LB), R2
+	LOAD #102, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_581
+	LOAD -3(LB), R2
+	LOAD #100, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_583
+	LOAD #0x1.58f9a8p-2, R0
+	RTS
+	BRA end_if_584
+else_583:
+	LOAD #0x1.4d1e24p-2, R0
+	RTS
+end_if_584:
+	BRA end_if_582
+else_581:
+	LOAD -3(LB), R2
+	LOAD #102, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_585
+	LOAD #0x1.4135cap-2, R0
+	RTS
+	BRA end_if_586
+else_585:
+	LOAD #0x1.35410cp-2, R0
+	RTS
+end_if_586:
+end_if_582:
+end_if_574:
+	BRA end_if_572
+else_571:
+	LOAD -3(LB), R2
+	LOAD #108, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_587
+	LOAD -3(LB), R2
+	LOAD #106, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_589
+	LOAD -3(LB), R2
+	LOAD #104, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_591
+	LOAD #0x1.294062p-2, R0
+	RTS
+	BRA end_if_592
+else_591:
+	LOAD #0x1.1d3444p-2, R0
+	RTS
+end_if_592:
+	BRA end_if_590
+else_589:
+	LOAD -3(LB), R2
+	LOAD #106, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_593
+	LOAD #0x1.111d26p-2, R0
+	RTS
+	BRA end_if_594
+else_593:
+	LOAD #0x1.04fb8p-2, R0
+	RTS
+end_if_594:
+end_if_590:
+	BRA end_if_588
+else_587:
+	LOAD -3(LB), R2
+	LOAD #110, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_595
+	LOAD -3(LB), R2
+	LOAD #108, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_597
+	LOAD #0x1.f19f98p-3, R0
+	RTS
+	BRA end_if_598
+else_597:
+	LOAD #0x1.d934fep-3, R0
+	RTS
+end_if_598:
+	BRA end_if_596
+else_595:
+	LOAD -3(LB), R2
+	LOAD #110, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_599
+	LOAD #0x1.c0b826p-3, R0
+	RTS
+	BRA end_if_600
+else_599:
+	LOAD #0x1.a82a02p-3, R0
+	RTS
+end_if_600:
+end_if_596:
+end_if_588:
+end_if_572:
+	BRA end_if_570
+else_569:
+	LOAD -3(LB), R2
+	LOAD #120, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_601
+	LOAD -3(LB), R2
+	LOAD #116, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_603
+	LOAD -3(LB), R2
+	LOAD #114, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_605
+	LOAD -3(LB), R2
+	LOAD #112, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_607
+	LOAD #0x1.8f8b84p-3, R0
+	RTS
+	BRA end_if_608
+else_607:
+	LOAD #0x1.76dd9ep-3, R0
+	RTS
+end_if_608:
+	BRA end_if_606
+else_605:
+	LOAD -3(LB), R2
+	LOAD #114, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_609
+	LOAD #0x1.5e2146p-3, R0
+	RTS
+	BRA end_if_610
+else_609:
+	LOAD #0x1.45576cp-3, R0
+	RTS
+end_if_610:
+end_if_606:
+	BRA end_if_604
+else_603:
+	LOAD -3(LB), R2
+	LOAD #118, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_611
+	LOAD -3(LB), R2
+	LOAD #116, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_613
+	LOAD #0x1.2c8106p-3, R0
+	RTS
+	BRA end_if_614
+else_613:
+	LOAD #0x1.139f0cp-3, R0
+	RTS
+end_if_614:
+	BRA end_if_612
+else_611:
+	LOAD -3(LB), R2
+	LOAD #118, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_615
+	LOAD #0x1.f564e6p-4, R0
+	RTS
+	BRA end_if_616
+else_615:
+	LOAD #0x1.c3785cp-4, R0
+	RTS
+end_if_616:
+end_if_612:
+end_if_604:
+	BRA end_if_602
+else_601:
+	LOAD -3(LB), R2
+	LOAD #124, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_617
+	LOAD -3(LB), R2
+	LOAD #122, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_619
+	LOAD -3(LB), R2
+	LOAD #120, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_621
+	LOAD #0x1.917a6cp-4, R0
+	RTS
+	BRA end_if_622
+else_621:
+	LOAD #0x1.5f6dp-4, R0
+	RTS
+end_if_622:
+	BRA end_if_620
+else_619:
+	LOAD -3(LB), R2
+	LOAD #122, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_623
+	LOAD #0x1.2d520ap-4, R0
+	RTS
+	BRA end_if_624
+else_623:
+	LOAD #0x1.f656eap-5, R0
+	RTS
+end_if_624:
+end_if_620:
+	BRA end_if_618
+else_617:
+	LOAD -3(LB), R2
+	LOAD #126, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_625
+	LOAD -3(LB), R2
+	LOAD #124, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_627
+	LOAD #0x1.91f66p-5, R0
+	RTS
+	BRA end_if_628
+else_627:
+	LOAD #0x1.2d8658p-5, R0
+	RTS
+end_if_628:
+	BRA end_if_626
+else_625:
+	LOAD -3(LB), R2
+	LOAD #126, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_629
+	LOAD #0x1.92156p-6, R0
+	RTS
+	BRA end_if_630
+else_629:
+	LOAD #0x1.921d2p-7, R0
+	RTS
+end_if_630:
+end_if_626:
+end_if_618:
+end_if_602:
+end_if_570:
+end_if_506:
+end_if_378:
+	BOV missing_ret
+; Méthodes de la classe Math
+code.Math._fma:
+; Méthode _fma
+
+        LOAD 2(GB), R1    ; a
+        LOAD 3(GB), R2    ; b
+        LOAD 4(GB), R3    ; c
+
+        ; Préparer pour FMA: R1 * R2 + R3
+        LOAD R3, R1       ; R1 = c (pour être R1 dans FMA)
+        LOAD 2(GB), R2    ; R2 = a
+        FMA 3(GB), R2     ; R2 = a * b + c
+        
+        STORE R2, 1(GB)   ; résultat dans la pile
+        RTS
+    
+code.Math.sin:
+; Méthode sin
+	TSTO #6
+	BOV stack_overflow_isr
+	ADDSP #4
+	LOAD #0, R2
+	STORE R2, 2(LB)
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_631
+	LOAD #1, R2
+	STORE R2, 2(LB)
+	LOAD -3(LB), R2
+	OPP R2, R2
+	STORE R2, -3(LB)
+	BRA end_if_632
+else_631:
+end_if_632:
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD -3(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 1(LB)
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 1(R3), R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_633
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 1(R3), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 1(LB)
+	LOAD #1, R2
+	STORE R2, 2(LB)
+	BRA end_if_634
+else_633:
+end_if_634:
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 3(R3), R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_635
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD 1(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 1(LB)
+	BRA end_if_636
+else_635:
+end_if_636:
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 9(R3), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_637
+	LOAD 1(LB), R2
+	STORE R2, 3(LB)
+	BRA end_if_638
+else_637:
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 10(R3), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_639
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 1(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._tableSin
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 3(LB)
+	BRA end_if_640
+else_639:
+	LOAD 1(LB), R2
+	LOAD -2(LB), R3
+	LOAD 11(R3), R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_641
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD 1(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 4(LB)
+	LOAD 4(LB), R2
+	LOAD -2(LB), R3
+	LOAD 9(R3), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_643
+	LOAD #0x1.0p0, R2
+	STORE R2, 3(LB)
+	BRA end_if_644
+else_643:
+	LOAD 4(LB), R2
+	LOAD -2(LB), R3
+	LOAD 10(R3), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_645
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 4(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._tableCos
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 3(LB)
+	BRA end_if_646
+else_645:
+	LOAD #0x1.0p0, R2
+	STORE R2, 3(LB)
+end_if_646:
+end_if_644:
+	BRA end_if_642
+else_641:
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 1(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._cordicSin
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 3(LB)
+end_if_642:
+end_if_640:
+end_if_638:
+	LOAD 2(LB), R2
+	CMP #0, R2
+	BEQ else_647
+	LOAD 3(LB), R0
+	OPP R0, R0
+	RTS
+	BRA end_if_648
+else_647:
+	LOAD 3(LB), R0
+	RTS
+end_if_648:
+	BOV missing_ret
+code.Math._cordicSin:
+; Méthode _cordicSin
+	TSTO #11
+	BOV stack_overflow_isr
+	ADDSP #9
+	NEW #1, R2
+	BOV heap_full_isr
+	LEA 1(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.CordicTable
+	SUBSP #1
+	STORE R2, 6(LB)
+	LOAD #0, R2
+	STORE R2, 9(LB)
+	LOAD -3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 4(R3), R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_649
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD -3(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, -3(LB)
+	LOAD #1, R2
+	STORE R2, 9(LB)
+	BRA end_if_650
+else_649:
+end_if_650:
+	LOAD -2(LB), R2
+	LOAD 5(R2), R2
+	STORE R2, 1(LB)
+	LOAD #0x0.0p0, R2
+	STORE R2, 2(LB)
+	LOAD -3(LB), R2
+	STORE R2, 3(LB)
+	LOAD #24, R2
+	LOAD -2(LB), R3
+	LOAD 8(R3), R3
+	CMP R3, R2
+	SLE R2
+	CMP #0, R2
+	BEQ else_651
+	LOAD #24, R2
+	STORE R2, 4(LB)
+	BRA end_if_652
+else_651:
+	LOAD -2(LB), R2
+	LOAD 8(R2), R2
+	STORE R2, 4(LB)
+end_if_652:
+	LOAD #0, R2
+	STORE R2, 5(LB)
+	BRA while_cond_655
+loop_start_653:
+	LOAD 1(LB), R2
+	STORE R2, 7(LB)
+	LOAD 6(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 5(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.CordicTable._getPow2
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 8(LB)
+	LOAD 3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_656
+	LOAD 1(LB), R2
+	LOAD 2(LB), R3
+	LOAD 8(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 1(LB)
+	LOAD 2(LB), R2
+	LOAD 7(LB), R3
+	LOAD 8(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD 6(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 5(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 3(LB)
+	BRA end_if_657
+else_656:
+	LOAD 1(LB), R2
+	LOAD 2(LB), R3
+	LOAD 8(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 1(LB)
+	LOAD 2(LB), R2
+	LOAD 7(LB), R3
+	LOAD 8(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD 6(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 5(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 3(LB)
+end_if_657:
+	LOAD 5(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 5(LB)
+while_cond_655:
+	LOAD 5(LB), R2
+	LOAD 4(LB), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_653
+loop_exit_654:
+	LOAD 9(LB), R2
+	CMP #0, R2
+	BEQ else_658
+	LOAD 2(LB), R0
+	RTS
+	BRA end_if_659
+else_658:
+end_if_659:
+	LOAD 1(LB), R0
+	RTS
+	BOV missing_ret
+code.Math._cordicCos:
+; Méthode _cordicCos
+	TSTO #11
+	BOV stack_overflow_isr
+	ADDSP #9
+	NEW #1, R2
+	BOV heap_full_isr
+	LEA 1(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.CordicTable
+	SUBSP #1
+	STORE R2, 6(LB)
+	LOAD #0, R2
+	STORE R2, 7(LB)
+	LOAD -3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 4(R3), R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_660
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD -3(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, -3(LB)
+	LOAD #1, R2
+	STORE R2, 7(LB)
+	BRA end_if_661
+else_660:
+end_if_661:
+	LOAD -2(LB), R2
+	LOAD 5(R2), R2
+	STORE R2, 1(LB)
+	LOAD #0x0.0p0, R2
+	STORE R2, 2(LB)
+	LOAD -3(LB), R2
+	STORE R2, 3(LB)
+	LOAD #24, R2
+	LOAD -2(LB), R3
+	LOAD 8(R3), R3
+	CMP R3, R2
+	SLE R2
+	CMP #0, R2
+	BEQ else_662
+	LOAD #24, R2
+	STORE R2, 8(LB)
+	BRA end_if_663
+else_662:
+	LOAD -2(LB), R2
+	LOAD 8(R2), R2
+	STORE R2, 8(LB)
+end_if_663:
+	LOAD #0, R2
+	STORE R2, 9(LB)
+	BRA while_cond_666
+loop_start_664:
+	LOAD 1(LB), R2
+	STORE R2, 4(LB)
+	LOAD 6(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 9(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.CordicTable._getPow2
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 5(LB)
+	LOAD 3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_667
+	LOAD 1(LB), R2
+	LOAD 2(LB), R3
+	LOAD 5(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 1(LB)
+	LOAD 2(LB), R2
+	LOAD 4(LB), R3
+	LOAD 5(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD 6(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 9(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 3(LB)
+	BRA end_if_668
+else_667:
+	LOAD 1(LB), R2
+	LOAD 2(LB), R3
+	LOAD 5(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 1(LB)
+	LOAD 2(LB), R2
+	LOAD 4(LB), R3
+	LOAD 5(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD 6(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 9(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 3(LB)
+end_if_668:
+	LOAD 9(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 9(LB)
+while_cond_666:
+	LOAD 9(LB), R2
+	LOAD 8(LB), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_664
+loop_exit_665:
+	LOAD 7(LB), R2
+	CMP #0, R2
+	BEQ else_669
+	LOAD 1(LB), R0
+	RTS
+	BRA end_if_670
+else_669:
+end_if_670:
+	LOAD 2(LB), R0
+	RTS
+	BOV missing_ret
+code.Math._abs:
+; Méthode _abs
+	TSTO #0
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_671
+	LOAD -3(LB), R0
+	OPP R0, R0
+	RTS
+	BRA end_if_672
+else_671:
+	LOAD -3(LB), R0
+	RTS
+end_if_672:
+	BOV missing_ret
+code.Math._tableSin:
+; Méthode _tableSin
+	TSTO #8
+	BOV stack_overflow_isr
+	ADDSP #6
+	LOAD -3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 7(R3), R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 1(LB)
+	NEW #1, R2
+	BOV heap_full_isr
+	LEA 4(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.TableSinCos
+	SUBSP #1
+	STORE R2, 2(LB)
+	LOAD 1(LB), R2
+	INT R2, R2
+	STORE R2, 3(LB)
+	LOAD 3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 6(R3), R3
+	LOAD #1, R4
+	SUB R4, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_673
+	LOAD 2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -2(LB), R0
+	LOAD 6(R0), R0
+	LOAD #1, R2
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.TableSinCos._getSinValue
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_674
+else_673:
+end_if_674:
+	LOAD -3(LB), R2
+	LOAD 3(LB), R3
+	FLOAT R3, R3
+	LOAD -2(LB), R4
+	LOAD 7(R4), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 4(LB)
+	LOAD 4(LB), R2
+	STORE R2, 5(LB)
+	LOAD #0x1.0p0, R2
+	LOAD 4(LB), R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD #0x1.0p-1, R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 6(LB)
+	LOAD 6(LB), R0
+	LOAD 2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 3(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.TableSinCos._getSinValue
+	SUBSP #2
+	LOAD R0, R2
+	BOV overflow_float
+	MUL R2, R0
+	LOAD 5(LB), R2
+	LOAD 2(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 3(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.TableSinCos._getCosValue
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	MUL R3, R2
+	BOV overflow_float
+	ADD R2, R0
+	RTS
+	BOV missing_ret
+code.Math._tableCos:
+; Méthode _tableCos
+	TSTO #8
+	BOV stack_overflow_isr
+	ADDSP #6
+	NEW #1, R2
+	BOV heap_full_isr
+	LEA 4(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.TableSinCos
+	SUBSP #1
+	STORE R2, 1(LB)
+	LOAD -3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 7(R3), R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 2(LB)
+	LOAD 2(LB), R2
+	INT R2, R2
+	STORE R2, 3(LB)
+	LOAD 3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 6(R3), R3
+	LOAD #1, R4
+	SUB R4, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_675
+	LOAD 1(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -2(LB), R0
+	LOAD 6(R0), R0
+	LOAD #1, R2
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.TableSinCos._getCosValue
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_676
+else_675:
+end_if_676:
+	LOAD -3(LB), R2
+	LOAD 3(LB), R3
+	FLOAT R3, R3
+	LOAD -2(LB), R4
+	LOAD 7(R4), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 4(LB)
+	LOAD 4(LB), R2
+	STORE R2, 5(LB)
+	LOAD #0x1.0p0, R2
+	LOAD 4(LB), R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD #0x1.0p-1, R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 6(LB)
+	LOAD 6(LB), R0
+	LOAD 1(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 3(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.TableSinCos._getCosValue
+	SUBSP #2
+	LOAD R0, R2
+	BOV overflow_float
+	MUL R2, R0
+	LOAD 5(LB), R2
+	LOAD 1(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 3(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.TableSinCos._getSinValue
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	MUL R3, R2
+	BOV overflow_float
+	SUB R2, R0
+	RTS
+	BOV missing_ret
+code.Math.cos:
+; Méthode cos
+	TSTO #2
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -2(LB), R0
+	LOAD 3(R0), R0
+	LOAD -3(LB), R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math.sin
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BOV missing_ret
+code.Math.asin:
+; Méthode asin
+	TSTO #7
+	BOV stack_overflow_isr
+	ADDSP #5
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	OPP R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE end_or_679
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_677
+end_or_679:
+	LOAD #0x0.0p0, R0
+	LOAD #0x0.0p0, R2
+	DIV R2, R0
+	BOV div_zero_isr
+	RTS
+	BRA end_if_678
+else_677:
+end_if_678:
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	OPP R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE end_or_682
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_680
+end_or_682:
+	LOAD #0x0.0p0, R0
+	LOAD #0x0.0p0, R2
+	DIV R2, R0
+	BOV div_zero_isr
+	RTS
+	BRA end_if_681
+else_680:
+end_if_681:
+	LOAD #0x1.ad7f2ap-24, R2
+	STORE R2, 1(LB)
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._abs
+	SUBSP #2
+	LOAD R0, R2
+	LOAD 1(LB), R3
+	CMP R3, R2
+	SLE R2
+	CMP #0, R2
+	BEQ else_683
+	LOAD -2(LB), R0
+	LOAD 3(R0), R0
+	RTS
+	BRA end_if_684
+else_683:
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._abs
+	SUBSP #2
+	LOAD R0, R2
+	LOAD 1(LB), R3
+	CMP R3, R2
+	SLE R2
+	CMP #0, R2
+	BEQ else_685
+	LOAD -2(LB), R0
+	LOAD 3(R0), R0
+	OPP R0, R0
+	RTS
+	BRA end_if_686
+else_685:
+	LOAD -3(LB), R2
+	LOAD #0x1.fff2e4p-1, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BNE end_or_689
+	LOAD -3(LB), R2
+	LOAD #0x1.fff2e4p-1, R3
+	OPP R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_687
+end_or_689:
+	LOAD #0x1.0p0, R2
+	LOAD -2(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD -3(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.Math._abs
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 2(LB)
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD #0x1.0p1, R2
+	LOAD 2(LB), R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._sqrt
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 3(LB)
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_690
+	LOAD -2(LB), R0
+	LOAD 3(R0), R0
+	LOAD 3(LB), R2
+	BOV overflow_float
+	SUB R2, R0
+	RTS
+	BRA end_if_691
+else_690:
+	LOAD 3(LB), R0
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	BOV overflow_float
+	SUB R2, R0
+	RTS
+end_if_691:
+	BRA end_if_688
+else_687:
+end_if_688:
+end_if_686:
+end_if_684:
+	LOAD -3(LB), R2
+	LOAD -3(LB), R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 4(LB)
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD #0x1.0p0, R2
+	LOAD 4(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._sqrt
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 5(LB)
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD 5(LB), R2
+	DIV R2, R0
+	BOV div_zero_isr
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math.atan
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD 5(LB), R2
+	DIV R2, R0
+	BOV div_zero_isr
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math.atan
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BOV missing_ret
+code.Math.acos:
+; Méthode acos
+	TSTO #3
+	BOV stack_overflow_isr
+	ADDSP #1
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD -3(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math.asin
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 1(LB)
+	LOAD -2(LB), R0
+	LOAD 3(R0), R0
+	LOAD 1(LB), R2
+	BOV overflow_float
+	SUB R2, R0
+	RTS
+	BOV missing_ret
+code.Math.atan:
+; Méthode atan
+	TSTO #15
+	BOV stack_overflow_isr
+	ADDSP #13
+	NEW #1, R2
+	BOV heap_full_isr
+	LEA 1(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.CordicTable
+	SUBSP #1
+	STORE R2, 1(LB)
+	LOAD #0, R2
+	STORE R2, 2(LB)
+	LOAD -3(LB), R2
+	STORE R2, 4(LB)
+	LOAD 4(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_692
+	LOAD #1, R2
+	STORE R2, 2(LB)
+	LOAD 4(LB), R2
+	OPP R2, R2
+	STORE R2, 4(LB)
+	BRA end_if_693
+else_692:
+end_if_693:
+	LOAD 4(LB), R2
+	LOAD #0x1.353f7cp-3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_694
+	LOAD 4(LB), R2
+	LOAD 4(LB), R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD #0x1.8p1, R4
+	DIV R4, R3
+	BOV div_zero_isr
+	BOV overflow_float
+	SUB R3, R2
+	LOAD 4(LB), R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD #0x1.4p2, R4
+	DIV R4, R3
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R3, R2
+	LOAD 4(LB), R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD 4(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	LOAD #0x1.cp2, R4
+	DIV R4, R3
+	BOV div_zero_isr
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 5(LB)
+	LOAD 2(LB), R2
+	CMP #0, R2
+	BEQ else_696
+	LOAD 5(LB), R0
+	OPP R0, R0
+	RTS
+	BRA end_if_697
+else_696:
+	LOAD 5(LB), R0
+	RTS
+end_if_697:
+	BRA end_if_695
+else_694:
+end_if_695:
+	LOAD #0, R2
+	STORE R2, 3(LB)
+	LOAD 4(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_698
+	LOAD #0x1.0p0, R2
+	LOAD 4(LB), R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 4(LB)
+	LOAD #1, R2
+	STORE R2, 3(LB)
+	BRA end_if_699
+else_698:
+end_if_699:
+	LOAD #0x1.0p0, R2
+	STORE R2, 8(LB)
+	LOAD 4(LB), R2
+	STORE R2, 9(LB)
+	LOAD #0x0.0p0, R2
+	STORE R2, 10(LB)
+	LOAD #0, R2
+	STORE R2, 13(LB)
+	BRA while_cond_702
+loop_start_700:
+	LOAD 8(LB), R2
+	STORE R2, 6(LB)
+	LOAD 1(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 13(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.CordicTable._getPow2
+	SUBSP #2
+	LOAD R0, R2
+	STORE R2, 11(LB)
+	LOAD 9(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_703
+	LOAD 8(LB), R2
+	LOAD 9(LB), R3
+	LOAD 11(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 8(LB)
+	LOAD 9(LB), R2
+	LOAD 6(LB), R3
+	LOAD 11(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 9(LB)
+	LOAD 10(LB), R2
+	LOAD 1(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 13(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 10(LB)
+	BRA end_if_704
+else_703:
+	LOAD 8(LB), R2
+	LOAD 9(LB), R3
+	LOAD 11(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 8(LB)
+	LOAD 9(LB), R2
+	LOAD 6(LB), R3
+	LOAD 11(LB), R4
+	BOV overflow_float
+	MUL R4, R3
+	BOV overflow_float
+	ADD R3, R2
+	STORE R2, 9(LB)
+	LOAD 10(LB), R2
+	LOAD 1(LB), R3
+	CMP #null, R3
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R3, 0(SP)
+	LOAD 13(LB), R3
+	STORE R3, -1(SP)
+	LOAD 0(SP), R3
+	LOAD 0(R3), R3
+	BSR code.CordicTable._getCordic
+	SUBSP #2
+	LOAD R0, R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 10(LB)
+end_if_704:
+	LOAD 13(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 13(LB)
+while_cond_702:
+	LOAD 13(LB), R2
+	LOAD #30, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_700
+loop_exit_701:
+	LOAD 10(LB), R2
+	STORE R2, 7(LB)
+	LOAD 3(LB), R2
+	CMP #0, R2
+	BEQ else_705
+	LOAD -2(LB), R2
+	LOAD 3(R2), R2
+	LOAD 7(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, 7(LB)
+	BRA end_if_706
+else_705:
+end_if_706:
+	LOAD 2(LB), R2
+	CMP #0, R2
+	BEQ else_707
+	LOAD 7(LB), R0
+	OPP R0, R0
+	RTS
+	BRA end_if_708
+else_707:
+	LOAD 7(LB), R0
+	RTS
+end_if_708:
+	BOV missing_ret
+code.Math.ulp:
+; Méthode ulp
+	TSTO #5
+	BOV stack_overflow_isr
+	ADDSP #5
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_709
+	LOAD #0x0.000002p-126, R0
+	RTS
+	BRA end_if_710
+else_709:
+end_if_710:
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_711
+	LOAD -3(LB), R2
+	OPP R2, R2
+	STORE R2, 1(LB)
+	BRA end_if_712
+else_711:
+	LOAD -3(LB), R2
+	STORE R2, 1(LB)
+end_if_712:
+	LOAD #0, R2
+	STORE R2, 4(LB)
+	LOAD 1(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_713
+	BRA while_cond_717
+loop_start_715:
+	LOAD 1(LB), R2
+	LOAD #0x1.0p1, R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 1(LB)
+	LOAD 4(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 4(LB)
+while_cond_717:
+	LOAD 1(LB), R2
+	LOAD #0x1.0p1, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BNE loop_start_715
+loop_exit_716:
+	BRA end_if_714
+else_713:
+	BRA while_cond_720
+loop_start_718:
+	LOAD 1(LB), R2
+	LOAD #0x1.0p1, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD 4(LB), R2
+	LOAD #1, R3
+	SUB R3, R2
+	STORE R2, 4(LB)
+while_cond_720:
+	LOAD 1(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_718
+loop_exit_719:
+end_if_714:
+	LOAD 4(LB), R2
+	LOAD #23, R3
+	SUB R3, R2
+	STORE R2, 5(LB)
+	LOAD 5(LB), R2
+	LOAD #126, R3
+	OPP R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_721
+	LOAD #0x0.000002p-126, R0
+	RTS
+	BRA end_if_722
+else_721:
+end_if_722:
+	LOAD #0x1.0p0, R2
+	STORE R2, 2(LB)
+	LOAD 5(LB), R2
+	LOAD #0, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_723
+	LOAD #0, R2
+	STORE R2, 3(LB)
+	BRA while_cond_727
+loop_start_725:
+	LOAD 2(LB), R2
+	LOAD #0x1.0p1, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 3(LB)
+while_cond_727:
+	LOAD 3(LB), R2
+	LOAD 5(LB), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_725
+loop_exit_726:
+	BRA end_if_724
+else_723:
+	LOAD #0, R2
+	STORE R2, 3(LB)
+	LOAD 5(LB), R2
+	OPP R2, R2
+	STORE R2, 5(LB)
+	BRA while_cond_730
+loop_start_728:
+	LOAD 2(LB), R2
+	LOAD #0x1.0p1, R3
+	DIV R3, R2
+	BOV div_zero_isr
+	STORE R2, 2(LB)
+	LOAD 3(LB), R2
+	LOAD #1, R3
+	ADD R3, R2
+	STORE R2, 3(LB)
+while_cond_730:
+	LOAD 3(LB), R2
+	LOAD 5(LB), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BNE loop_start_728
+loop_exit_729:
+end_if_724:
+	LOAD 2(LB), R0
+	RTS
+	BOV missing_ret
+code.Math._reduction2PIRecursive:
+; Méthode _reduction2PIRecursive
+	TSTO #2
+	BOV stack_overflow_isr
+	ADDSP #0
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_731
+	LOAD -3(LB), R2
+	LOAD -2(LB), R3
+	LOAD 2(R3), R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_731
+	LOAD -3(LB), R0
+	RTS
+	BRA end_if_732
+else_731:
+	LOAD -3(LB), R2
+	LOAD #0, R3
+	FLOAT R3, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_733
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD -2(LB), R2
+	LOAD 2(R2), R2
+	BOV overflow_float
+	ADD R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_734
+else_733:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p15, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_735
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p15, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_736
+else_735:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p14, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_737
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p14, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_738
+else_737:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p13, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_739
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p13, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_740
+else_739:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p12, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_741
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p12, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_742
+else_741:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p11, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_743
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p11, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_744
+else_743:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p10, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_745
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p10, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_746
+else_745:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p9, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_747
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p9, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_748
+else_747:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p8, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_749
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p8, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_750
+else_749:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p7, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_751
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p7, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_752
+else_751:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p6, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_753
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p6, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_754
+else_753:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p5, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_755
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p5, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_756
+else_755:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p4, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_757
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p4, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_758
+else_757:
+	LOAD -3(LB), R2
+	LOAD #0x1.921fb6p3, R3
+	CMP R3, R2
+	SGE R2
+	CMP #0, R2
+	BEQ else_759
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD #0x1.921fb6p3, R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+	BRA end_if_760
+else_759:
+	LOAD -2(LB), R0
+	CMP #null, R0
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R0, 0(SP)
+	LOAD -3(LB), R0
+	LOAD -2(LB), R2
+	LOAD 2(R2), R2
+	BOV overflow_float
+	SUB R2, R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
+	BSR code.Math._reduction2PIRecursive
+	SUBSP #2
+	LOAD R0, R0
+	RTS
+end_if_760:
+end_if_758:
+end_if_756:
+end_if_754:
+end_if_752:
+end_if_750:
+end_if_748:
+end_if_746:
+end_if_744:
+end_if_742:
+end_if_740:
+end_if_738:
+end_if_736:
+end_if_734:
+end_if_732:
+	BOV missing_ret
+code.Math._sqrt:
+; Méthode _sqrt
+	TSTO #1
+	BOV stack_overflow_isr
+	ADDSP #1
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SLT R2
+	CMP #0, R2
+	BEQ else_761
+	LOAD #0x0.0p0, R0
+	LOAD #0x0.0p0, R2
+	DIV R2, R0
+	BOV div_zero_isr
+	RTS
+	BRA end_if_762
+else_761:
+end_if_762:
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BNE end_or_765
+	LOAD -3(LB), R2
+	LOAD #0x0.0p0, R3
+	OPP R3, R3
+	CMP R3, R2
+	SEQ R2
+	CMP #0, R2
+	BEQ else_763
+end_or_765:
+	LOAD -3(LB), R0
+	RTS
+	BRA end_if_764
+else_763:
+end_if_764:
+	LOAD -3(LB), R2
+	LOAD #0x1.0p0, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BEQ else_766
+	LOAD -3(LB), R2
+	STORE R2, 1(LB)
+	BRA end_if_767
+else_766:
+	LOAD #0x1.0p0, R2
+	STORE R2, 1(LB)
+end_if_767:
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD #0x1.0p-1, R2
+	LOAD 1(LB), R3
+	LOAD -3(LB), R4
+	LOAD 1(LB), R5
+	DIV R5, R4
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R4, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+	LOAD 1(LB), R0
+	RTS
+	BOV missing_ret
+code.Math._sqrt1:
+; Méthode _sqrt1
+	TSTO #3
+	BOV stack_overflow_isr
+	ADDSP #1
+	LOAD #0x1.0p0, R2
+	STORE R2, 1(LB)
+	BRA while_cond_770
+loop_start_768:
+	LOAD 1(LB), R2
+	LOAD -3(LB), R3
+	LOAD 1(LB), R4
+	DIV R4, R3
+	BOV div_zero_isr
+	BOV overflow_float
+	ADD R3, R2
+	LOAD #0x1.0p-1, R3
+	BOV overflow_float
+	MUL R3, R2
+	STORE R2, 1(LB)
+while_cond_770:
+	LOAD -2(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD 1(LB), R2
+	LOAD 1(LB), R3
+	BOV overflow_float
+	MUL R3, R2
+	LOAD -3(LB), R3
+	BOV overflow_float
+	SUB R3, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math._abs
+	SUBSP #2
+	LOAD R0, R2
+	LOAD #0x1.0c6f7ap-20, R3
+	CMP R3, R2
+	SGT R2
+	CMP #0, R2
+	BNE loop_start_768
+loop_exit_769:
+	LOAD 1(LB), R0
+	RTS
+	BOV missing_ret
+main_start:
+; Main program
+; Beginning of main declarations:
+	NEW #12, R2
+	BOV heap_full_isr
+	LEA 7(GB), R0
+	STORE R0, 0(R2)
+	PEA 0(R2)
+	BSR init.Math
+	SUBSP #1
+	STORE R2, 1(LB)
+	TSTO #1
+	BOV stack_overflow_isr
+	ADDSP #1
+; Beginning of main instructions:
+	LOAD 1(LB), R2
+	CMP #null, R2
+	BOV null_ptr_isr
+	ADDSP #2
+	STORE R2, 0(SP)
+	LOAD #0x1.0p-126, R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
+	BSR code.Math.ulp
+	SUBSP #2
+	LOAD R0, R2
+	LOAD R2, R1
+	WFLOAT
+	WNL
+	HALT
+; --- Interrupt Service Routines (ISR) ---
+div_zero_isr:
+	WSTR "Erreur : Division par zero"
+	WNL
+	ERROR
+missing_ret:
+	WSTR "Erreur : il manque un retour"
+	WNL
+	ERROR
+heap_full_isr:
+	WSTR "Erreur : Tas plein"
+	WNL
+	ERROR
+null_ptr_isr:
+	WSTR "Erreur : Dereferencement null"
+	WNL
+	ERROR
+overflow_float:
+	WSTR "Erreur : float overflow"
+	WNL
+	ERROR
+stack_overflow_isr:
+	WSTR "Erreur : Pile pleine"
+	WNL
+	ERROR
+; end main program
