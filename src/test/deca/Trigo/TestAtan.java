@@ -45,15 +45,9 @@ public class TestAtan {
             mesTests.add(new UnTest(x, (float)java.lang.Math.atan(x)));
         }
 
-        System.out.println("#Format:nom;fonction;valeur;Resultat");
-        int total =0;
         for (UnTest t : mesTests) {
-            total += 1;
             verifierAtan(t);
         }
-        System.out.println(" #on a "+ total + " test pour la fonction Atan");
-        System.out.println("");
-
     }
 
   
@@ -61,10 +55,10 @@ public class TestAtan {
     public static void verifierAtan(UnTest t) {
         String nomTest = "atan_" + t.x;
         if (Float.isNaN(t.attenduAtan)) {
-            System.out.printf("%s;%s;%f;%s\n", 
+            System.out.printf("%s;%s;%.12E;%s\n", 
                             nomTest, "atan", t.x,"NaN");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "atan", t.x, t.attenduAtan);
     }
 }

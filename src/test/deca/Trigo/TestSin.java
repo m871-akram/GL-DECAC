@@ -88,8 +88,8 @@ public class TestSin {
             -0.999f,
             0.99f,
             -0.99f,
-            1e-6f,      // très petit positif
-            -1e-6f,     // très petit négatif
+            1e-6f,
+            -1e-6f,
             3.14159f,
             6.28318f,
             4.712388f,
@@ -106,14 +106,9 @@ public class TestSin {
             mesTests.add(new UnTest(x, (float)java.lang.Math.sin(x)));
         }
 
-        System.out.println("# nom ; fonction ; valeur ; Resultat");
-        int total =0;
         for (UnTest t : mesTests) {
-            total += 1;
             verifierSin(t);
         }
-        System.out.println("# on a "+ total + "test pour la fonction sin");
-        System.out.println("");
 
     }
 
@@ -122,10 +117,10 @@ public class TestSin {
     public static void verifierSin(UnTest t) {
         String nomTest = "sin_" + t.x;
         if (Float.isNaN(t.attenduSin)) {
-            System.out.printf("%s;%s;%f;%s\n", 
+            System.out.printf("%s;%s;%.12E;%s\n", 
                             nomTest, "sin", t.x,"NAN");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "sin", t.x, t.attenduSin);
     }
 }

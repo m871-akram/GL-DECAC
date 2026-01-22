@@ -81,15 +81,10 @@ public class TestAcosAsin {
             mesTests.add(new UnTest(x, (float)java.lang.Math.asin(x) , (float)java.lang.Math.acos(x)));
         }
 
-        System.out.println("#nom;fonction;valeur;Resultat");
-        int total =0;
         for (UnTest t : mesTests) {
-            total += 1;
             verifierAsin(t);
             verifierAcos(t);
         }
-        System.out.println("# on a "+ total + "test pour les fonctions Asin et Acos");
-        System.out.println("");
     }
 
   
@@ -97,20 +92,20 @@ public class TestAcosAsin {
     public static void verifierAsin(UnTest t) {
         String nomTest = "asin_" + t.x;
         if (Float.isNaN(t.attenduAsin)) {
-            System.out.printf("%s;%s;%s;%s\n", 
-                            nomTest, "asin", t.x,"NAN");
+            System.out.printf("%s;%s;%.12E;%s\n", 
+                            nomTest, "asin", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "asin", t.x, t.attenduAsin);
     }
 
     public static void verifierAcos(UnTest t) {
         String nomTest = "acos_" + t.x;
         if (Float.isNaN(t.attenduAcos)) {
-            System.out.printf("%s;%s;%s;%s\n", 
-                            nomTest, "acos", t.x,"NAN");
+            System.out.printf("%s;%s;%.12E;%s\n", 
+                            nomTest, "acos", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "acos", t.x, t.attenduAcos);
     }
 }

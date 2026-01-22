@@ -72,15 +72,9 @@ public class TestUlp {
             mesTests.add(new UnTest(x, (float)java.lang.Math.ulp(x)));
         }
 
-        System.out.println("# nom ; fonction ; valeur ; Resultat");
-        int total =0;
         for (UnTest t : mesTests) {
-            total += 1;
             verifierUlp(t);
         }
-        System.out.println("# on a "+ total + "test pour la fonction ulp");
-        System.out.println("");
-
     }
 
   
@@ -88,10 +82,10 @@ public class TestUlp {
     public static void verifierUlp(UnTest t) {
         String nomTest = "ulp_b_" + t.x;
         if (Float.isNaN(t.attenduUlp)) {
-            System.out.printf("%s;%s;%f;%s\n", 
-                            nomTest, "ulp", t.x,"NaN");
+            System.out.printf("%s;%s;%.12E;%s\n", 
+                            nomTest, "ulp", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "ulp", t.x, t.attenduUlp);
     }
 }

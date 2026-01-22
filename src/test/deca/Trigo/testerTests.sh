@@ -39,11 +39,11 @@ do
     # on verifie le resultat
     if [[ "$resultat" == "erreur" ]]; then
         # On verifie si le resultat est NaN
-        if echo "$resultat_exec" | grep -qi "NaN"; then
-            echo "  OK - Erreur detectee (NaN)"
+        if echo "$resultat_exec" | grep -qi "erreur"; then
+            echo "  OK - Erreur detectee (erruer)"
             tests_ok=$((tests_ok + 1))
         else
-            echo "  ECHEC - Attendu: NaN, Obtenu: $resultat_exec"
+            echo "  ECHEC - Attendu: erreur, Obtenu: $resultat_exec"
         fi
     else
         # Test de precision avec Python (ULP < 2)
@@ -74,8 +74,6 @@ except:
     
 done < "src/test/deca/Trigo/mes-tests-trigo.txt"
 
-# un resume final
-echo "***************** Resultats des tests *******************"
 echo "Tests total: $total_tests"
 echo "Tests OK:    $tests_ok"
 

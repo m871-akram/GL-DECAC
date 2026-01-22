@@ -86,8 +86,8 @@ public class TestCos {
             -0.999f,
             0.99f,
             -0.99f,
-            1e-6f,      // très petit positif
-            -1e-6f,     // très petit négatif
+            1e-6f,
+            -1e-6f,
             3.14159f,
             6.28318f,
             4.712388f,
@@ -104,15 +104,9 @@ public class TestCos {
             mesTests.add(new UnTest(x, (float)java.lang.Math.cos(x)));
         }
 
-        System.out.println("#nom; fonction; valeur; Resultat");
-        int total =0;
         for (UnTest t : mesTests) {
-            total += 1;
             verifierCos(t);
         }
-        System.out.println(" #on a "+ total + "test pour la fonction cos");
-        System.out.println("");
-
     }
 
   
@@ -120,10 +114,10 @@ public class TestCos {
     public static void verifierCos(UnTest t) {
         String nomTest = "cos_" + t.x;
         if (Float.isNaN(t.attenduCos)) {
-            System.out.printf("%s;%s;%f;%s\n", 
+            System.out.printf("%s;%s;%.12E;%s\n", 
                             nomTest, "cos", t.x,"NaN");
         }
-        System.out.printf("%s;%s;%f;%f\n", 
+        System.out.printf("%s;%s;%.12E;%.12E\n", 
                           nomTest, "cos", t.x, t.attenduCos);
     }
 }

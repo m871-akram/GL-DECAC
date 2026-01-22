@@ -1,12 +1,12 @@
 #!/bin/bash
-# Script pour creer les fichiers de tests TRIGO
+# Script pour creer les fichiers de tests TRIGO(a partir du text mes-tests-trigo)
 
-echo "***************** CREATION DES FICHIERS TRIGO ***************"
+echo "CREATION DES FICHIERS TRIGO ~~~~~~~"
 echo ""
 
 mkdir -p "src/test/deca/Trigo/valid"
 mkdir -p "src/test/deca/Trigo/invalid"
-# Compteurs
+# Compteurs des fichiers
 total_fichiers=0
 fichiers_crees=0
 
@@ -21,7 +21,7 @@ do
     total_fichiers=$((total_fichiers + 1))
     
 
-    # Determiner le dossier
+    # on determine le bon dossier(valid/invalid)
     if [[ "$resultat" == "NaN" ]]; then
         dossier="invalid"
         type_test="(invalid)"
@@ -34,7 +34,7 @@ do
     # Fichier principal
     fichier="src/test/deca/Trigo/$dossier/$nom.deca"
     
-    # On ecrit le code Deca avec en-tête
+    # On ecrit le code Deca
     cat > "$fichier" << EOF
 // Description:
 //    Test TRIGO: $fonction($valeur)
@@ -48,15 +48,8 @@ do
 {
     Math m = new Math();
 EOF
-        
-if [[ "$fonction" == *"("* ]] && [[ "$fonction" == *")"* ]]; then
-    # Expression complexe
-    echo "    println($fonction);" >> "$fichier"
-else
-    # Fonction simple
-    echo "    println(m.$fonction($valeur));" >> "$fichier"
-fi
 
+echo "    println(m.$fonction($valeur));" >> "$fichier"
 echo "}" >> "$fichier"
 
 echo "$nom.deca $type_test cree: $fichier"
@@ -87,10 +80,9 @@ echo "${nom}_ulp.deca cree: $fichier_ulp"
 fichiers_crees=$((fichiers_crees + 1))
 fi
     
-done < "src/test/deca/Trigo/TestsAcosAsin.txt"
+done < "src/test/deca/Trigo/mes-tests-trigo.txt"
 
-# un Resume
+
 echo ""
-echo "***************** RESUME *******************"
-echo "Tests dans le fichier: $total_fichiers"
-echo "Fichiers .deca crees:  $fichiers_crees"
+echo "le nombre de tests dans le fichier: $total_fichiers"
+echo "le nombre des fichiers .deca crees:  $fichiers_crees"
