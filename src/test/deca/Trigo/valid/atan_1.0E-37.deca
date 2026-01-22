@@ -1,7 +1,7 @@
 // Description:
-//    Test TRIGO: atan(9.999999910976E-38)
+//    Test TRIGO: atan(1.000000e-37)
 //
-// Resultats attendus: 9.999999910976E-38
+// Resultats attendus: 1.000000e-37
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.atan(9.999999910976E-38));
+    println(m.atan(1.000000e-37));
 }

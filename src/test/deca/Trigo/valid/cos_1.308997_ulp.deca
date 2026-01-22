@@ -1,7 +1,7 @@
 // Description:
-//    Calcul ULP pour: 1.308997035027E+00
+//    Calcul ULP pour: 1.308997e+00
 //
-// Resultats attendus: ulp(1.308997035027E+00)
+// Resultats attendus: ulp(1.308997e+00)
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp(1.308997035027E+00));
+    println(m.ulp(1.308997e+00));
 }

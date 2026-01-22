@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: asin(-1.100000e+00)
+//
+// Resultats attendus: NaN
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.asin(-1.100000e+00));
+}

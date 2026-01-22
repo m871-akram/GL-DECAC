@@ -1,7 +1,7 @@
 // Description:
-//    Calcul ULP pour: 9.999999682655E-21
+//    Calcul ULP pour: 1.000000e-20
 //
-// Resultats attendus: ulp(9.999999682655E-21)
+// Resultats attendus: ulp(1.000000e-20)
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp(9.999999682655E-21));
+    println(m.ulp(1.000000e-20));
 }

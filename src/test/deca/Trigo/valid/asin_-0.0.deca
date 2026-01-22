@@ -1,7 +1,7 @@
 // Description:
-//    Test TRIGO: asin(-0.000000000000E+00)
+//    Test TRIGO: asin(-0.000000e+00)
 //
-// Resultats attendus: -0.000000000000E+00
+// Resultats attendus: -0.000000e+00
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.asin(-0.000000000000E+00));
+    println(m.asin(-0.000000e+00));
 }

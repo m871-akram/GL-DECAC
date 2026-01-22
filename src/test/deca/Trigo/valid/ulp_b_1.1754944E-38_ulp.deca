@@ -1,7 +1,7 @@
 // Description:
-//    Calcul ULP pour: 1.175494350822E-38
+//    Calcul ULP pour: 1.175494e-38
 //
-// Resultats attendus: ulp(1.175494350822E-38)
+// Resultats attendus: ulp(1.175494e-38)
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp(1.175494350822E-38));
+    println(m.ulp(1.175494e-38));
 }

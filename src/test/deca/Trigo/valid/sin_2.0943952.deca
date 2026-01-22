@@ -1,7 +1,7 @@
 // Description:
-//    Test TRIGO: sin(2.094395160675E+00)
+//    Test TRIGO: sin(2.094395e+00)
 //
-// Resultats attendus: 8.660253882408E-01
+// Resultats attendus: 8.660254e-01
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.sin(2.094395160675E+00));
+    println(m.sin(2.094395e+00));
 }

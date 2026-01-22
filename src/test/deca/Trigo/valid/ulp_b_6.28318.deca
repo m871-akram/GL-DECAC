@@ -1,7 +1,7 @@
 // Description:
-//    Test TRIGO: ulp(6.283180236816E+00)
+//    Test TRIGO: ulp(6.283180e+00)
 //
-// Resultats attendus: 4.768371582031E-07
+// Resultats attendus: 4.768372e-07
 //
 // Historique:
 //    cree le 22/01/2026
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp(6.283180236816E+00));
+    println(m.ulp(6.283180e+00));
 }

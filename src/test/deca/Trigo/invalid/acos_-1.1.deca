@@ -1,5 +1,5 @@
 // Description:
-//    Test TRIGO: acos(-1.100000023842E+00)
+//    Test TRIGO: acos(-1.100000e+00)
 //
 // Resultats attendus: erreur
 //
@@ -9,5 +9,5 @@
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.acos(-1.100000023842E+00));
+    println(m.acos(-1.100000e+00));
 }
