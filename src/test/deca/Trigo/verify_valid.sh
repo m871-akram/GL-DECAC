@@ -1,40 +1,68 @@
 #!/bin/bash
 
-echo "~~~~ verification des tests invalid ****"
+echo "Test de performance pour trigo (just le dossier valid)"
 echo ""
 
-tests_total=0
-tests_ok=0
-tests_fail=0
-
-for fichier in src/test/deca/Trigo/invalid/*.ass; do
-    tests_total=$((tests_total + 1))
+for fichier in src/test/deca/Trigo/valid/*.ass; do
+    # on ignore les fichiers _ulp (car sont juste des binomes )
+    [[ "$fichier" == *"_ulp.ass" ]] && continue
+    
     nom_test=$(basename "$fichier" .ass)
     
-    echo -n "Test $tests_total: $nom_test ... "
+    # le résultat attendu
+    ligne=$(grep "^$nom_test;" "src/test/deca/Trigo/mes-tests-trigo.txt" 2>/dev/null)
+    [ -z "$ligne" ] && continue
     
-    # Exécution de ima :
-    ima "$fichier" >/dev/null 2>&1
-    code_retour=$?
+    resultat_attendu=$(echo "$ligne" | cut -d';' -f4)
+    [ "$resultat_attendu" = "erreur" ] && continue
     
-    # Un test invalid DOIT échouer
-    if [ $code_retour -ne 0 ]; then
-        echo "OK (a échoué comme attendu)"
-        tests_ok=$((tests_ok + 1))
+    # Exécution du  test principal (pas le binome _ulp)
+    sortie_test=$(ima "$fichier" 2>&1)
+    resultat_obtenu=$(echo "$sortie_test" | awk 'END{print $NF}' | tr -d '\r')
+    
+    # Exécution de  test binome (ULP)
+    fichier_ulp="src/test/deca/Trigo/valid/${nom_test}_ulp.ass"
+    [ ! -f "$fichier_ulp" ] && continue
+    
+    sortie_ulp=$(ima "$fichier_ulp" 2>&1)
+    ulp_value=$(echo "$sortie_ulp" | awk 'END{print $NF}' | tr -d '\r')
+    
+    # on calcul l'erreur relative
+    erreur_ulp=$(awk -v obtenu="$resultat_obtenu" -v attendu="$resultat_attendu" -v ulp="$ulp_value" '
+    BEGIN {
+        # Convertion en nombres
+        o = obtenu + 0
+        a = attendu + 0
+        u = ulp + 0
+        
+        # différence absolue
+        diff = o - a
+        if (diff < 0) diff = -diff
+        
+        # Calculer erreur en ULP
+        erreur = diff / u
+        printf "%.4f", erreur
+    }')
+    
+    echo "Test: $nom_test"
+    echo "  Obtenu  : $resultat_obtenu"
+    echo "  Attendu : $resultat_attendu"
+    echo "  ULP     : $ulp_value"
+    echo "  Erreur relative : $erreur_ulp ULP"
+    
+    # Vérifier si ≤ 2 ULP
+    if [ "$erreur_ulp" = "INF" ]; then
+        echo "  ERREUR: ULP = 0"
     else
-        echo "ÉCHEC (il a réussi au lieu d'échouer!)"
-        tests_fail=$((tests_fail + 1))
+        # calcul via awk
+        if awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 2.0)}'; then
+            echo "  OK (≤ 2 ULP)"
+        elif awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 4.0)}'; then
+            echo "  pas mal (>2 ULP et <4 ULP)"
+        else
+            echo "  c'est mal ( > 4 ULP)"
+        fi
     fi
+    
+    echo ""
 done
-
-echo "Total tests     : $tests_total"
-echo "Tests corrects  : $tests_ok (doivent échouer)"
-echo "Tests incorrects: $tests_fail (ne devraient pas réussir)"
-
-if [ $tests_fail -eq 0 ] && [ $tests_total -gt 0 ]; then
-    echo ""
-    echo "Tous les tests invalid sont invalid"
-elif [ $tests_total -eq 0 ]; then
-    echo ""
-    echo "Aucun test invalid trouvé !"
-fi
