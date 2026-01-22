@@ -1,0 +1,16 @@
+// Description:
+//    calcul des fonctions trigonometriques
+//
+// Resultats:
+//    affiche erreur
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float res = m.acos(2.3)*m.cos(0.0);
+    println(res );
+}
