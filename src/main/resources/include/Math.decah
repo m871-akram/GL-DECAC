@@ -19,7 +19,7 @@ class Math {
     //en utilisant un produit des cos ..
     
     //des trucs de la table SINCOS
-    protected int CACHE_SIZE = 512;
+    protected int CACHE_SIZE = 256;
     protected float CACHE_STEP = PI_OVER_2/(CACHE_SIZE -1);
     protected int CORDIC_TABLE_SIZE = 32;
   
@@ -28,21 +28,6 @@ class Math {
     protected float PETIT = 0.1f;              // Pour table d'interpolation
     protected float VOISIN_PI_2 = 1.472f;      // pi/2 - VOISIN_PI_2 ~ 0.1
 
-    
-
-    float _fma(float a, float b, float c) asm("
-        LOAD 2(GB), R1    ; a
-        LOAD 3(GB), R2    ; b
-        LOAD 4(GB), R3    ; c
-
-        ; Préparer pour FMA: R1 * R2 + R3
-        LOAD R3, R1       ; R1 = c (pour être R1 dans FMA)
-        LOAD 2(GB), R2    ; R2 = a
-        FMA 3(GB), R2     ; R2 = a * b + c
-        
-        STORE R2, 1(GB)   ; résultat dans la pile
-        RTS
-    ");
 
 
 
@@ -120,12 +105,7 @@ class Math {
         y = 0.0f;
         z = angle;
         
-        //min(24 , CORDIC_TABLE_SIZE)
-        if(24 <= CORDIC_TABLE_SIZE){
-            iterations = 24 ;
-        }else{
-            iterations = CORDIC_TABLE_SIZE;
-        }
+        iterations = 24 ;   //min(24 , CORDIC_TABLE_SIZE)
         
         i=0;
         while(i < iterations) {
@@ -145,10 +125,10 @@ class Math {
         }
         
         if (inverse) {
-            return y;             // x,y = cos(pi/2-angle), sin(pi/2-angle)
+            return x;             // x,y = cos(pi/2-angle), sin(pi/2-angle)
         }
         
-        return x;
+        return y;
     }
     
     
@@ -170,13 +150,8 @@ class Math {
         y = 0.0f;
         z = angle;
         
-        //min(24 , CORDIC_TABLE_SIZE)
-        if(24 <= CORDIC_TABLE_SIZE){
-            iterations = 24 ;
-        }else{
-            iterations = CORDIC_TABLE_SIZE;
-        }
-        
+        iterations = 24 ;   //min(24 , CORDIC_TABLE_SIZE)
+
         i=0;
         while (i < iterations) {
             xOld = x;
@@ -194,12 +169,14 @@ class Math {
         }
         
         if (inverse) {
-            return x;  
+            return y;  
         }
         
-        return y;    
+        return x;    
     }
      
+
+
 
     float _abs(float x) {
         //fonction auxiliare necessaire (au lieu d'utilser java.abs())
@@ -232,6 +209,7 @@ class Math {
     }
 
 
+
     //l'algo d'interpolation depuis la table cos
     float _tableCos(float x) {
         TableSinCos table = new TableSinCos();
@@ -247,7 +225,7 @@ class Math {
         cos_h = 1.0f - (h * h * 0.5f);
         
         // Formule d'addition
-        return  cos_h*table._getCosValue(i) - sin_h*table._getSinValue(i);   //on utilse apres le _fma()
+        return  cos_h*table._getCosValue(i) - sin_h*table._getSinValue(i);
     }
 
 
@@ -261,8 +239,6 @@ class Math {
 
 
 
-
-    
     float asin(float f) {
         float EPSILON , delta , result , x2 , denom; 
         
@@ -270,9 +246,7 @@ class Math {
         if (f < -1.0f || f > 1.0f) {
             return 0.0/0.0;
        }
-        if (f < -1.0f || f > 1.0f) {
-            return 0.0f/0.0f;
-        }
+
 
         // on evite la division par zéro (1 - x^2 = 0)
         EPSILON = 1.0E-7f;               // bon compromis , depend des tests qu'on a fait 
@@ -420,7 +394,6 @@ class Math {
             return 1.40129846e-45;     // ~ 2^-149 (le plus petit nombre  dénormalisé)
         }
         
-       
 
         // on travaille avec la valeur absolue (car l'ULP est toujours positif)
       
@@ -429,8 +402,6 @@ class Math {
         } else {
             val = f;
         }
-
-
 
         //  On commence par chercher l'exposant par normalisation
         // l'idee est de chercher exp telque : 2^exp <= val < 2^(exp+1)
@@ -447,7 +418,6 @@ class Math {
                 exp = exp - 1;
             }
         }
-
 
         //  en suite on calcul  l'ULP : 2^(exp - 23)
         // Le décalage de 23 correspond aux bits de la mantisse en simple précision(float 32bit )
@@ -558,9 +528,9 @@ class Math {
             res = 1.0f;
         }
 
-        // 7 Itérations de Newton (aussi le nombre 7 est un resulatat des tests , on a commence par 5 ,mais c'etait pas suffisant)
+        // 7 Itérations de Newton (aussi le nombre 7 est un resultat des tests (et anlyse theorique))
         // La formule de Newton est : x_{n+1} = (x_n + a/x_n) / 2 (avec a ~ x**2)
-        // c'est une methode efficace avec un grand nombre d'iterations ,mais comme on utilse des nombres float en 32bits de precision , 
+        // c'est une methode efficace avec un grand nombre d'iterations ,mais comme on utilise des nombres float en 32bits de precision , 
         // le resulatat n'est pas autant precis 
         res = 0.5f * (res + x / res);
         res = 0.5f * (res + x / res);
@@ -587,8 +557,5 @@ class Math {
 }
 
     
-
-
-
 
     // End of Deca Math libraryif (x >=402.1238596594935f ) 
