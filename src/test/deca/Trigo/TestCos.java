@@ -114,10 +114,10 @@ public class TestCos {
     public static void verifierCos(UnTest t) {
         String nomTest = "cos_" + t.x;
         if (Float.isNaN(t.attenduCos)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
-                            nomTest, "cos", t.x,"NaN");
+            System.out.printf("%s;%s;%.6e;%s\n", 
+                            nomTest, "cos", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "cos", t.x, t.attenduCos);
     }
 }

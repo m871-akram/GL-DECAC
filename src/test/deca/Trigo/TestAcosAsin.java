@@ -92,20 +92,20 @@ public class TestAcosAsin {
     public static void verifierAsin(UnTest t) {
         String nomTest = "asin_" + t.x;
         if (Float.isNaN(t.attenduAsin)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
+            System.out.printf("%s;%s;%.6e;%s\n", 
                             nomTest, "asin", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "asin", t.x, t.attenduAsin);
     }
 
     public static void verifierAcos(UnTest t) {
         String nomTest = "acos_" + t.x;
         if (Float.isNaN(t.attenduAcos)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
+            System.out.printf("%s;%s;%.6e;%s\n", 
                             nomTest, "acos", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "acos", t.x, t.attenduAcos);
     }
 }

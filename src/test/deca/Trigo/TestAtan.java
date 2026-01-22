@@ -55,10 +55,10 @@ public class TestAtan {
     public static void verifierAtan(UnTest t) {
         String nomTest = "atan_" + t.x;
         if (Float.isNaN(t.attenduAtan)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
-                            nomTest, "atan", t.x,"NaN");
+            System.out.printf("%s;%s;%.6e;%s\n", 
+                            nomTest, "atan", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "atan", t.x, t.attenduAtan);
     }
 }

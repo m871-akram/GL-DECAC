@@ -82,10 +82,10 @@ public class TestUlp {
     public static void verifierUlp(UnTest t) {
         String nomTest = "ulp_b_" + t.x;
         if (Float.isNaN(t.attenduUlp)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
+            System.out.printf("%s;%s;%.6e;%s\n", 
                             nomTest, "ulp", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "ulp", t.x, t.attenduUlp);
     }
 }

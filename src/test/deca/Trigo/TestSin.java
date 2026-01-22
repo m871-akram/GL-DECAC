@@ -117,10 +117,10 @@ public class TestSin {
     public static void verifierSin(UnTest t) {
         String nomTest = "sin_" + t.x;
         if (Float.isNaN(t.attenduSin)) {
-            System.out.printf("%s;%s;%.12E;%s\n", 
-                            nomTest, "sin", t.x,"NAN");
+            System.out.printf("%s;%s;%.6e;%s\n", 
+                            nomTest, "sin", t.x,"erreur");
         }
-        System.out.printf("%s;%s;%.12E;%.12E\n", 
+        System.out.printf("%s;%s;%.6e;%.6e\n", 
                           nomTest, "sin", t.x, t.attenduSin);
     }
 }
