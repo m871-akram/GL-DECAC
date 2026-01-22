@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "**** CALCUL ERREUR EN ULP (avec awk) *******"
+echo "~~~ Execution avec Ima *******"
 echo ""
 
 for fichier in src/test/deca/Trigo/valid/*.ass; do
@@ -10,7 +10,7 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
     nom_test=$(basename "$fichier" .ass)
     
     # Chercher résultat attendu
-    ligne=$(grep "^$nom_test;" "src/test/deca/Trigo/TestsAtan.txt" 2>/dev/null)
+    ligne=$(grep "^$nom_test;" "src/test/deca/Trigo/mes-tests-trigo.txt" 2>/dev/null)
     [ -z "$ligne" ] && continue
     
     resultat_attendu=$(echo "$ligne" | cut -d';' -f4)
@@ -40,12 +40,9 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
         if (diff < 0) diff = -diff
         
         # Calculer erreur en ULP
-        if (u != 0) {
-            erreur = diff / u
-            printf "%.4f", erreur
-        } else {
-            print "INF"
-        }
+        erreur = diff / u
+        printf "%.4f", erreur
+       
     }')
     
     # Afficher résultat
@@ -59,7 +56,7 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
     if [ "$erreur_ulp" = "INF" ]; then
         echo " ERREUR: ULP = 0"
     else
-        # Comparer avec awk
+        # Comparer via awk
         if awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 2.0)}'; then
             echo "  OK (≤ 2 ULP)"
         elif awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 4.0)}'; then
