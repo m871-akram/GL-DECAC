@@ -1,0 +1,16 @@
+// Description:
+//    utilisation de fma
+//
+// Resultats:
+//    affiche 1.0
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float res = m.cos(0)*m.cos(0.0) + m.cos(0)*m.sin(0);
+    println(res );
+}
