@@ -54,9 +54,6 @@ class Math {
         float result;
         float res;
 
-        //des cas speciaux
-        if (_isNaN(f) || _isInfinite(f)) {return 0.0f/0.0f;}
-        
         // Gestion du signe
         negative = false;
         
@@ -255,16 +252,12 @@ class Math {
 
 
 
-    float cos(float f) {
-        if (_isNaN(f)) {return 0.0f/0.0f;}
-        if (_isInfinite(f)) {return 1.0f/0.0f;}
-        
+
+    float cos(float f) {        
         return sin(PI_OVER_2 - f);
     }
     
     
-
-
 
 
 
@@ -274,9 +267,12 @@ class Math {
         float EPSILON , delta , result , x2 , denom; 
         
         // Gestion du codomaine (x doit être dans [-1, 1])
-        if (f < -1.0f || f > 1.0f || _isNaN(f)) {
+        if (f < -1.0f || f > 1.0f) {
             return 0.0/0.0;
        }
+        if (f < -1.0f || f > 1.0f) {
+            return 0.0f/0.0f;
+        }
 
         // on evite la division par zéro (1 - x^2 = 0)
         EPSILON = 1.0E-7f;               // bon compromis , depend des tests qu'on a fait 
@@ -327,11 +323,6 @@ class Math {
         // on sait que : acos(x) + asin(x) = PI/2
         float res = asin(f);
         
-        // Si asin renvoie NaN, acos doit aussi renvoyer NaN
-        if (_isNaN(res)) {
-            return 0.0/0.0;
-        }
-        
         return PI_OVER_2 - res;
     }
 
@@ -350,15 +341,12 @@ class Math {
         float x , val , x_old , res;
         float curr_x , curr_y , angle_accumulee, pow2i , cordici ;
         int i;
-        if (_isNaN(f)) {return 0.0f/0.0f;}
         
-        if (_isInfinite(f)){
-            if (f > 0.0f) {
-                return PI_OVER_2;
-            } else {
-                return -PI_OVER_2;
-            }
-        }
+        boolean negative , inverted;
+        float x , val , x_old , res;
+        float curr_x , curr_y , angle_accumulee, pow2i , cordici ;
+        int i;
+        
 
 
         negative = false;
@@ -371,7 +359,7 @@ class Math {
 
         // des petites valeurs : serie de Taylor
         if (x < 0.151f){
-            val =x - (x*x*x)/3 + (x*x*x*x*x)/5 - (x*x*x*x*x*x*x)/7;  
+            val =x - (x*x*x)/3.0f + (x*x*x*x*x)/5.0f - (x*x*x*x*x*x*x)/7.0f;  
             //on a choisit l'ordre 7 , apres une serie de tests
             if(negative){
                 return -val;
@@ -438,16 +426,7 @@ class Math {
             return 1.40129846e-45;     // ~ 2^-149 (le plus petit nombre  dénormalisé)
         }
         
-        //cas de NaN
-        if(_isNaN(f)){
-            return 0.0f/0.0f;      //c'est le NAN
-        }
-
-        // cas Infini
-        if (_isInfinite(f)) {
-            return 1.0f/0.0f;
-        }
-
+       
 
         // on travaille avec la valeur absolue (car l'ULP est toujours positif)
       
@@ -507,16 +486,9 @@ class Math {
     }
 
 
-    // fonction auxiliare  pour tester NaN
-    boolean _isNaN(float f) {
-        return f != f;
-    }
+  
 
-    // fonction auxiliare  pour tester les INFINIs
-    boolean _isInfinite(float f) {
-        float INFINI = 1.0f / 0.0f;
-        return f == INFINI || f == -INFINI;
-    }
+ 
 
 
     float _reduction2PIRecursive(float x){
@@ -583,7 +555,6 @@ class Math {
         float res;
         if (x < 0.0f) {return 0.0/0.0 ;}
         if (x == 0.0f || x == -0.0f) {return x;}
-        if (_isInfinite(x)) {return x;}
 
         // approximlation pour commencer (pour une bonne stabilite)
 

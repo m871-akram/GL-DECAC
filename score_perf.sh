@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-# Chemin vers votre compilateur
+# Chemin vers notre compilateur
 DECAC="./src/main/bin/decac"
 # Dossier contenant les tests de performance fournis
 PERF_DIR="src/test/deca/codegen/perf/provided"

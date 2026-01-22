@@ -6,7 +6,7 @@
 class remplirTable{
     public static void main(String[] args) {
         float PI_OVER_2 = 1.57079632679489661923f;
-        int CACHE_SIZE = 512;
+        int CACHE_SIZE = 256;
         float CACHE_STEP = PI_OVER_2 / (CACHE_SIZE - 1);
         
         System.out.println("//table sin:");
@@ -25,35 +25,5 @@ class remplirTable{
             System.out.println("float COS_"+i+ " = " + cos_i + ";");
         }
 
-
-        System.out.println("");
-
-        System.out.println("float _getSinValue(int index) {");
-        for (int i = 0; i < CACHE_SIZE; i++) {
-            if (i == 0) {
-                System.out.print("    if (index == " + i + ") return SIN_" + i + ";");
-            } else {
-                System.out.print("    else if (index == " + i + ") return SIN_" + i + ";");
-            }
-            System.out.println();
-        }
-        System.out.println("    else { return 0.0f / 0.0f; } // NaN");
-        System.out.println("}");
-        
-
-
-        System.out.println("");
-
-        System.out.println("float _getCosValue(int index) {");
-        for (int i = 0; i < CACHE_SIZE; i++) {
-            if (i == 0) {
-                System.out.print("    if (index == " + i + ") return COS_" + i + ";");
-            } else {
-                System.out.print("    else if (index == " + i + ") return COS_" + i + ";");
-            }
-            System.out.println();
-        }
-        System.out.println("    else { return 0.0f / 0.0f; } // NaN");
-        System.out.println("}");
     }
 }
