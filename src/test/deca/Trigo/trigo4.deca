@@ -1,0 +1,16 @@
+// Description:
+//    calcul de tan(pi/4)
+//
+// Resultats:
+//     1.0
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float res = m.sin(0.78539816)/m.cos(0.78539816) ;
+    println(res );
+}
