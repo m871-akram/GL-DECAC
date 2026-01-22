@@ -1,0 +1,16 @@
+// Description:
+//    appel a ulp 
+//
+// Resultats:
+//    affiche 0.0
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float res = m.ulp(1.2);
+    println(res );
+}
