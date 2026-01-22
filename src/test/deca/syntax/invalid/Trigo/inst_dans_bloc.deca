@@ -1,0 +1,12 @@
+// Description:
+//    Instruction placée hors bloc
+// Resultat:
+//    Erreur  ligne 7
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    m.sin(4.0f);
+}

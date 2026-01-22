@@ -1,0 +1,12 @@
+// Description:
+//    Appel de méthode sans parenthèses
+// Resultat:
+//    Erreur ligne 11
+/ Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    float x = m.sin;
+}

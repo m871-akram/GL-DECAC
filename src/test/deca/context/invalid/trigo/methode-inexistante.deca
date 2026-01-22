@@ -1,0 +1,13 @@
+// Description:
+//    erreur , la methode tan n'existe pas dans Math.decah
+// Resultat:
+//    Erreur ligne 10
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+
+{
+    Math m = new Math();
+    float b = m.tan(1.0f);
+}

@@ -1,0 +1,12 @@
+// Description:
+//    Expression incomplète dans un appel a atan
+// Resultat:
+//    Erreur ligne 11
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    float x = m.atan(0.2f + ); 
+}
