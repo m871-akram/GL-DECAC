@@ -1,13 +1,13 @@
 // Description:
-//    Test TRIGO: acos(0.866025)
+//    Test TRIGO: acos(8.660253882408E-01)
 //
-// Resultats attendus: 0.523599
+// Resultats attendus: 5.235987901688E-01
 //
 // Historique:
-//    cree le 19/01/2026
+//    cree le 22/01/2026
 
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.acos(0.866025));
+    println(m.acos(8.660253882408E-01));
 }

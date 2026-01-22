@@ -1,13 +1,13 @@
 // Description:
-//    Calcul ULP pour: 4.712389
+//    Calcul ULP pour: 4.712388992310E+00
 //
-// Resultats attendus: ulp(4.712389)
+// Resultats attendus: ulp(4.712388992310E+00)
 //
 // Historique:
-//    cree le 19/01/2026
+//    cree le 22/01/2026
 
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.ulp(4.712389));
+    println(m.ulp(4.712388992310E+00));
 }

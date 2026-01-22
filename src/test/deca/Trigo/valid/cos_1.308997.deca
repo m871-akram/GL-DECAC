@@ -1,13 +1,13 @@
 // Description:
-//    Test TRIGO: cos(1.308997)
+//    Test TRIGO: cos(1.308997035027E+00)
 //
-// Resultats attendus: 0.258819
+// Resultats attendus: 2.588190138340E-01
 //
 // Historique:
-//    cree le 19/01/2026
+//    cree le 22/01/2026
 
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.cos(1.308997));
+    println(m.cos(1.308997035027E+00));
 }

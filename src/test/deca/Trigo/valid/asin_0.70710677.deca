@@ -1,13 +1,13 @@
 // Description:
-//    Test TRIGO: asin(0.707107)
+//    Test TRIGO: asin(7.071067690849E-01)
 //
-// Resultats attendus: 0.785398
+// Resultats attendus: 7.853981852531E-01
 //
 // Historique:
-//    cree le 19/01/2026
+//    cree le 22/01/2026
 
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.asin(0.707107));
+    println(m.asin(7.071067690849E-01));
 }

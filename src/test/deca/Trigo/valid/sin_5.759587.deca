@@ -1,13 +1,13 @@
 // Description:
-//    Test TRIGO: sin(5.759587)
+//    Test TRIGO: sin(5.759586811066E+00)
 //
-// Resultats attendus: -0.500000
+// Resultats attendus: -5.000000000000E-01
 //
 // Historique:
-//    cree le 19/01/2026
+//    cree le 22/01/2026
 
 #include "Math.decah"
 {
     Math m = new Math();
-    println(m.sin(5.759587));
+    println(m.sin(5.759586811066E+00));
 }

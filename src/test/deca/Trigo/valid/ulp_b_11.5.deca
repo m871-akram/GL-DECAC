@@ -1,0 +1,13 @@
+// Description:
+//    Test TRIGO: ulp(1.150000000000E+01)
+//
+// Resultats attendus: 9.536743164063E-07
+//
+// Historique:
+//    cree le 22/01/2026
+
+#include "Math.decah"
+{
+    Math m = new Math();
+    println(m.ulp(1.150000000000E+01));
+}

@@ -22,7 +22,7 @@ do
     
 
     # on determine le bon dossier(valid/invalid)
-    if [[ "$resultat" == "NaN" ]]; then
+    if [[ "$resultat" == "erreur" ]]; then
         dossier="invalid"
         type_test="(invalid)"
     else
@@ -56,7 +56,7 @@ echo "$nom.deca $type_test cree: $fichier"
 fichiers_crees=$((fichiers_crees + 1))
     
     # Fichier ULP (est fait seulement pour les tests valides)
-    if [[ "$resultat" != "NaN" ]]; then
+    if [[ "$resultat" != "erreur" ]]; then
         fichier_ulp="src/test/deca/Trigo/$dossier/${nom}_ulp.deca"
         
         cat > "$fichier_ulp" << EOF
