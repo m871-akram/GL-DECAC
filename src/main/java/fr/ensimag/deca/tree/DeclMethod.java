@@ -124,6 +124,9 @@ public class DeclMethod extends AbstractDeclMethod {
                     fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
 
+            // maintenant on peut faire les init (store)
+            ((MethodBody) body).codeGenInit(compiler);
+
             // ajoute corps
             compiler.appendProgram(bodyProgram);
 

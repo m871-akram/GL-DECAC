@@ -13,7 +13,7 @@ fichiers_crees=0
 # fichier de tests
 while IFS=';' read -r nom fonction valeur resultat
 do
-    # Ignorer les lignes vides ou commentaires
+    # on ignore les lignes vides ou commentaires
     if [[ -z "$nom" ]] || [[ "$nom" == \#* ]]; then
         continue
     fi
@@ -55,7 +55,7 @@ echo "}" >> "$fichier"
 echo "$nom.deca $type_test cree: $fichier"
 fichiers_crees=$((fichiers_crees + 1))
     
-    # Fichier ULP (est fait seulement pour les tests valides)
+    # Fichier ULP (on l'ajoute  seulement pour les tests valides)
     if [[ "$resultat" != "erreur" ]]; then
         fichier_ulp="src/test/deca/Trigo/$dossier/${nom}_ulp.deca"
         
@@ -75,11 +75,11 @@ fichiers_crees=$((fichiers_crees + 1))
 }
 EOF
 
-
 echo "${nom}_ulp.deca cree: $fichier_ulp"
 fichiers_crees=$((fichiers_crees + 1))
 fi
     
+
 done < "src/test/deca/Trigo/mes-tests-trigo.txt"
 
 

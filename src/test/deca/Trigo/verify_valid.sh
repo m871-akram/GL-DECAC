@@ -13,7 +13,7 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
     ligne=$(grep "^$nom_test;" "src/test/deca/Trigo/mes-tests-trigo.txt" 2>/dev/null)
     [ -z "$ligne" ] && continue
     
-    resultat_attendu=$(echo "$ligne" | cut -d';' -f4)
+    resultat_attendu=$(echo "$ligne" | cut -d';' -f4)  #on recupere le 4eme field
     [ "$resultat_attendu" = "erreur" ] && continue
     
     # Exécution du  test principal (pas le binome _ulp)
@@ -41,7 +41,7 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
         
         # Calculer erreur en ULP
         erreur = diff / u
-        printf "%.4f", erreur
+        printf "%.6f", erreur
     }')
     
     echo "Test: $nom_test"
@@ -50,7 +50,7 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
     echo "  ULP     : $ulp_value"
     echo "  Erreur relative : $erreur_ulp ULP"
     
-    # Vérifier si ≤ 2 ULP
+    # on vérifie si <= 2 ULP
     if [ "$erreur_ulp" = "INF" ]; then
         echo "  ERREUR: ULP = 0"
     else
@@ -59,8 +59,10 @@ for fichier in src/test/deca/Trigo/valid/*.ass; do
             echo "  OK (≤ 2 ULP)"
         elif awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 4.0)}'; then
             echo "  pas mal (>2 ULP et <4 ULP)"
+        elif awk -v e="$erreur_ulp" 'BEGIN {exit !(e <= 100.0)}'; then
+            echo "  un peu mal (>4 ULP et <100 ULP)"
         else
-            echo "  c'est mal ( > 4 ULP)"
+            echo "  trop mal ( > 100 ULP)"
         fi
     fi
     

@@ -15,7 +15,7 @@ total=0
 
 while read -r fichier; do
     echo "  Supprime: $(basename "$fichier")"
-    rm -f "$fichier"
+    rm -f "$fichier"  
     total=$((total + 1))
 done < <(find "$DIR" \( -name "*.deca" -o -name "*.ass" -o -name "*.expected" \) -type f)
 

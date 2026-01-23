@@ -88,7 +88,11 @@ fragment FLOATHEX : ('0x' | '0X') NUMHEX '.' NUMHEX ('P' | 'p') SIGN NUM [Ff]?;
 FLOAT : (FLOATDEC | FLOATHEX) {  Float temp = Float.parseFloat(getText());
                                  if(Float.isInfinite(temp) || Float.isNaN(temp)){
                                     throw new InvalidFloat(this,getInputStream());
-                                 }};
+                                 }}
+      | (FLOATDEC | FLOATHEX) [A-Za-z] { 
+                                 LexerNoViableAltException e = new LexerNoViableAltException(
+                                    this, _input, _tokenStartCharIndex, null);
+                                 notifyListeners(e); };
 
 
 

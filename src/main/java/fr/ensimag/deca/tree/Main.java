@@ -67,6 +67,9 @@ public class Main extends AbstractMain {
         // addsp pour les locales
         compiler.addInstruction(new ADDSP(nbLocales));
 
+        // maintenant on peut faire les init (store)
+        declVariables.codeGenListInit(compiler);
+
         // A FAIRE: traiter les déclarations de variables.
         compiler.addComment("Beginning of main instructions:");
         insts.codeGenListInst(compiler);

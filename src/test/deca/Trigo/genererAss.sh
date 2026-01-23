@@ -19,13 +19,13 @@ do
     target="src/test/deca/Trigo/$dossier/$nom.deca"
     
     echo "Compilation : $nom"
-    $DECAC "$target"
+    $DECAC "$target"             #la ligne de commande
     if [ $? -ne 0 ]; then
         echo "ERREUR dans $target"
         exit 1
     fi
 
-    # Gestion du binome ULP pour les tests valides(pour invalid pas besoin)
+    # Gestion du binome ULP pour les tests valides(pour invalid n'existe pas )
     if [ "$dossier" == "valid" ]; then
         ulp_target="src/test/deca/Trigo/valid/${nom}_ulp.deca"
         if [ -f "$ulp_target" ]; then

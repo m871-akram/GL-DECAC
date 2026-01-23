@@ -68,6 +68,15 @@ public class Cast extends AbstractExpr {
         if (getType().isClass()) {
             ClassDefinition targetClassDef = (ClassDefinition) cast.getDefinition();
 
+// optimisation: si upcast c'est valide
+            boolean isUpcast = compiler.environmentType.assignCompatible(getType(), expr.getType());
+
+            if (isUpcast) {
+                // rien a faire, le registre est bon
+                return;
+            }
+
+// sinon downcast, on verifie
             Label endLabel = compiler.getSequencer().genSignal("cast_end");
             Label loopLabel = compiler.getSequencer().genSignal("cast_loop");
 

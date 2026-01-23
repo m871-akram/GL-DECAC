@@ -1,57 +1,69 @@
 ; start main program
 	BRA main_start
+; Méthode Object.equals (comparaison référentielle)
+equals:
+	LOAD -2(LB), R0
+	LOAD -3(LB), R1
+	CMP R1, R0
+	SEQ R0
+	RTS
+; Table des méthodes de Object
+	LOAD #null, R0
+	STORE R0, 1(GB)
+	LOAD equals, R0
+	STORE R0, 2(GB)
 ; Construction des tables des methodes
 ; Classe CordicTable
-; Table des méthodes de CordicTable à l'adresse 1(GB)
+; Table des méthodes de CordicTable à l'adresse 3(GB)
 	LOAD #0, R0
-	STORE R0, 1(GB)
-	LOAD code.CordicTable._getPow2, R0
-	STORE R0, 2(GB)
-	LOAD code.CordicTable._getCordic, R0
 	STORE R0, 3(GB)
-; Classe TableSinCos
-; Table des méthodes de TableSinCos à l'adresse 4(GB)
-	LOAD #0, R0
-	STORE R0, 4(GB)
-	LOAD code.TableSinCos._getSinValue, R0
+	LOAD code.CordicTable._getPow2, R0
 	STORE R0, 5(GB)
-	LOAD code.TableSinCos._getCosValue, R0
+	LOAD code.CordicTable._getCordic, R0
 	STORE R0, 6(GB)
-; Classe Math
-; Table des méthodes de Math à l'adresse 7(GB)
+; Classe TableSinCos
+; Table des méthodes de TableSinCos à l'adresse 7(GB)
 	LOAD #0, R0
 	STORE R0, 7(GB)
-	LOAD code.Math._fma, R0
-	STORE R0, 8(GB)
-	LOAD code.Math.sin, R0
+	LOAD code.TableSinCos._getSinValue, R0
 	STORE R0, 9(GB)
-	LOAD code.Math._cordicSin, R0
+	LOAD code.TableSinCos._getCosValue, R0
 	STORE R0, 10(GB)
-	LOAD code.Math._cordicCos, R0
+; Classe Math
+; Table des méthodes de Math à l'adresse 11(GB)
+	LOAD #0, R0
 	STORE R0, 11(GB)
-	LOAD code.Math._abs, R0
-	STORE R0, 12(GB)
-	LOAD code.Math._tableSin, R0
+	LOAD code.Math.sin, R0
 	STORE R0, 13(GB)
-	LOAD code.Math._tableCos, R0
+	LOAD code.Math._cordicSin, R0
 	STORE R0, 14(GB)
-	LOAD code.Math.cos, R0
+	LOAD code.Math._cordicCos, R0
 	STORE R0, 15(GB)
-	LOAD code.Math.asin, R0
+	LOAD code.Math._abs, R0
 	STORE R0, 16(GB)
-	LOAD code.Math.acos, R0
+	LOAD code.Math._tableSin, R0
 	STORE R0, 17(GB)
-	LOAD code.Math.atan, R0
+	LOAD code.Math._tableCos, R0
 	STORE R0, 18(GB)
-	LOAD code.Math.ulp, R0
+	LOAD code.Math.cos, R0
 	STORE R0, 19(GB)
-	LOAD code.Math._reduction2PIRecursive, R0
+	LOAD code.Math.asin, R0
 	STORE R0, 20(GB)
-	LOAD code.Math._sqrt, R0
+	LOAD code.Math.acos, R0
 	STORE R0, 21(GB)
-	LOAD code.Math._sqrt1, R0
+	LOAD code.Math.atan, R0
 	STORE R0, 22(GB)
+	LOAD code.Math.ulp, R0
+	STORE R0, 23(GB)
+	LOAD code.Math._reduction2PIRecursive, R0
+	STORE R0, 24(GB)
+	LOAD code.Math._sqrt, R0
+	STORE R0, 25(GB)
+	LOAD code.Math._sqrt1, R0
+	STORE R0, 26(GB)
 ; init objets
+init.Object:
+	RTS
 init.CordicTable:
 ; Initialisation des champs de CordicTable
 	PUSH R1
@@ -78,7 +90,7 @@ init.Math:
 	STORE R2, 4(R1)
 	LOAD #0x1.36e9dcp-1, R2
 	STORE R2, 5(R1)
-	LOAD #512, R2
+	LOAD #256, R2
 	STORE R2, 6(R1)
 	LOAD -2(LB), R2
 	LOAD 3(R2), R2
@@ -3608,21 +3620,6 @@ end_if_506:
 end_if_378:
 	BOV missing_ret
 ; Méthodes de la classe Math
-code.Math._fma:
-; Méthode _fma
-
-        LOAD 2(GB), R1    ; a
-        LOAD 3(GB), R2    ; b
-        LOAD 4(GB), R3    ; c
-
-        ; Préparer pour FMA: R1 * R2 + R3
-        LOAD R3, R1       ; R1 = c (pour être R1 dans FMA)
-        LOAD 2(GB), R2    ; R2 = a
-        FMA 3(GB), R2     ; R2 = a * b + c
-        
-        STORE R2, 1(GB)   ; résultat dans la pile
-        RTS
-    
 code.Math.sin:
 ; Méthode sin
 	TSTO #6
@@ -3807,16 +3804,16 @@ end_if_648:
 	BOV missing_ret
 code.Math._cordicSin:
 ; Méthode _cordicSin
-	TSTO #11
+	TSTO #12
 	BOV stack_overflow_isr
 	ADDSP #9
 	NEW #1, R2
 	BOV heap_full_isr
-	LEA 1(GB), R0
+	LEA 3(GB), R0
 	STORE R0, 0(R2)
-	PEA 0(R2)
+	PUSH R2
 	BSR init.CordicTable
-	SUBSP #1
+	POP R2
 	STORE R2, 6(LB)
 	LOAD #0, R2
 	STORE R2, 9(LB)
@@ -3846,24 +3843,11 @@ end_if_650:
 	LOAD -3(LB), R2
 	STORE R2, 3(LB)
 	LOAD #24, R2
-	LOAD -2(LB), R3
-	LOAD 8(R3), R3
-	CMP R3, R2
-	SLE R2
-	CMP #0, R2
-	BEQ else_651
-	LOAD #24, R2
 	STORE R2, 4(LB)
-	BRA end_if_652
-else_651:
-	LOAD -2(LB), R2
-	LOAD 8(R2), R2
-	STORE R2, 4(LB)
-end_if_652:
 	LOAD #0, R2
 	STORE R2, 5(LB)
-	BRA while_cond_655
-loop_start_653:
+	BRA while_cond_653
+loop_start_651:
 	LOAD 1(LB), R2
 	STORE R2, 7(LB)
 	LOAD 6(LB), R2
@@ -3885,7 +3869,7 @@ loop_start_653:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_656
+	BEQ else_654
 	LOAD 1(LB), R2
 	LOAD 2(LB), R3
 	LOAD 8(LB), R4
@@ -3903,23 +3887,26 @@ loop_start_653:
 	ADD R3, R2
 	STORE R2, 2(LB)
 	LOAD 3(LB), R2
-	LOAD 6(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 6(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 5(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 5(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	SUB R3, R2
+	LOAD R2, R0
+	POP R2
+	SUB R0, R2
 	STORE R2, 3(LB)
-	BRA end_if_657
-else_656:
+	BRA end_if_655
+else_654:
 	LOAD 1(LB), R2
 	LOAD 2(LB), R3
 	LOAD 8(LB), R4
@@ -3937,57 +3924,60 @@ else_656:
 	SUB R3, R2
 	STORE R2, 2(LB)
 	LOAD 3(LB), R2
-	LOAD 6(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 6(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 5(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 5(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	ADD R3, R2
+	LOAD R2, R0
+	POP R2
+	ADD R0, R2
 	STORE R2, 3(LB)
-end_if_657:
+end_if_655:
 	LOAD 5(LB), R2
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 5(LB)
-while_cond_655:
+while_cond_653:
 	LOAD 5(LB), R2
 	LOAD 4(LB), R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_653
-loop_exit_654:
+	BNE loop_start_651
+loop_exit_652:
 	LOAD 9(LB), R2
 	CMP #0, R2
-	BEQ else_658
-	LOAD 2(LB), R0
-	RTS
-	BRA end_if_659
-else_658:
-end_if_659:
+	BEQ else_656
 	LOAD 1(LB), R0
+	RTS
+	BRA end_if_657
+else_656:
+end_if_657:
+	LOAD 2(LB), R0
 	RTS
 	BOV missing_ret
 code.Math._cordicCos:
 ; Méthode _cordicCos
-	TSTO #11
+	TSTO #12
 	BOV stack_overflow_isr
 	ADDSP #9
 	NEW #1, R2
 	BOV heap_full_isr
-	LEA 1(GB), R0
+	LEA 3(GB), R0
 	STORE R0, 0(R2)
-	PEA 0(R2)
+	PUSH R2
 	BSR init.CordicTable
-	SUBSP #1
+	POP R2
 	STORE R2, 6(LB)
 	LOAD #0, R2
 	STORE R2, 7(LB)
@@ -3997,7 +3987,7 @@ code.Math._cordicCos:
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_660
+	BEQ else_658
 	LOAD -2(LB), R2
 	LOAD 3(R2), R2
 	LOAD -3(LB), R3
@@ -4006,9 +3996,9 @@ code.Math._cordicCos:
 	STORE R2, -3(LB)
 	LOAD #1, R2
 	STORE R2, 7(LB)
-	BRA end_if_661
-else_660:
-end_if_661:
+	BRA end_if_659
+else_658:
+end_if_659:
 	LOAD -2(LB), R2
 	LOAD 5(R2), R2
 	STORE R2, 1(LB)
@@ -4017,24 +4007,11 @@ end_if_661:
 	LOAD -3(LB), R2
 	STORE R2, 3(LB)
 	LOAD #24, R2
-	LOAD -2(LB), R3
-	LOAD 8(R3), R3
-	CMP R3, R2
-	SLE R2
-	CMP #0, R2
-	BEQ else_662
-	LOAD #24, R2
 	STORE R2, 8(LB)
-	BRA end_if_663
-else_662:
-	LOAD -2(LB), R2
-	LOAD 8(R2), R2
-	STORE R2, 8(LB)
-end_if_663:
 	LOAD #0, R2
 	STORE R2, 9(LB)
-	BRA while_cond_666
-loop_start_664:
+	BRA while_cond_662
+loop_start_660:
 	LOAD 1(LB), R2
 	STORE R2, 4(LB)
 	LOAD 6(LB), R2
@@ -4056,7 +4033,7 @@ loop_start_664:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_667
+	BEQ else_663
 	LOAD 1(LB), R2
 	LOAD 2(LB), R3
 	LOAD 5(LB), R4
@@ -4074,23 +4051,26 @@ loop_start_664:
 	ADD R3, R2
 	STORE R2, 2(LB)
 	LOAD 3(LB), R2
-	LOAD 6(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 6(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 9(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 9(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	SUB R3, R2
+	LOAD R2, R0
+	POP R2
+	SUB R0, R2
 	STORE R2, 3(LB)
-	BRA end_if_668
-else_667:
+	BRA end_if_664
+else_663:
 	LOAD 1(LB), R2
 	LOAD 2(LB), R3
 	LOAD 5(LB), R4
@@ -4108,43 +4088,46 @@ else_667:
 	SUB R3, R2
 	STORE R2, 2(LB)
 	LOAD 3(LB), R2
-	LOAD 6(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 6(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 9(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 9(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	ADD R3, R2
+	LOAD R2, R0
+	POP R2
+	ADD R0, R2
 	STORE R2, 3(LB)
-end_if_668:
+end_if_664:
 	LOAD 9(LB), R2
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 9(LB)
-while_cond_666:
+while_cond_662:
 	LOAD 9(LB), R2
 	LOAD 8(LB), R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_664
-loop_exit_665:
+	BNE loop_start_660
+loop_exit_661:
 	LOAD 7(LB), R2
 	CMP #0, R2
-	BEQ else_669
-	LOAD 1(LB), R0
-	RTS
-	BRA end_if_670
-else_669:
-end_if_670:
+	BEQ else_665
 	LOAD 2(LB), R0
+	RTS
+	BRA end_if_666
+else_665:
+end_if_666:
+	LOAD 1(LB), R0
 	RTS
 	BOV missing_ret
 code.Math._abs:
@@ -4158,19 +4141,19 @@ code.Math._abs:
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_671
+	BEQ else_667
 	LOAD -3(LB), R0
 	OPP R0, R0
 	RTS
-	BRA end_if_672
-else_671:
+	BRA end_if_668
+else_667:
 	LOAD -3(LB), R0
 	RTS
-end_if_672:
+end_if_668:
 	BOV missing_ret
 code.Math._tableSin:
 ; Méthode _tableSin
-	TSTO #8
+	TSTO #10
 	BOV stack_overflow_isr
 	ADDSP #6
 	LOAD -3(LB), R2
@@ -4181,11 +4164,11 @@ code.Math._tableSin:
 	STORE R2, 1(LB)
 	NEW #1, R2
 	BOV heap_full_isr
-	LEA 4(GB), R0
+	LEA 7(GB), R0
 	STORE R0, 0(R2)
-	PEA 0(R2)
+	PUSH R2
 	BSR init.TableSinCos
-	SUBSP #1
+	POP R2
 	STORE R2, 2(LB)
 	LOAD 1(LB), R2
 	INT R2, R2
@@ -4198,7 +4181,7 @@ code.Math._tableSin:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_673
+	BEQ else_669
 	LOAD 2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -4215,9 +4198,9 @@ code.Math._tableSin:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_674
-else_673:
-end_if_674:
+	BRA end_if_670
+else_669:
+end_if_670:
 	LOAD -3(LB), R2
 	LOAD 3(LB), R3
 	FLOAT R3, R3
@@ -4242,51 +4225,60 @@ end_if_674:
 	SUB R3, R2
 	STORE R2, 6(LB)
 	LOAD 6(LB), R0
-	LOAD 2(LB), R2
-	CMP #null, R2
+	PUSH R0
+	LOAD 2(LB), R0
+	CMP #null, R0
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R2, 0(SP)
-	LOAD 3(LB), R2
-	STORE R2, -1(SP)
-	LOAD 0(SP), R2
-	LOAD 0(R2), R2
+	STORE R0, 0(SP)
+	LOAD 3(LB), R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
 	BSR code.TableSinCos._getSinValue
 	SUBSP #2
-	LOAD R0, R2
+	LOAD R0, R0
 	BOV overflow_float
-	MUL R2, R0
-	LOAD 5(LB), R2
-	LOAD 2(LB), R3
-	CMP #null, R3
+	LOAD R0, R1
+	POP R0
+	MUL R1, R0
+	PUSH R0
+	LOAD 5(LB), R0
+	PUSH R0
+	LOAD 2(LB), R0
+	CMP #null, R0
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 3(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R0, 0(SP)
+	LOAD 3(LB), R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
 	BSR code.TableSinCos._getCosValue
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R0
 	BOV overflow_float
-	MUL R3, R2
+	LOAD R0, R1
+	POP R0
+	MUL R1, R0
 	BOV overflow_float
-	ADD R2, R0
+	LOAD R0, R1
+	POP R0
+	ADD R1, R0
 	RTS
 	BOV missing_ret
 code.Math._tableCos:
 ; Méthode _tableCos
-	TSTO #8
+	TSTO #10
 	BOV stack_overflow_isr
 	ADDSP #6
 	NEW #1, R2
 	BOV heap_full_isr
-	LEA 4(GB), R0
+	LEA 7(GB), R0
 	STORE R0, 0(R2)
-	PEA 0(R2)
+	PUSH R2
 	BSR init.TableSinCos
-	SUBSP #1
+	POP R2
 	STORE R2, 1(LB)
 	LOAD -3(LB), R2
 	LOAD -2(LB), R3
@@ -4305,7 +4297,7 @@ code.Math._tableCos:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_675
+	BEQ else_671
 	LOAD 1(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -4322,9 +4314,9 @@ code.Math._tableCos:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_676
-else_675:
-end_if_676:
+	BRA end_if_672
+else_671:
+end_if_672:
 	LOAD -3(LB), R2
 	LOAD 3(LB), R3
 	FLOAT R3, R3
@@ -4349,37 +4341,46 @@ end_if_676:
 	SUB R3, R2
 	STORE R2, 6(LB)
 	LOAD 6(LB), R0
-	LOAD 1(LB), R2
-	CMP #null, R2
+	PUSH R0
+	LOAD 1(LB), R0
+	CMP #null, R0
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R2, 0(SP)
-	LOAD 3(LB), R2
-	STORE R2, -1(SP)
-	LOAD 0(SP), R2
-	LOAD 0(R2), R2
+	STORE R0, 0(SP)
+	LOAD 3(LB), R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
 	BSR code.TableSinCos._getCosValue
 	SUBSP #2
-	LOAD R0, R2
+	LOAD R0, R0
 	BOV overflow_float
-	MUL R2, R0
-	LOAD 5(LB), R2
-	LOAD 1(LB), R3
-	CMP #null, R3
+	LOAD R0, R1
+	POP R0
+	MUL R1, R0
+	PUSH R0
+	LOAD 5(LB), R0
+	PUSH R0
+	LOAD 1(LB), R0
+	CMP #null, R0
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 3(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R0, 0(SP)
+	LOAD 3(LB), R0
+	STORE R0, -1(SP)
+	LOAD 0(SP), R0
+	LOAD 0(R0), R0
 	BSR code.TableSinCos._getSinValue
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R0
 	BOV overflow_float
-	MUL R3, R2
+	LOAD R0, R1
+	POP R0
+	MUL R1, R0
 	BOV overflow_float
-	SUB R2, R0
+	LOAD R0, R1
+	POP R0
+	SUB R1, R0
 	RTS
 	BOV missing_ret
 code.Math.cos:
@@ -4407,7 +4408,7 @@ code.Math.cos:
 	BOV missing_ret
 code.Math.asin:
 ; Méthode asin
-	TSTO #7
+	TSTO #8
 	BOV stack_overflow_isr
 	ADDSP #5
 	LOAD -3(LB), R2
@@ -4416,44 +4417,22 @@ code.Math.asin:
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE end_or_679
+	BNE end_or_675
 	LOAD -3(LB), R2
 	LOAD #0x1.0p0, R3
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_677
-end_or_679:
+	BEQ else_673
+end_or_675:
 	LOAD #0x0.0p0, R0
 	LOAD #0x0.0p0, R2
 	DIV R2, R0
 	BOV div_zero_isr
 	RTS
-	BRA end_if_678
-else_677:
-end_if_678:
-	LOAD -3(LB), R2
-	LOAD #0x1.0p0, R3
-	OPP R3, R3
-	CMP R3, R2
-	SLT R2
-	CMP #0, R2
-	BNE end_or_682
-	LOAD -3(LB), R2
-	LOAD #0x1.0p0, R3
-	CMP R3, R2
-	SGT R2
-	CMP #0, R2
-	BEQ else_680
-end_or_682:
-	LOAD #0x0.0p0, R0
-	LOAD #0x0.0p0, R2
-	DIV R2, R0
-	BOV div_zero_isr
-	RTS
-	BRA end_if_681
-else_680:
-end_if_681:
+	BRA end_if_674
+else_673:
+end_if_674:
 	LOAD #0x1.ad7f2ap-24, R2
 	STORE R2, 1(LB)
 	LOAD -2(LB), R2
@@ -4475,12 +4454,12 @@ end_if_681:
 	CMP R3, R2
 	SLE R2
 	CMP #0, R2
-	BEQ else_683
+	BEQ else_676
 	LOAD -2(LB), R0
 	LOAD 3(R0), R0
 	RTS
-	BRA end_if_684
-else_683:
+	BRA end_if_677
+else_676:
 	LOAD -2(LB), R2
 	CMP #null, R2
 	BOV null_ptr_isr
@@ -4500,42 +4479,45 @@ else_683:
 	CMP R3, R2
 	SLE R2
 	CMP #0, R2
-	BEQ else_685
+	BEQ else_678
 	LOAD -2(LB), R0
 	LOAD 3(R0), R0
 	OPP R0, R0
 	RTS
-	BRA end_if_686
-else_685:
+	BRA end_if_679
+else_678:
 	LOAD -3(LB), R2
 	LOAD #0x1.fff2e4p-1, R3
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BNE end_or_689
+	BNE end_or_682
 	LOAD -3(LB), R2
 	LOAD #0x1.fff2e4p-1, R3
 	OPP R3, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_687
-end_or_689:
+	BEQ else_680
+end_or_682:
 	LOAD #0x1.0p0, R2
-	LOAD -2(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD -2(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD -3(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD -3(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.Math._abs
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	SUB R3, R2
+	LOAD R2, R0
+	POP R2
+	SUB R0, R2
 	STORE R2, 2(LB)
 	LOAD -2(LB), R2
 	CMP #null, R2
@@ -4558,27 +4540,27 @@ end_or_689:
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_690
+	BEQ else_683
 	LOAD -2(LB), R0
 	LOAD 3(R0), R0
 	LOAD 3(LB), R2
 	BOV overflow_float
 	SUB R2, R0
 	RTS
-	BRA end_if_691
-else_690:
+	BRA end_if_684
+else_683:
 	LOAD 3(LB), R0
 	LOAD -2(LB), R2
 	LOAD 3(R2), R2
 	BOV overflow_float
 	SUB R2, R0
 	RTS
-end_if_691:
-	BRA end_if_688
-else_687:
-end_if_688:
-end_if_686:
 end_if_684:
+	BRA end_if_681
+else_680:
+end_if_681:
+end_if_679:
+end_if_677:
 	LOAD -3(LB), R2
 	LOAD -3(LB), R3
 	BOV overflow_float
@@ -4635,7 +4617,7 @@ end_if_684:
 	BOV missing_ret
 code.Math.acos:
 ; Méthode acos
-	TSTO #3
+	TSTO #1
 	BOV stack_overflow_isr
 	ADDSP #1
 	LOAD -2(LB), R2
@@ -4660,16 +4642,16 @@ code.Math.acos:
 	BOV missing_ret
 code.Math.atan:
 ; Méthode atan
-	TSTO #15
+	TSTO #16
 	BOV stack_overflow_isr
 	ADDSP #13
 	NEW #1, R2
 	BOV heap_full_isr
-	LEA 1(GB), R0
+	LEA 3(GB), R0
 	STORE R0, 0(R2)
-	PEA 0(R2)
+	PUSH R2
 	BSR init.CordicTable
-	SUBSP #1
+	POP R2
 	STORE R2, 1(LB)
 	LOAD #0, R2
 	STORE R2, 2(LB)
@@ -4680,21 +4662,21 @@ code.Math.atan:
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_692
+	BEQ else_685
 	LOAD #1, R2
 	STORE R2, 2(LB)
 	LOAD 4(LB), R2
 	OPP R2, R2
 	STORE R2, 4(LB)
-	BRA end_if_693
-else_692:
-end_if_693:
+	BRA end_if_686
+else_685:
+end_if_686:
 	LOAD 4(LB), R2
 	LOAD #0x1.353f7cp-3, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_694
+	BEQ else_687
 	LOAD 4(LB), R2
 	LOAD 4(LB), R3
 	LOAD 4(LB), R4
@@ -4753,18 +4735,18 @@ end_if_693:
 	STORE R2, 5(LB)
 	LOAD 2(LB), R2
 	CMP #0, R2
-	BEQ else_696
+	BEQ else_689
 	LOAD 5(LB), R0
 	OPP R0, R0
 	RTS
-	BRA end_if_697
-else_696:
+	BRA end_if_690
+else_689:
 	LOAD 5(LB), R0
 	RTS
-end_if_697:
-	BRA end_if_695
-else_694:
-end_if_695:
+end_if_690:
+	BRA end_if_688
+else_687:
+end_if_688:
 	LOAD #0, R2
 	STORE R2, 3(LB)
 	LOAD 4(LB), R2
@@ -4772,7 +4754,7 @@ end_if_695:
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_698
+	BEQ else_691
 	LOAD #0x1.0p0, R2
 	LOAD 4(LB), R3
 	DIV R3, R2
@@ -4780,9 +4762,9 @@ end_if_695:
 	STORE R2, 4(LB)
 	LOAD #1, R2
 	STORE R2, 3(LB)
-	BRA end_if_699
-else_698:
-end_if_699:
+	BRA end_if_692
+else_691:
+end_if_692:
 	LOAD #0x1.0p0, R2
 	STORE R2, 8(LB)
 	LOAD 4(LB), R2
@@ -4791,8 +4773,8 @@ end_if_699:
 	STORE R2, 10(LB)
 	LOAD #0, R2
 	STORE R2, 13(LB)
-	BRA while_cond_702
-loop_start_700:
+	BRA while_cond_695
+loop_start_693:
 	LOAD 8(LB), R2
 	STORE R2, 6(LB)
 	LOAD 1(LB), R2
@@ -4814,7 +4796,7 @@ loop_start_700:
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_703
+	BEQ else_696
 	LOAD 8(LB), R2
 	LOAD 9(LB), R3
 	LOAD 11(LB), R4
@@ -4832,23 +4814,26 @@ loop_start_700:
 	SUB R3, R2
 	STORE R2, 9(LB)
 	LOAD 10(LB), R2
-	LOAD 1(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 1(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 13(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 13(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	ADD R3, R2
+	LOAD R2, R0
+	POP R2
+	ADD R0, R2
 	STORE R2, 10(LB)
-	BRA end_if_704
-else_703:
+	BRA end_if_697
+else_696:
 	LOAD 8(LB), R2
 	LOAD 9(LB), R3
 	LOAD 11(LB), R4
@@ -4866,59 +4851,62 @@ else_703:
 	ADD R3, R2
 	STORE R2, 9(LB)
 	LOAD 10(LB), R2
-	LOAD 1(LB), R3
-	CMP #null, R3
+	PUSH R2
+	LOAD 1(LB), R2
+	CMP #null, R2
 	BOV null_ptr_isr
 	ADDSP #2
-	STORE R3, 0(SP)
-	LOAD 13(LB), R3
-	STORE R3, -1(SP)
-	LOAD 0(SP), R3
-	LOAD 0(R3), R3
+	STORE R2, 0(SP)
+	LOAD 13(LB), R2
+	STORE R2, -1(SP)
+	LOAD 0(SP), R2
+	LOAD 0(R2), R2
 	BSR code.CordicTable._getCordic
 	SUBSP #2
-	LOAD R0, R3
+	LOAD R0, R2
 	BOV overflow_float
-	SUB R3, R2
+	LOAD R2, R0
+	POP R2
+	SUB R0, R2
 	STORE R2, 10(LB)
-end_if_704:
+end_if_697:
 	LOAD 13(LB), R2
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 13(LB)
-while_cond_702:
+while_cond_695:
 	LOAD 13(LB), R2
 	LOAD #30, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_700
-loop_exit_701:
+	BNE loop_start_693
+loop_exit_694:
 	LOAD 10(LB), R2
 	STORE R2, 7(LB)
 	LOAD 3(LB), R2
 	CMP #0, R2
-	BEQ else_705
+	BEQ else_698
 	LOAD -2(LB), R2
 	LOAD 3(R2), R2
 	LOAD 7(LB), R3
 	BOV overflow_float
 	SUB R3, R2
 	STORE R2, 7(LB)
-	BRA end_if_706
-else_705:
-end_if_706:
+	BRA end_if_699
+else_698:
+end_if_699:
 	LOAD 2(LB), R2
 	CMP #0, R2
-	BEQ else_707
+	BEQ else_700
 	LOAD 7(LB), R0
 	OPP R0, R0
 	RTS
-	BRA end_if_708
-else_707:
+	BRA end_if_701
+else_700:
 	LOAD 7(LB), R0
 	RTS
-end_if_708:
+end_if_701:
 	BOV missing_ret
 code.Math.ulp:
 ; Méthode ulp
@@ -4930,26 +4918,26 @@ code.Math.ulp:
 	CMP R3, R2
 	SEQ R2
 	CMP #0, R2
-	BEQ else_709
+	BEQ else_702
 	LOAD #0x0.000002p-126, R0
 	RTS
-	BRA end_if_710
-else_709:
-end_if_710:
+	BRA end_if_703
+else_702:
+end_if_703:
 	LOAD -3(LB), R2
 	LOAD #0x0.0p0, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_711
+	BEQ else_704
 	LOAD -3(LB), R2
 	OPP R2, R2
 	STORE R2, 1(LB)
-	BRA end_if_712
-else_711:
+	BRA end_if_705
+else_704:
 	LOAD -3(LB), R2
 	STORE R2, 1(LB)
-end_if_712:
+end_if_705:
 	LOAD #0, R2
 	STORE R2, 4(LB)
 	LOAD 1(LB), R2
@@ -4957,9 +4945,9 @@ end_if_712:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_713
-	BRA while_cond_717
-loop_start_715:
+	BEQ else_706
+	BRA while_cond_710
+loop_start_708:
 	LOAD 1(LB), R2
 	LOAD #0x1.0p1, R3
 	DIV R3, R2
@@ -4969,18 +4957,18 @@ loop_start_715:
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 4(LB)
-while_cond_717:
+while_cond_710:
 	LOAD 1(LB), R2
 	LOAD #0x1.0p1, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BNE loop_start_715
-loop_exit_716:
-	BRA end_if_714
-else_713:
-	BRA while_cond_720
-loop_start_718:
+	BNE loop_start_708
+loop_exit_709:
+	BRA end_if_707
+else_706:
+	BRA while_cond_713
+loop_start_711:
 	LOAD 1(LB), R2
 	LOAD #0x1.0p1, R3
 	BOV overflow_float
@@ -4990,15 +4978,15 @@ loop_start_718:
 	LOAD #1, R3
 	SUB R3, R2
 	STORE R2, 4(LB)
-while_cond_720:
+while_cond_713:
 	LOAD 1(LB), R2
 	LOAD #0x1.0p0, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_718
-loop_exit_719:
-end_if_714:
+	BNE loop_start_711
+loop_exit_712:
+end_if_707:
 	LOAD 4(LB), R2
 	LOAD #23, R3
 	SUB R3, R2
@@ -5009,12 +4997,12 @@ end_if_714:
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_721
+	BEQ else_714
 	LOAD #0x0.000002p-126, R0
 	RTS
-	BRA end_if_722
-else_721:
-end_if_722:
+	BRA end_if_715
+else_714:
+end_if_715:
 	LOAD #0x1.0p0, R2
 	STORE R2, 2(LB)
 	LOAD 5(LB), R2
@@ -5022,11 +5010,11 @@ end_if_722:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_723
+	BEQ else_716
 	LOAD #0, R2
 	STORE R2, 3(LB)
-	BRA while_cond_727
-loop_start_725:
+	BRA while_cond_720
+loop_start_718:
 	LOAD 2(LB), R2
 	LOAD #0x1.0p1, R3
 	BOV overflow_float
@@ -5036,23 +5024,23 @@ loop_start_725:
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 3(LB)
-while_cond_727:
+while_cond_720:
 	LOAD 3(LB), R2
 	LOAD 5(LB), R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_725
-loop_exit_726:
-	BRA end_if_724
-else_723:
+	BNE loop_start_718
+loop_exit_719:
+	BRA end_if_717
+else_716:
 	LOAD #0, R2
 	STORE R2, 3(LB)
 	LOAD 5(LB), R2
 	OPP R2, R2
 	STORE R2, 5(LB)
-	BRA while_cond_730
-loop_start_728:
+	BRA while_cond_723
+loop_start_721:
 	LOAD 2(LB), R2
 	LOAD #0x1.0p1, R3
 	DIV R3, R2
@@ -5062,15 +5050,15 @@ loop_start_728:
 	LOAD #1, R3
 	ADD R3, R2
 	STORE R2, 3(LB)
-while_cond_730:
+while_cond_723:
 	LOAD 3(LB), R2
 	LOAD 5(LB), R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BNE loop_start_728
-loop_exit_729:
-end_if_724:
+	BNE loop_start_721
+loop_exit_722:
+end_if_717:
 	LOAD 2(LB), R0
 	RTS
 	BOV missing_ret
@@ -5085,25 +5073,25 @@ code.Math._reduction2PIRecursive:
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_731
+	BEQ else_724
 	LOAD -3(LB), R2
 	LOAD -2(LB), R3
 	LOAD 2(R3), R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_731
+	BEQ else_724
 	LOAD -3(LB), R0
 	RTS
-	BRA end_if_732
-else_731:
+	BRA end_if_725
+else_724:
 	LOAD -3(LB), R2
 	LOAD #0, R3
 	FLOAT R3, R3
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_733
+	BEQ else_726
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5121,14 +5109,14 @@ else_731:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_734
-else_733:
+	BRA end_if_727
+else_726:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p15, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_735
+	BEQ else_728
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5145,14 +5133,14 @@ else_733:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_736
-else_735:
+	BRA end_if_729
+else_728:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p14, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_737
+	BEQ else_730
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5169,14 +5157,14 @@ else_735:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_738
-else_737:
+	BRA end_if_731
+else_730:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p13, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_739
+	BEQ else_732
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5193,14 +5181,14 @@ else_737:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_740
-else_739:
+	BRA end_if_733
+else_732:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p12, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_741
+	BEQ else_734
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5217,14 +5205,14 @@ else_739:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_742
-else_741:
+	BRA end_if_735
+else_734:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p11, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_743
+	BEQ else_736
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5241,14 +5229,14 @@ else_741:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_744
-else_743:
+	BRA end_if_737
+else_736:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p10, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_745
+	BEQ else_738
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5265,14 +5253,14 @@ else_743:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_746
-else_745:
+	BRA end_if_739
+else_738:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p9, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_747
+	BEQ else_740
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5289,14 +5277,14 @@ else_745:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_748
-else_747:
+	BRA end_if_741
+else_740:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p8, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_749
+	BEQ else_742
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5313,14 +5301,14 @@ else_747:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_750
-else_749:
+	BRA end_if_743
+else_742:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p7, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_751
+	BEQ else_744
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5337,14 +5325,14 @@ else_749:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_752
-else_751:
+	BRA end_if_745
+else_744:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p6, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_753
+	BEQ else_746
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5361,14 +5349,14 @@ else_751:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_754
-else_753:
+	BRA end_if_747
+else_746:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p5, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_755
+	BEQ else_748
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5385,14 +5373,14 @@ else_753:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_756
-else_755:
+	BRA end_if_749
+else_748:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p4, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_757
+	BEQ else_750
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5409,14 +5397,14 @@ else_755:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_758
-else_757:
+	BRA end_if_751
+else_750:
 	LOAD -3(LB), R2
 	LOAD #0x1.921fb6p3, R3
 	CMP R3, R2
 	SGE R2
 	CMP #0, R2
-	BEQ else_759
+	BEQ else_752
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5433,8 +5421,8 @@ else_757:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-	BRA end_if_760
-else_759:
+	BRA end_if_753
+else_752:
 	LOAD -2(LB), R0
 	CMP #null, R0
 	BOV null_ptr_isr
@@ -5452,21 +5440,21 @@ else_759:
 	SUBSP #2
 	LOAD R0, R0
 	RTS
-end_if_760:
-end_if_758:
-end_if_756:
-end_if_754:
-end_if_752:
-end_if_750:
-end_if_748:
-end_if_746:
-end_if_744:
-end_if_742:
-end_if_740:
-end_if_738:
-end_if_736:
-end_if_734:
-end_if_732:
+end_if_753:
+end_if_751:
+end_if_749:
+end_if_747:
+end_if_745:
+end_if_743:
+end_if_741:
+end_if_739:
+end_if_737:
+end_if_735:
+end_if_733:
+end_if_731:
+end_if_729:
+end_if_727:
+end_if_725:
 	BOV missing_ret
 code.Math._sqrt:
 ; Méthode _sqrt
@@ -5478,47 +5466,47 @@ code.Math._sqrt:
 	CMP R3, R2
 	SLT R2
 	CMP #0, R2
-	BEQ else_761
+	BEQ else_754
 	LOAD #0x0.0p0, R0
 	LOAD #0x0.0p0, R2
 	DIV R2, R0
 	BOV div_zero_isr
 	RTS
-	BRA end_if_762
-else_761:
-end_if_762:
+	BRA end_if_755
+else_754:
+end_if_755:
 	LOAD -3(LB), R2
 	LOAD #0x0.0p0, R3
 	CMP R3, R2
 	SEQ R2
 	CMP #0, R2
-	BNE end_or_765
+	BNE end_or_758
 	LOAD -3(LB), R2
 	LOAD #0x0.0p0, R3
 	OPP R3, R3
 	CMP R3, R2
 	SEQ R2
 	CMP #0, R2
-	BEQ else_763
-end_or_765:
+	BEQ else_756
+end_or_758:
 	LOAD -3(LB), R0
 	RTS
-	BRA end_if_764
-else_763:
-end_if_764:
+	BRA end_if_757
+else_756:
+end_if_757:
 	LOAD -3(LB), R2
 	LOAD #0x1.0p0, R3
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BEQ else_766
+	BEQ else_759
 	LOAD -3(LB), R2
 	STORE R2, 1(LB)
-	BRA end_if_767
-else_766:
+	BRA end_if_760
+else_759:
 	LOAD #0x1.0p0, R2
 	STORE R2, 1(LB)
-end_if_767:
+end_if_760:
 	LOAD #0x1.0p-1, R2
 	LOAD 1(LB), R3
 	LOAD -3(LB), R4
@@ -5606,8 +5594,8 @@ code.Math._sqrt1:
 	ADDSP #1
 	LOAD #0x1.0p0, R2
 	STORE R2, 1(LB)
-	BRA while_cond_770
-loop_start_768:
+	BRA while_cond_763
+loop_start_761:
 	LOAD 1(LB), R2
 	LOAD -3(LB), R3
 	LOAD 1(LB), R4
@@ -5619,7 +5607,7 @@ loop_start_768:
 	BOV overflow_float
 	MUL R3, R2
 	STORE R2, 1(LB)
-while_cond_770:
+while_cond_763:
 	LOAD -2(LB), R2
 	CMP #null, R2
 	BOV null_ptr_isr
@@ -5642,25 +5630,25 @@ while_cond_770:
 	CMP R3, R2
 	SGT R2
 	CMP #0, R2
-	BNE loop_start_768
-loop_exit_769:
+	BNE loop_start_761
+loop_exit_762:
 	LOAD 1(LB), R0
 	RTS
 	BOV missing_ret
 main_start:
 ; Main program
 ; Beginning of main declarations:
-	NEW #12, R2
-	BOV heap_full_isr
-	LEA 7(GB), R0
-	STORE R0, 0(R2)
-	PEA 0(R2)
-	BSR init.Math
-	SUBSP #1
-	STORE R2, 1(LB)
 	TSTO #1
 	BOV stack_overflow_isr
 	ADDSP #1
+	NEW #12, R2
+	BOV heap_full_isr
+	LEA 11(GB), R0
+	STORE R0, 0(R2)
+	PUSH R2
+	BSR init.Math
+	POP R2
+	STORE R2, 1(LB)
 ; Beginning of main instructions:
 	LOAD 1(LB), R2
 	CMP #null, R2
@@ -5680,8 +5668,20 @@ main_start:
 	WNL
 	HALT
 ; --- Interrupt Service Routines (ISR) ---
+stack_overflow_isr:
+	WSTR "Erreur : Pile pleine"
+	WNL
+	ERROR
 div_zero_isr:
 	WSTR "Erreur : Division par zero"
+	WNL
+	ERROR
+overflow_float:
+	WSTR "Erreur : float overflow"
+	WNL
+	ERROR
+null_ptr_isr:
+	WSTR "Erreur : Dereferencement null"
 	WNL
 	ERROR
 missing_ret:
@@ -5690,18 +5690,6 @@ missing_ret:
 	ERROR
 heap_full_isr:
 	WSTR "Erreur : Tas plein"
-	WNL
-	ERROR
-null_ptr_isr:
-	WSTR "Erreur : Dereferencement null"
-	WNL
-	ERROR
-overflow_float:
-	WSTR "Erreur : float overflow"
-	WNL
-	ERROR
-stack_overflow_isr:
-	WSTR "Erreur : Pile pleine"
 	WNL
 	ERROR
 ; end main program

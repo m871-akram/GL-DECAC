@@ -60,7 +60,9 @@ public class Selection extends AbstractLValue {
             }
 
             // Condition supplémentaire : le type de l'objet (expr) doit être sous-type de la classe courante
-            if (!compiler.environmentType.subType(typeExpr, currentClass.getType())) {
+            // On vérifie que typeExpr (le type de l'expression) est un sous-type de currentClass
+            // subType(T1, T2) retourne vrai si T2 <: T1, donc on passe currentClass en premier
+            if (!compiler.environmentType.subType(currentClass.getType(), typeExpr)) {
                 throw new ContextualError("Accès protégé invalide : le type de l'expression n'est pas un sous-type de la classe courante", getLocation());
             }
         }

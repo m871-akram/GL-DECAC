@@ -3,9 +3,8 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.Label;
-import fr.ensimag.ima.pseudocode.instructions.BRA;
-import fr.ensimag.ima.pseudocode.instructions.HALT;
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
@@ -54,12 +53,42 @@ public class Program extends AbstractProgram {
         Label mainLabel = new Label("main_start");
         compiler.addInstruction(new BRA(mainLabel));
 
+        // 1. Générer le code de la méthode Object.equals
+        compiler.addComment("Méthode Object.equals (comparaison référentielle)");
+        compiler.addLabel(new Label("equals"));
+        // Compare this (-2(LB)) et param (-3(LB))
+        compiler.addInstruction(new LOAD(new RegisterOffset(-2, Register.LB), Register.R0));
+        compiler.addInstruction(new LOAD(new RegisterOffset(-3, Register.LB), Register.R1));
+        compiler.addInstruction(new CMP(Register.R1, Register.R0));
+        compiler.addInstruction(new SEQ(Register.R0));
+        compiler.addInstruction(new RTS());
+
+        compiler.addComment("Table des méthodes de Object");
+        // Alloc 2 mots : 1 pour parent (null) + 1 pour equals
+        RegisterOffset objectVTableAddr = compiler.getMMU().allocGlobal(2);
+
+        // Sauvegarder l'adresse pour les classes filles
+        fr.ensimag.deca.context.ClassDefinition objectDef = (fr.ensimag.deca.context.ClassDefinition) compiler.environmentType.defOfType(compiler.createSymbol("Object"));
+        objectDef.setOperand(objectVTableAddr);
+
+        // Remplir VTable Object : Parent = null
+        compiler.addInstruction(new LOAD(new NullOperand(), Register.R0));
+        compiler.addInstruction(new STORE(Register.R0, objectVTableAddr));
+
+        // Remplir VTable Object : Méthode equals à l'index 1
+        compiler.addInstruction(new LOAD(new LabelOperand(new Label("equals")), Register.R0));
+        compiler.addInstruction(new STORE(fr.ensimag.ima.pseudocode.Register.R0, new RegisterOffset(objectVTableAddr.getOffset() + 1, Register.GB)));
+
         // passe 1 : tables methodes
         compiler.addComment("Construction des tables des methodes");
         classes.codeGenListDeclClass(compiler);
 
         // passe 2a : init objets
         compiler.addComment("init objets");
+        // Générer l'initialisateur vide pour Object (classe prédéfinie)
+        compiler.addLabel(new Label("init.Object"));
+        compiler.addInstruction(new RTS());
+        
         classes.codeGenListInit(compiler);
 
         // passe 2b : code methodes

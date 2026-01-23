@@ -88,16 +88,16 @@ public class New extends AbstractExpr {
         compiler.addInstruction(new LEA(vTableAddr, Register.R0));
         compiler.addInstruction(new STORE(Register.R0, new RegisterOffset(0, register)));
 
-        // appel constructeur avec pea
-        compiler.addInstruction(new PEA(new RegisterOffset(0, register)));
+        // appel constructeur : push this
+        compiler.addInstruction(new PUSH(register));
         compiler.getMMU().notifyPush(1);
 
         // appel init
         String initLabel = "init." + classDef.getType().getName().getName();
         compiler.addInstruction(new BSR(new Label(initLabel)));
 
-        // nettoyage param this
-        compiler.addInstruction(new SUBSP(new ImmediateInteger(1)));
+        // restaure adresse objet (pop this)
+        compiler.addInstruction(new POP(register));
         compiler.getMMU().notifyPop(1);
     }
 

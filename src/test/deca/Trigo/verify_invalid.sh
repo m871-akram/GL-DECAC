@@ -13,16 +13,16 @@ for fichier in src/test/deca/Trigo/invalid/*.ass; do
     
     echo -n "Test $tests_total: $nom_test ... "
     
-    # Exécution de ima :
+    # Exécution de ima
     ima "$fichier" >/dev/null 2>&1
     code_retour=$?
     
-    # Un test invalid DOIT échouer
+    # Un test invalid doit échouer
     if [ $code_retour -ne 0 ]; then
         echo "OK (a échoué comme attendu)"
         tests_ok=$((tests_ok + 1))
     else
-        echo "ÉCHEC (il a réussi au lieu d'échouer!)"
+        echo "ÉCHEC (il a réussi au lieu d'échouer)"
         tests_fail=$((tests_fail + 1))
     fi
 done

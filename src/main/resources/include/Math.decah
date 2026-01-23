@@ -71,7 +71,7 @@ class Math {
             res = PI_OVER_2 - x_red;
             if(res < TRES_PETIT) {result = 1.0f;}                    //cos(res)~1
             else if (res < PETIT){result = _tableCos(res);}
-            else {result = 1.0f; }     //tableCos(res);           // inversion(res < PETIT -0.1f) 
+            else {result = 1.0f; } 
         }else {
             result = _cordicSin(x_red);   }               // Cordic
         
@@ -125,7 +125,7 @@ class Math {
         }
         
         if (inverse) {
-            return x;      
+            return x;             // x,y = cos(pi/2-angle), sin(pi/2-angle)
         }
         
         return y;
@@ -179,7 +179,7 @@ class Math {
 
 
     float _abs(float x) {
-        //fonction auxiliare necessaire (au lieu d'utilser java.abs())
+        //fonction auxiliare necessaire
         if(x<0){return -x;}
         else{
             return x;
@@ -279,7 +279,12 @@ class Math {
         // Methode 2 : avec la racine1 (autre implementation de la racine ), et apres on inverse
         //x2 = f * f;
         //denom = _sqrt1(1.0f - x2);
-        //return atan(f / denom);
+        //return atan(f / denom);*/
+
+
+        //Methode 3 : avec la racine inverse directement
+        ///x2 = f * f;
+        //denom = _sqrt(1.0f - x2);*/
         
         return atan(f / denom);
     }
@@ -389,7 +394,6 @@ class Math {
             return 1.40129846e-45;     // ~ 2^-149 (le plus petit nombre  dénormalisé)
         }
         
-
         // on travaille avec la valeur absolue (car l'ULP est toujours positif)
       
         if (f < 0.0) {

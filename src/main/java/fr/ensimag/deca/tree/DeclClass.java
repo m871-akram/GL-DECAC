@@ -111,6 +111,10 @@ public class DeclClass extends AbstractDeclClass {
         ClassDefinition superClassDef = (ClassDefinition)
             compiler.environmentType.defOfType(superName);
 
+//        // On initialise le nombre de champs et méthodes avec ceux de la super-classe
+        currentClassDef.setNumberOfFields(superClassDef.getNumberOfFields());
+        currentClassDef.setNumberOfMethods(superClassDef.getNumberOfMethods());
+
         EnvironmentExp superClassEnv = null;
         if (superClassDef != null) {
             superClassEnv = superClassDef.getMembers();

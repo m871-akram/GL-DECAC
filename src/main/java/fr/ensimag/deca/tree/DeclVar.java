@@ -70,7 +70,12 @@ public class DeclVar extends AbstractDeclVar {
         // stockage adresse dans def
         this.varName.getVariableDefinition().setOperand(addr);
 
-        // gen code init
+        //  init sera generee apres addsp
+    }
+
+    protected void codeGenInit(DecacCompiler compiler) {
+        // gen code init apres addsp
+        RegisterOffset addr = (RegisterOffset) this.varName.getVariableDefinition().getOperand();
         this.initialization.codeGenInit(compiler, addr, this.varName.getVariableDefinition().getType());
     }
 

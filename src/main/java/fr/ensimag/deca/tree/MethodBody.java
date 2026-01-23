@@ -38,6 +38,11 @@ public class MethodBody extends AbstractMethodBody {
         insts.codeGenListInst(compiler);
         if(getType().isVoid()) compiler.addInstruction(new RTS());
     }
+
+    public void codeGenInit(DecacCompiler compiler) {
+        // gen init apres addsp
+        locals.codeGenListInit(compiler);
+    }
     
     /**
      * Retourne le nombre de variables locales (pour le calcul de ADDSP)

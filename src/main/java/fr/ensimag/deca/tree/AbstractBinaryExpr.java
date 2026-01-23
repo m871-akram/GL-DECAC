@@ -51,6 +51,27 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
     }
 
     /**
+     * Vérifie si une expression peut modifier les registres (appel de méthode, etc.)
+     * Dans ce cas, il faut sauvegarder le registre de l'opérande gauche sur la pile.
+     */
+    private boolean canModifyRegisters(AbstractExpr expr) {
+        if (expr instanceof MethodCall) {
+            return true;
+        }
+        if (expr instanceof AbstractBinaryExpr) {
+            AbstractBinaryExpr binExpr = (AbstractBinaryExpr) expr;
+            return canModifyRegisters(binExpr.getLeftOperand()) || canModifyRegisters(binExpr.getRightOperand());
+        }
+        if (expr instanceof UnaryMinus) {
+            return canModifyRegisters(((UnaryMinus) expr).getOperand());
+        }
+        if (expr instanceof Not) {
+            return canModifyRegisters(((Not) expr).getOperand());
+        }
+        return false;
+    }
+
+    /**
      * Méthode template pour générer le code binaire standard.
      * Gère automatiquement l'allocation de registre et le SPILL.
      */
@@ -59,9 +80,12 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
         // calcul gauche
         getLeftOperand().codeGenExpr(compiler, register);
 
-        // calcul droite + gestion reg
-        if (compiler.getRegisterManager().registreLibre()) {
-            // cas normal : reg dispo
+        // Si l'opérande droit peut modifier les registres (ex: appel de méthode),
+        // on doit sauvegarder l'opérande gauche sur la pile pour éviter qu'elle soit écrasée
+        boolean needSpill = !compiler.getRegisterManager().registreLibre() || canModifyRegisters(getRightOperand());
+
+        if (!needSpill) {
+            // cas normal : reg dispo et pas d'appel de méthode dans l'opérande droit
             GPRegister rRight = compiler.getRegisterManager().prendreRegistre();
             getRightOperand().codeGenExpr(compiler, rRight);
             if (getType().isFloat() && this instanceof AbstractOpArith && !compiler.getCompilerOptions().getNoCheck() && !(this instanceof Divide)) {
@@ -74,8 +98,9 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
 
             compiler.getRegisterManager().libererRegistre();
         } else {
-            // spill : plus de reg -> pile
+            // spill : plus de reg -> pile, ou l'opérande droit peut modifier les registres
             GPRegister rRight = fr.ensimag.ima.pseudocode.Register.R0;
+            GPRegister rTemp = fr.ensimag.ima.pseudocode.Register.R1;  // registre temporaire pour éviter l'écrasement
 
             // sauvegarde gauche
             compiler.addInstruction(new PUSH(register));
@@ -88,15 +113,24 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
                         InterruptVector.IRQ_FLOAT_OVERFLOW);
             }
 
-            // charge droite dans r0
-            compiler.addInstruction(new LOAD(register, rRight));
-
-            // restaure gauche
-            compiler.addInstruction(new POP(register));
-            compiler.getMMU().notifyPop(1);
-
-            // operation avec r0
-            codeGenInst(compiler, rRight, register);
+            // Cas spécial : si register est R0, utiliser R1 comme intermédiaire pour éviter l'écrasement
+            if (register == rRight) {
+                // sauvegarder droite dans R1
+                compiler.addInstruction(new LOAD(register, rTemp));
+                // restaure gauche dans R0
+                compiler.addInstruction(new POP(register));
+                compiler.getMMU().notifyPop(1);
+                // operation : R0 (gauche) op= R1 (droite)
+                codeGenInst(compiler, rTemp, register);
+            } else {
+                // sauvegarder temporairement droite dans R0
+                compiler.addInstruction(new LOAD(register, rRight));
+                // restaure gauche dans register
+                compiler.addInstruction(new POP(register));
+                compiler.getMMU().notifyPop(1);
+                // operation : register (gauche) op= R0 (droite)
+                codeGenInst(compiler, rRight, register);
+            }
         }
     }
 
