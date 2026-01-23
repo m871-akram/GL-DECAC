@@ -1,0 +1,13 @@
+class A {
+int x ;
+int y ;
+int val(){
+return x + y ;
+}
+}
+{
+A p1 ; 
+p1 = new A();
+p1.y = 1; 
+println("p1.val() = " , p1.val());
+}
