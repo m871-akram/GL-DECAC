@@ -7,7 +7,7 @@
 //import org.junit.jupiter.api.Test;
 //import static org.junit.jupiter.api.Assertions.*;
 //
-///**
+/// **
 // * Tests de génération de code pour les opérateurs booléens via programmes complets
 // *
 // * @author gl51

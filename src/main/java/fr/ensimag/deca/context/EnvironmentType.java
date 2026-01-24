@@ -2,13 +2,14 @@ package fr.ensimag.deca.context;
 
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
-
-import java.util.HashMap;
-import java.util.Map;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.deca.tree.Location;
 import fr.ensimag.ima.pseudocode.Label;
+
+import java.util.HashMap;
+import java.util.Map;
 // A FAIRE: étendre cette classe pour traiter la partie "avec objet" de Déca
+
 /**
  * Environment containing types. Initially contains predefined identifiers, more
  * classes can be added with declareClass().
@@ -17,10 +18,18 @@ import fr.ensimag.ima.pseudocode.Label;
  * @date 01/01/2026
  */
 public class EnvironmentType {
+    public final VoidType VOID;
+    public final IntType INT;
+    public final FloatType FLOAT;
+    public final StringType STRING;
+    public final BooleanType BOOLEAN;
+    public final NullType NULL;
+    private final Map<Symbol, TypeDefinition> envTypes;
+
     public EnvironmentType(DecacCompiler compiler) {
-        
+
         envTypes = new HashMap<Symbol, TypeDefinition>();
-        
+
         Symbol intSymb = compiler.createSymbol("int");
         INT = new IntType(intSymb);
         envTypes.put(intSymb, new TypeDefinition(INT, Location.BUILTIN));
@@ -62,10 +71,10 @@ public class EnvironmentType {
         Signature equalsSignature = new Signature();
         equalsSignature.add(objectType);
         MethodDefinition equalsExpDef = new MethodDefinition(
-            BOOLEAN,
-            Location.BUILTIN,
-            equalsSignature,
-            0
+                BOOLEAN,
+                Location.BUILTIN,
+                equalsSignature,
+                1  // Index 1 car index 0 est réservé pour le pointeur vers le parent
         );
         equalsExpDef.setLabel(new Label("equals"));
         try {
@@ -77,23 +86,19 @@ public class EnvironmentType {
         objectDef.incNumberOfMethods();
     }
 
-
-
-
-    public void declareClass(Symbol symb,TypeDefinition classDef){
+    public void declareClass(Symbol symb, TypeDefinition classDef) {
         envTypes.put(symb, classDef);
     }
-
-    private final Map<Symbol, TypeDefinition> envTypes;
 
     public TypeDefinition defOfType(Symbol s) {
         return envTypes.get(s);
     }
-    public boolean subType(Type T1, Type T2){
+
+    public boolean subType(Type T1, Type T2) {
         if (T1.sameType(T2)) {
             return true;
         }
-        if ( T1.isClass() && T2.isNull() ) {
+        if (T1.isClass() && T2.isNull()) {
             return true;
         }
         if (T1.isClass() && T2.isClass()) {
@@ -108,18 +113,20 @@ public class EnvironmentType {
         }
         return false;
     }
+
     public boolean assignCompatible(Type T1, Type T2) {
 
         if (T1.isFloat() && T2.isInt()) {
             return true;
         }
-        if(subType(T1,T2)){
+        if (subType(T1, T2)) {
             return true;
         }
 
 
         return false;
     }
+
     public boolean aritCompatible(Type T1, Type T2) {
         if (T1.isFloat() && T2.isInt()) {
             return true;
@@ -135,21 +142,15 @@ public class EnvironmentType {
         }
         return false;
     }
+
     public boolean castCompatible(Type T1, Type T2) {
         if (T1.isVoid()) {
             return false;
         }
-        if (assignCompatible(T1,T2) || assignCompatible(T2,T1)) {
+        if (assignCompatible(T1, T2) || assignCompatible(T2, T1)) {
             return true;
         }
-    
+
         return false;
     }
-
-    public final VoidType    VOID;
-    public final IntType     INT;
-    public final FloatType   FLOAT;
-    public final StringType  STRING;
-    public final BooleanType BOOLEAN;
-    public final NullType NULL;
 }

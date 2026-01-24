@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -10,8 +10,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jacoco.skip>true</jacoco.skip> 
-        <jacoco.report_dir>${project.build.directory}/site/jacoco</jacoco.report_dir> 
+        <jacoco.skip>true</jacoco.skip>
+        <jacoco.report_dir>${project.build.directory}/site/jacoco</jacoco.report_dir>
     </properties>
 
     <dependencies>
@@ -68,7 +68,7 @@
             <classifier>runtime</classifier>
             <version>0.8.13</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -87,7 +87,7 @@
                                 <requireMavenVersion>
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
-                            </rules>    
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
@@ -108,7 +108,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
-            </plugin>            
+            </plugin>
 
             <plugin>
                 <!-- compute the classpath when building, for use by various
@@ -140,13 +140,13 @@
                         <exclude>fr/ensimag/deca/tools/DecacInternalError.class</exclude>
                         <exclude>fr/ensimag/deca/ima/pseudocode/IMAInternalError.class</exclude>
                     </excludes>
-                </configuration>                               
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-instrument</id>
                         <goals>
                             <goal>instrument</goal>
-                        </goals>             
+                        </goals>
                     </execution>
                     <execution>
                         <id>default-restore-instrumented-classes</id>
@@ -181,7 +181,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>      
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -419,7 +419,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>4.0.0-M16</version>
-                </plugin>                
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -454,7 +454,7 @@
                     <threshold>Exp</threshold>
                 </configuration>
             </plugin>
-      
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -469,7 +469,7 @@
                                 <additionalparam>-Xdoclint:none</additionalparam>
                             </configuration>
                         </execution>
-                    </executions>          
+                    </executions>
                     <tags>
                         <tag>
                             <name>date</name>

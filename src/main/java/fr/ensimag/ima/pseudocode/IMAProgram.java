@@ -41,7 +41,7 @@ public class IMAProgram {
     public void append(IMAProgram p) {
         lines.addAll(p.lines);
     }
-    
+
     /**
      * Add a line at the front of the program.
      */
@@ -53,7 +53,7 @@ public class IMAProgram {
      * Display the program in a textual form readable by IMA to stream s.
      */
     public void display(PrintStream s) {
-        for (AbstractLine l: lines) {
+        for (AbstractLine l : lines) {
             l.display(s);
         }
     }
@@ -71,7 +71,7 @@ public class IMAProgram {
     public void addFirst(Instruction i) {
         addFirst(new Line(i));
     }
-    
+
     public void addFirst(Instruction i, String comment) {
         addFirst(new Line(null, i, comment));
     }

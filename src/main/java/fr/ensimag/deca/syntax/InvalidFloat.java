@@ -15,6 +15,7 @@ public class InvalidFloat extends DecaRecognitionException {
     public InvalidFloat(DecaParser recognizer, ParserRuleContext ctx) {
         super(recognizer, ctx);
     }
+
     public InvalidFloat(AbstractDecaLexer recognizer, IntStream input) {
         super(recognizer, input);
     }

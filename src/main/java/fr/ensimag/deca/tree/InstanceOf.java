@@ -1,17 +1,16 @@
 package fr.ensimag.deca.tree;
 
-import java.io.PrintStream;
-
-import fr.ensimag.ima.pseudocode.*;
-import fr.ensimag.ima.pseudocode.instructions.*;
-import org.apache.commons.lang.Validate;
-
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
 import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.instructions.*;
+import org.apache.commons.lang.Validate;
+
+import java.io.PrintStream;
 
 
 /**
@@ -22,6 +21,7 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 public class InstanceOf extends AbstractExpr {
     private AbstractExpr leftOperand;
     private AbstractIdentifier rightOperand;
+
     public InstanceOf(AbstractExpr leftOperand, AbstractIdentifier rightOperand) {
         Validate.notNull(leftOperand, "left operand cannot be null");
         Validate.notNull(rightOperand, "right operand cannot be null");
@@ -37,14 +37,14 @@ public class InstanceOf extends AbstractExpr {
 
         if (!exprType.isClassOrNull()) {
             throw new ContextualError(
-                "instanceof ne s'applique qu'à un objet",
-                leftOperand.getLocation());
+                    "instanceof ne s'applique qu'à un objet",
+                    leftOperand.getLocation());
         }
 
         if (!classType.isClass()) {
             throw new ContextualError(
-                "instanceof attend un type classe",
-                rightOperand.getLocation());
+                    "instanceof attend un type classe",
+                    rightOperand.getLocation());
         }
 
         setType(compiler.environmentType.BOOLEAN);

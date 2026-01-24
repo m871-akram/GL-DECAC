@@ -6,12 +6,11 @@ import fr.ensimag.deca.tree.AbstractProgram;
 import fr.ensimag.deca.tree.Location;
 import fr.ensimag.deca.tree.LocationException;
 import fr.ensimag.deca.tree.Tree;
-
-import java.io.PrintStream;
-
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.log4j.Logger;
+
+import java.io.PrintStream;
 
 /**
  * The super class of the generated parser. It is extended by the generated
@@ -25,6 +24,33 @@ public abstract class AbstractDecaParser extends Parser {
 
     private DecacCompiler decacCompiler;
 
+    /**
+     * Create a new parser instance, pre-supplying the input token stream.
+     *
+     * @param input The stream of tokens that will be pulled from the lexer
+     */
+    protected AbstractDecaParser(TokenStream input) {
+        super(input);
+        setErrorHandler(new DefaultErrorStrategy() {
+            @Override
+            public void reportError(Parser recognizer,
+                                    RecognitionException e) {
+                LOG.debug("Error found by ANTLR");
+                if (e instanceof DecaRecognitionException) {
+                    Token offendingToken = e.getOffendingToken();
+                    if (offendingToken == null) {
+                        offendingToken = recognizer.getCurrentToken();
+                    }
+                    recognizer.notifyErrorListeners(offendingToken, e.getMessage(), e);
+                } else {
+                    super.reportError(recognizer, e);
+                }
+            }
+        });
+        removeErrorListeners();
+        addErrorListener(new DecacErrorListner(input));
+    }
+
     protected DecacCompiler getDecacCompiler() {
         return decacCompiler;
     }
@@ -34,16 +60,16 @@ public abstract class AbstractDecaParser extends Parser {
     }
 
     protected abstract AbstractProgram parseProgram();
-    
+
     public AbstractProgram parseProgramAndManageErrors(PrintStream err) {
         try {
             AbstractProgram result = parseProgram();
-            assert(result != null);
+            assert (result != null);
             return result;
         } catch (ParseCancellationException e) {
             LOG.debug("ParseCancellationException raised while compiling file:", e);
             if (e.getCause() instanceof LocationException) {
-                ((LocationException)e.getCause()).display(err);
+                ((LocationException) e.getCause()).display(err);
                 return null;
             } else {
                 throw new DecacInternalError("Parsing cancelled", e);
@@ -62,41 +88,14 @@ public abstract class AbstractDecaParser extends Parser {
                 token.getCharPositionInLine(),
                 token.getInputStream().getSourceName());
     }
-    
+
     /**
      * Sets the location of Tree to the one in Token.
-     *
+     * <p>
      * This is a simple convenience wrapper around {@link Tree#setLocation(Location)}.
      */
     protected void setLocation(Tree tree, Token token) {
         tree.setLocation(tokenLocation(token));
-    }
-
-    /**
-     * Create a new parser instance, pre-supplying the input token stream.
-     *
-     * @param input The stream of tokens that will be pulled from the lexer
-     */
-    protected AbstractDecaParser(TokenStream input) {
-        super(input);
-        setErrorHandler(new DefaultErrorStrategy() {
-            @Override
-            public void reportError(Parser recognizer,
-                                    RecognitionException e) {
-                LOG.debug("Error found by ANTLR");
-                if (e instanceof DecaRecognitionException) {
-                    Token offendingToken = e.getOffendingToken();
-                    if (offendingToken == null) {
-                        offendingToken = recognizer.getCurrentToken();                        
-                    }
-                    recognizer.notifyErrorListeners(offendingToken, e.getMessage(), e);
-                } else {
-                    super.reportError(recognizer, e);
-                }
-            }
-        });
-        removeErrorListeners();
-        addErrorListener(new DecacErrorListner(input));
     }
 }
 

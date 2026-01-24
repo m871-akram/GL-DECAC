@@ -2,7 +2,7 @@ package fr.ensimag.ima.pseudocode;
 
 /**
  * Immediate operand containing a float value.
- * 
+ *
  * @author Ensimag
  * @date 01/01/2026
  */

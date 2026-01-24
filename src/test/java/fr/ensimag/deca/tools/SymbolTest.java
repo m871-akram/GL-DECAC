@@ -1,8 +1,9 @@
 package fr.ensimag.deca.tools;
 
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Example JUnit class. A JUnit class must be named TestXXX or YYYTest. JUnit

@@ -14,7 +14,7 @@
 //
 //import java.io.IOException;
 //
-///**
+/// **
 // * Test JUnit pour vérifier le calcul de TSTO et ADDSP.
 // */
 //public class TestStackManagement {

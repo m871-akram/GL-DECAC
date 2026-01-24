@@ -22,17 +22,16 @@ public class Equals extends AbstractOpExactCmp {
     protected String getOperatorName() {
         return "==";
     }
-    
+
     @Override
     protected Instruction getAsmCode(GPRegister register) {
-
 
 
         return new SEQ(register);
 
 
     }
-    
+
 }
 
 

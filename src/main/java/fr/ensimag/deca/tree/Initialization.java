@@ -19,27 +19,27 @@ import java.io.PrintStream;
  */
 public class Initialization extends AbstractInitialization {
 
-    public AbstractExpr getExpression() {
-        return expression;
-    }
-
     private AbstractExpr expression;
-
-    public void setExpression(AbstractExpr expression) {
-        Validate.notNull(expression);
-        this.expression = expression;
-    }
 
     public Initialization(AbstractExpr expression) {
         Validate.notNull(expression);
         this.expression = expression;
     }
 
+    public AbstractExpr getExpression() {
+        return expression;
+    }
+
+    public void setExpression(AbstractExpr expression) {
+        Validate.notNull(expression);
+        this.expression = expression;
+    }
+
     @Override
     protected void verifyInitialization(DecacCompiler compiler, Type t,
-            EnvironmentExp localEnv, ClassDefinition currentClass)
+                                        EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
-        AbstractExpr t2 = getExpression().verifyRValue(compiler, localEnv, currentClass,t);
+        AbstractExpr t2 = getExpression().verifyRValue(compiler, localEnv, currentClass, t);
         setExpression(t2);
     }
 
@@ -67,8 +67,7 @@ public class Initialization extends AbstractInitialization {
     }
 
     @Override
-    protected
-    void iterChildren(TreeFunction f) {
+    protected void iterChildren(TreeFunction f) {
         expression.iter(f);
     }
 

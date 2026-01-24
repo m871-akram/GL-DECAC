@@ -29,6 +29,14 @@ public class InterruptController {
     }
 
     /**
+     * Arme une interruption sans générer de branchement.
+     * Utile quand on veut générer un BRA au lieu de BOV.
+     */
+    public void armInterrupt(InterruptVector vector) {
+        armedInterrupts.add(vector);
+    }
+
+    /**
      * Génère le code des routines de service (ISR) activées.
      * À appeler à la fin du Main.
      */

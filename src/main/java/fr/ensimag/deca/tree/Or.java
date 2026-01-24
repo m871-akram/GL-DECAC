@@ -1,4 +1,5 @@
 package fr.ensimag.deca.tree;
+
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.ima.pseudocode.Label;
 
@@ -20,7 +21,7 @@ public class Or extends AbstractOpBool {
     }
 
     @Override
-    protected void codeGenInst(DecacCompiler compiler, fr.ensimag.ima.pseudocode.DVal opSource, 
+    protected void codeGenInst(DecacCompiler compiler, fr.ensimag.ima.pseudocode.DVal opSource,
                                fr.ensimag.ima.pseudocode.GPRegister opDest) {
         throw new UnsupportedOperationException("on fait pas Or dans ce contexte la !!");
     }
@@ -54,10 +55,6 @@ public class Or extends AbstractOpBool {
 
 
     }
-
-
-
-
 
 
 }

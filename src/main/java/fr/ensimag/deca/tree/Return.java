@@ -27,15 +27,15 @@ public class Return extends AbstractInst {
     }
 
     @Override
-    protected void verifyInst(DecacCompiler compiler,  EnvironmentExp localEnv,
-                            ClassDefinition currentClass, Type returnType) throws ContextualError {
+    protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
+                              ClassDefinition currentClass, Type returnType) throws ContextualError {
 
         if (returnType.isVoid()) {
             throw new ContextualError(
-                "return avec un void interdit", getLocation()
+                    "return avec un void interdit", getLocation()
             );
         }
-        AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass,returnType);
+        AbstractExpr convValue = value.verifyRValue(compiler, localEnv, currentClass, returnType);
         this.value = convValue;
     }
 

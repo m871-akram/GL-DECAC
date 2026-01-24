@@ -1,15 +1,16 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import java.io.PrintStream;
-import org.apache.commons.lang.Validate;
 import fr.ensimag.ima.pseudocode.Label;
 import fr.ensimag.ima.pseudocode.instructions.BRA;
+import org.apache.commons.lang.Validate;
+
+import java.io.PrintStream;
 
 /**
  * Full if/else if/else statement.
@@ -18,8 +19,8 @@ import fr.ensimag.ima.pseudocode.instructions.BRA;
  * @date 01/01/2026
  */
 public class IfThenElse extends AbstractInst {
-    
-    private final AbstractExpr condition; 
+
+    private final AbstractExpr condition;
     private final ListInst thenBranch;
     private ListInst elseBranch;
 
@@ -35,12 +36,12 @@ public class IfThenElse extends AbstractInst {
 
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass, Type returnType)
+                              ClassDefinition currentClass, Type returnType)
             throws ContextualError {
         condition.verifyCondition(compiler, localEnv, currentClass);
-        
+
         thenBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
-        
+
         elseBranch.verifyListInst(compiler, localEnv, currentClass, returnType);
     }
 
@@ -73,20 +74,19 @@ public class IfThenElse extends AbstractInst {
         s.print("if (");
         condition.decompile(s);
         s.println(") {");
-        
+
         thenBranch.decompile(s);
-        
+
         s.println("} else {");
-        
+
         elseBranch.decompile(s);
-        
+
         s.println("}");
-    
+
     }
 
     @Override
-    protected
-    void iterChildren(TreeFunction f) {
+    protected void iterChildren(TreeFunction f) {
         condition.iter(f);
         thenBranch.iter(f);
         elseBranch.iter(f);

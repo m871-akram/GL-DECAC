@@ -1,15 +1,11 @@
 package fr.ensimag.deca;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import org.apache.log4j.Logger;
+import java.util.concurrent.*;
 
 /**
  * Main class for the command-line Deca compiler.
@@ -19,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 public class DecacMain {
     private static Logger LOG = Logger.getLogger(DecacMain.class);
-    
+
     public static void main(String[] args) {
         // example log4j message.
         LOG.info("Decac compiler started");
@@ -67,7 +63,7 @@ public class DecacMain {
                     error = true;
                     e.printStackTrace();
                 }
-    }
+            }
         } else {
             for (File source : options.getSourceFiles()) {
                 DecacCompiler compiler = new DecacCompiler(options, source);

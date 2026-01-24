@@ -16,23 +16,23 @@ import fr.ensimag.ima.pseudocode.GPRegister;
  */
 public class Assign extends AbstractBinaryExpr {
 
-    @Override
-    public AbstractLValue getLeftOperand() {
-        // The cast succeeds by construction, as the leftOperand has been set
-        // as an AbstractLValue by the constructor.
-        return (AbstractLValue)super.getLeftOperand();
-    }
-
     public Assign(AbstractLValue leftOperand, AbstractExpr rightOperand) {
         super(leftOperand, rightOperand);
     }
 
     @Override
+    public AbstractLValue getLeftOperand() {
+        // The cast succeeds by construction, as the leftOperand has been set
+        // as an AbstractLValue by the constructor.
+        return (AbstractLValue) super.getLeftOperand();
+    }
+
+    @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
+                           ClassDefinition currentClass) throws ContextualError {
         Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
-        AbstractExpr t2 = this.getRightOperand().verifyRValue(compiler, localEnv, currentClass,t1);
-        if(!compiler.environmentType.assignCompatible(t1,t2.getType())){
+        AbstractExpr t2 = this.getRightOperand().verifyRValue(compiler, localEnv, currentClass, t1);
+        if (!compiler.environmentType.assignCompatible(t1, t2.getType())) {
             throw new ContextualError("assign wrong type", getLocation());
         }
         setRightOperand(t2);
@@ -42,10 +42,10 @@ public class Assign extends AbstractBinaryExpr {
 
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition classCourante, Type returnType)
-            throws ContextualError {Type exprType = this.verifyExpr(compiler, localEnv, classCourante);
-            this.setType(exprType);
+            throws ContextualError {
+        Type exprType = this.verifyExpr(compiler, localEnv, classCourante);
+        this.setType(exprType);
     }
-
 
 
     /**

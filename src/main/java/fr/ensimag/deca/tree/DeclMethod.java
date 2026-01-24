@@ -1,14 +1,10 @@
 package fr.ensimag.deca.tree;
 
-import java.io.PrintStream;
-
-import org.apache.commons.lang.Validate;
-
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.Label;
-import fr.ensimag.ima.pseudocode.instructions.RTS;
+import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
@@ -19,9 +15,8 @@ public class DeclMethod extends AbstractDeclMethod {
     private final AbstractMethodBody body;
 
 
-
     public DeclMethod(AbstractIdentifier type, AbstractIdentifier name,
-                    ListDeclParam params, AbstractMethodBody body) {
+                      ListDeclParam params, AbstractMethodBody body) {
         Validate.notNull(type);
         Validate.notNull(name);
         Validate.notNull(params);
@@ -29,7 +24,7 @@ public class DeclMethod extends AbstractDeclMethod {
         this.type = type;
         this.name = name;
         this.params = params;
-        this.body=body;
+        this.body = body;
     }
 
     public AbstractIdentifier getName() {
@@ -37,11 +32,13 @@ public class DeclMethod extends AbstractDeclMethod {
     }
 
     public void verifyDeclMethodPrototype(DecacCompiler compiler,
-                                         EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
-        throws ContextualError {
+                                          EnvironmentExp superClassEnv, ClassDefinition currentClassDef, EnvironmentExp localEnv)
+            throws ContextualError {
         ExpDefinition superDef = superClassEnv.get(name.getName());
         Signature signature = params.verifyListDeclParam(compiler);
         Type returnType = type.verifyType(compiler);
+        int methodIndex;
+
         if (superDef != null) {
 
             MethodDefinition superMethod = superDef.asMethodDefinition("Le nom existe dans la super-classe mais ce n'est pas une methode", getLocation());
@@ -50,30 +47,37 @@ public class DeclMethod extends AbstractDeclMethod {
 
             if (signature.size() != sigSuper.size()) {
                 throw new ContextualError(
-                    "La signature de la methode redefinie doit avoir le meme nombre de parametres",
-                    getLocation()
+                        "La signature de la methode redefinie doit avoir le meme nombre de parametres",
+                        getLocation()
                 );
             }
 
             for (int i = 0; i < signature.size(); i++) {
                 if (!signature.paramNumber(i).sameType(sigSuper.paramNumber(i))) {
                     throw new ContextualError(
-                        "Les types des parametres doivent correspondre à ceux de la methode heritee",
-                        getLocation()
+                            "Les types des parametres doivent correspondre à ceux de la methode heritee",
+                            getLocation()
                     );
                 }
             }
 
             Type typeSuper = superMethod.getType();
 
-            if (!compiler.environmentType.subType(returnType,typeSuper)) {
+            if (!compiler.environmentType.subType(returnType, typeSuper)) {
                 throw new ContextualError(
-                    "Le type de retour de la methode redefinie doit etre un sous-type du type de la super-classe",
-                    getLocation()
+                        "Le type de retour de la methode redefinie doit etre un sous-type du type de la super-classe",
+                        getLocation()
                 );
             }
+
+            // Pour un override, on réutilise l'index de la méthode parent (polymorphisme)
+            methodIndex = superMethod.getIndex();
+        } else {
+            // Nouvelle méthode -> nouvel index
+            methodIndex = currentClassDef.incNumberOfMethods();
         }
-        MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, currentClassDef.incNumberOfMethods());
+
+        MethodDefinition methodDef = new MethodDefinition(returnType, getLocation(), signature, methodIndex);
         // Create and set the label for this method
         Label methodLabel = new Label("code." + currentClassDef.getType().getName().getName() + "." + name.getName().getName());
         methodDef.setLabel(methodLabel);
@@ -102,13 +106,13 @@ public class DeclMethod extends AbstractDeclMethod {
         // programme temp pour le corps
         fr.ensimag.ima.pseudocode.IMAProgram bodyProgram = new fr.ensimag.ima.pseudocode.IMAProgram();
         fr.ensimag.ima.pseudocode.IMAProgram originalProgram = compiler.swapProgram(bodyProgram);
-        
+
         // gen corps
         body.codeGenMethodBody(compiler);
-        
+
         // restaure programme
         compiler.swapProgram(originalProgram);
-        
+
         // check type corps
         if (body instanceof MethodAsmBody) {
             // corps asm inline - pas de prologue
@@ -119,9 +123,9 @@ public class DeclMethod extends AbstractDeclMethod {
             int maxStack = compiler.getMMU().getStackRequirements();
 
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.TSTO(maxStack));
-            if(!compiler.getCompilerOptions().getNoCheck())
-            compiler.getIrqController().triggerInterrupt(compiler,
-                    fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
+            if (!compiler.getCompilerOptions().getNoCheck())
+                compiler.getIrqController().triggerInterrupt(compiler,
+                        fr.ensimag.deca.codegen.InterruptVector.IRQ_STACK_OVERFLOW);
             compiler.addInstruction(new fr.ensimag.ima.pseudocode.instructions.ADDSP(nbLocales));
 
             // maintenant on peut faire les init (store)
@@ -131,8 +135,8 @@ public class DeclMethod extends AbstractDeclMethod {
             compiler.appendProgram(bodyProgram);
 
             // retour par defaut
-            if(!compiler.getCompilerOptions().getNoCheck()) compiler.getIrqController().triggerInterrupt(compiler,
-                fr.ensimag.deca.codegen.InterruptVector.IRQ_MISSING_RET);
+            if (!compiler.getCompilerOptions().getNoCheck()) compiler.getIrqController().triggerInterrupt(compiler,
+                    fr.ensimag.deca.codegen.InterruptVector.IRQ_MISSING_RET);
         } else {
             throw new UnsupportedOperationException("Type de corps de méthode non supporté: " + body.getClass());
         }
@@ -174,13 +178,13 @@ public class DeclMethod extends AbstractDeclMethod {
     protected void verifyDeclMethodBody(DecacCompiler compiler, EnvironmentExp localEnv, ClassDefinition currentClass)
             throws ContextualError {
         EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
-        params.verifyListDeclParamEnv(compiler,methodEnv);
+        params.verifyListDeclParamEnv(compiler, methodEnv);
         body.verifyMethodBody(compiler, methodEnv, currentClass, type.getType());
     }
 
     @Override
     protected void verifyDeclMethodContent(DecacCompiler compiler, ClassDefinition currentClassDef,
-            EnvironmentExp localEnv) throws ContextualError {
+                                           EnvironmentExp localEnv) throws ContextualError {
         EnvironmentExp methodEnv = new EnvironmentExp(localEnv);
 
         this.params.verifyListDeclParamEnv(compiler, methodEnv);

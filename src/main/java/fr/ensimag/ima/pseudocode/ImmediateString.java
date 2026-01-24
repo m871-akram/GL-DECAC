@@ -2,7 +2,7 @@ package fr.ensimag.ima.pseudocode;
 
 /**
  * Immediate operand representing a string.
- * 
+ *
  * @author Ensimag
  * @date 01/01/2026
  */

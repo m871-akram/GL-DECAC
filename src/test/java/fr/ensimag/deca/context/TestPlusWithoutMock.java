@@ -5,29 +5,42 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tree.AbstractExpr;
 import fr.ensimag.deca.tree.Plus;
 import fr.ensimag.deca.tree.TreeFunction;
-import java.io.PrintStream;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import fr.ensimag.ima.pseudocode.GPRegister;
+import org.junit.jupiter.api.Test;
+
+import java.io.PrintStream;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for the Plus node in a manual way. The same test would be much easier to
  * write using a mock-up framework like Mockito.
  *
- * @see TestPlusPlain to see how the Mockito library can help writing this kind
- * of tests.
- *
  * @author Ensimag
  * @date 01/01/2026
+ * @see TestPlusPlain to see how the Mockito library can help writing this kind
+ * of tests.
  */
 public class TestPlusWithoutMock {
     static final Type INT = new IntType(null);
     static final Type FLOAT = new FloatType(null);
 
+    @Test
+    public void testType() throws ContextualError {
+        DecacCompiler compiler = new DecacCompiler(null, null);
+        DummyIntExpression left = new DummyIntExpression();
+        DummyIntExpression right = new DummyIntExpression();
+        Plus t = new Plus(left, right);
+        // check the result
+        assertTrue(t.verifyExpr(compiler, null, null).isInt());
+        // check that the dummy expression have been called properly.
+        left.checkProperUse();
+        right.checkProperUse();
+    }
+
     /**
      * Stub usable as a replacement for a real class deriving from AbstractExpr.
-     *
+     * <p>
      * This would typically be much simpler using Mockito.
      */
     static class DummyIntExpression extends AbstractExpr {
@@ -35,7 +48,7 @@ public class TestPlusWithoutMock {
 
         @Override
         public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-                ClassDefinition currentClass) throws ContextualError {
+                               ClassDefinition currentClass) throws ContextualError {
             hasBeenVerified = true;
             return INT;
         }
@@ -46,9 +59,9 @@ public class TestPlusWithoutMock {
         }
 
         @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
-        throw new UnsupportedOperationException("ca beugger ici pour une raison dont elle avait besoin un import car on a ajouter le codegen expr");
-    }
+        protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+            throw new UnsupportedOperationException("ca beugger ici pour une raison dont elle avait besoin un import car on a ajouter le codegen expr");
+        }
 
         @Override
         protected void prettyPrintChildren(PrintStream s, String prefix) {
@@ -66,18 +79,5 @@ public class TestPlusWithoutMock {
         public void checkProperUse() {
             assertTrue(hasBeenVerified, "verifyExpr has not been called");
         }
-    }
-
-    @Test
-    public void testType() throws ContextualError {
-        DecacCompiler compiler = new DecacCompiler(null, null);
-        DummyIntExpression left = new DummyIntExpression();
-        DummyIntExpression right = new DummyIntExpression();
-        Plus t = new Plus(left, right);
-        // check the result
-        assertTrue(t.verifyExpr(compiler, null, null).isInt());
-        // check that the dummy expression have been called properly.
-        left.checkProperUse();
-        right.checkProperUse();
     }
 }

@@ -9,6 +9,15 @@ import java.io.PrintStream;
  * @date 01/01/2026
  */
 public class LocationException extends Exception {
+    private static final long serialVersionUID = 7628400022855935597L;
+    protected Location location;
+
+    public LocationException(String message, Location location) {
+        super(message);
+        assert (location == null || location.getFilename() != null);
+        this.location = location;
+    }
+
     public Location getLocation() {
         return location;
     }
@@ -25,15 +34,6 @@ public class LocationException extends Exception {
             column = ":" + loc.getPositionInLine();
         }
         s.println(location.getFilename() + ":" + line + column + ": " + getMessage());
-    }
-
-    private static final long serialVersionUID = 7628400022855935597L;
-    protected Location location;
-
-    public LocationException(String message, Location location) {
-        super(message);
-        assert(location == null || location.getFilename() != null);
-        this.location = location;
     }
 
 }

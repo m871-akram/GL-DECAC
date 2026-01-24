@@ -8,7 +8,7 @@
 //import org.junit.jupiter.params.ParameterizedTest;
 //import org.junit.jupiter.params.provider.EnumSource;
 //
-///**
+/// **
 // * Vérifie que chaque vecteur d'interruption génère le bon code assembleur.
 // */
 //public class TestInterruptController {

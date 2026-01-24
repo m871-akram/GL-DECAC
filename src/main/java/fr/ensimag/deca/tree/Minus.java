@@ -26,7 +26,7 @@ public class Minus extends AbstractOpArith {
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
         compiler.addInstruction(new SUB(opSource, opDest));
     }
-    
+
 }
 
 

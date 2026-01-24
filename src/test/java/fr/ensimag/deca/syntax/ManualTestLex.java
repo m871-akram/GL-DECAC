@@ -1,11 +1,12 @@
 package fr.ensimag.deca.syntax;
 
-import java.io.IOException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+
 /**
- * 
+ *
  * @author Ensimag
  * @date 01/01/2026
  */

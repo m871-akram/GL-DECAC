@@ -10,8 +10,6 @@ import fr.ensimag.ima.pseudocode.instructions.QUO;
 import fr.ensimag.ima.pseudocode.instructions.SHR;
 
 
-
-
 /**
  *
  * @author gl51
@@ -27,8 +25,8 @@ public class Divide extends AbstractOpArith {
 
         if (getType().isInt()) {
             int shiftR = getRightOperand().isPowerOftow();
-            if(shiftR != -1){
-                for(int i =0;i<shiftR;i++){
+            if (shiftR != -1) {
+                for (int i = 0; i < shiftR; i++) {
                     compiler.addInstruction(new SHR(opDest));
                 }
             } else {
@@ -43,7 +41,6 @@ public class Divide extends AbstractOpArith {
                     InterruptVector.IRQ_DIV_BY_ZERO);
         }
     }
-    
 
 
     @Override

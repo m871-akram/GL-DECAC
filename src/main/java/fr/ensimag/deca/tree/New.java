@@ -4,17 +4,20 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.*;
+import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.Label;
+import fr.ensimag.ima.pseudocode.Register;
+import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
 
-
 /**
  * Integer literal
  * new classname()
+ *
  * @author G51
  * @date 16/01/2026
  */
@@ -36,23 +39,23 @@ public class New extends AbstractExpr {
 
     @Override
     public Type verifyExpr(DecacCompiler compiler,
-        EnvironmentExp localEnv, ClassDefinition currentClass)
-        throws ContextualError {
+                           EnvironmentExp localEnv, ClassDefinition currentClass)
+            throws ContextualError {
         // on vérifier que le nom est une classe qui exist
         TypeDefinition typeDef = compiler.environmentType.defOfType(className.getName());
 
         // on verifie si ce objet 'classs' existe
         if (typeDef == null) {
             throw new ContextualError(
-                "la Classe :" + className.getName().getName() + ",est inconnue", getLocation()
+                    "la Classe :" + className.getName().getName() + ",est inconnue", getLocation()
             );
         }
 
         //et s'il existe , est ce une classe ,ou un autre type
         if (!typeDef.isClass()) {
             throw new ContextualError(
-                className.getName().getName() + " : n'est pas une classe",
-                getLocation()
+                    className.getName().getName() + " : n'est pas une classe",
+                    getLocation()
             );
         }
 
@@ -64,7 +67,6 @@ public class New extends AbstractExpr {
         setType(classType);
         return classType;
     }
-
 
 
     @Override

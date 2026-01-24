@@ -1,0 +1,123 @@
+// =================================================================
+// TEST COMPLET DECA : Objets, Héritage, Polymorphisme, Logique
+// =================================================================
+
+class A {
+    protected int x;
+
+    void setX(int val) {
+        this.x = val;
+    }
+
+    int getX() {
+        return this.x;
+    }
+
+    // Méthode qui sera redéfinie (Override)
+    void description() {
+        println("Je suis la classe A (Base). x = ", x);
+    }
+
+    // Méthode pour tester l'arithmétique simple
+    int calcul(int a, int b) {
+        return a + b;
+    }
+}
+
+class B extends A {
+    float y;
+
+    void setY(float val) {
+        this.y = val;
+    }
+
+    // Redéfinition (Polymorphisme)
+    void description() {
+        println("Je suis la classe B (Derivee). x=", x, ", y=", y);
+    }
+
+    // Surcharge logique (pas override, nouvelle méthode)
+    float division(float a, float b) {
+        if (b == 0.0) {
+            println("Erreur: division par zero");
+            return 0.0;
+        } else {
+            return a / b;
+        }
+    }
+
+    // Test récursivité simple (Factorielle)
+    int fact(int n) {
+        if (n <= 1) {
+            return 1;
+        } else {
+            return n * fact(n - 1);
+        }
+    }
+}
+
+{
+    // --- Déclarations ---
+    A a1;
+    B b1;
+    A poly; // Variable de type A, mais contiendra un B
+    int i = 0;
+    float fres;
+    boolean flag = true;
+
+    println("=== DEBUT DU TEST ULTIME ===");
+
+    // 1. Test Instanciation et Héritage simple
+    println("--- Etape 1 : Objets simples ---");
+    b1 = new B();
+    b1.setX(10);
+    b1.setY(3.5);
+    // Doit afficher B car c'est un objet B
+    b1.description();
+
+    // 2. Test Polymorphisme (CRUCIAL)
+    println("--- Etape 2 : Polymorphisme ---");
+    poly = new B();
+    poly.setX(42);
+    // poly est déclaré A, mais contient un B.
+    // Si le polymorphisme marche, ça doit appeler la méthode de B !
+    poly.description();
+
+    // 3. Test Arithmétique et Cast
+    println("--- Etape 3 : Calculs ---");
+    // Cast float -> int implicite ou explicite selon ta gestion, ici on utilise int
+    println("Somme (10 + 5) = ", b1.calcul(10, 5));
+
+    fres = b1.division(10.0, 2.0);
+    println("Division (10.0 / 2.0) = ", fres);
+
+    // 4. Test Récursivité
+    println("--- Etape 4 : Recursivite (Fact 5) ---");
+    println("Factorielle de 5 = ", b1.fact(5));
+
+    // 5. Test Instanceof et Cast
+    println("--- Etape 5 : Instanceof & Cast ---");
+    if (poly instanceof B) {
+        println("Succes : poly est bien une instance de B");
+        // Cast sécurisé
+        b1 = (B) (poly);
+        println("Cast reussi, valeur de y (defaut 0.0) = ", b1.y);
+    } else {
+        println("Echec : instanceof ne fonctionne pas");
+    }
+
+    // 6. Test Boucle While et Condition complexe
+    println("--- Etape 6 : Boucle While ---");
+    i = 0;
+    while (i < 5) {
+        if (i % 2 == 0 && flag) {
+            print(i, " est pair. ");
+        } else {
+            print(i, " est impair. ");
+        }
+        i = i + 1;
+    }
+    println(""); // Saut de ligne final
+
+    println("=== FIN DU TEST ===");
+}

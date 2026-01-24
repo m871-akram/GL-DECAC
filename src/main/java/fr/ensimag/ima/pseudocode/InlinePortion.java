@@ -11,12 +11,12 @@ import java.io.PrintStream;
  */
 public class InlinePortion extends AbstractLine {
     private final String asmCode;
-    
+
     public InlinePortion(String asmCode) {
         super();
         this.asmCode = asmCode;
     }
-    
+
     @Override
     void display(PrintStream s) {
         s.println(asmCode);

@@ -1,0 +1,113 @@
+// ============================================================================
+// TEST GLOBAL DE SOUTENANCE - COMPILATEUR DECA
+// ============================================================================
+// Ce test valide :
+// 1. Syntaxe et Lexique (Commentaires, Includes, Structure)
+// 2. Objet : Héritage, Polymorphisme, Encapsulation (protected), this
+// 3. Logique : If/Else, While, &&, || (Lazy eval), Instanceof, Cast
+// 4. Arithmétique : Int, Float, débordements, priorité
+// 5. Extension : Math (Sin, Cos)
+// ============================================================================
+
+#include "Math.decah"
+
+class A {
+    protected int x;
+
+    void setX(int x) {
+        this.x = x;
+    }
+
+    int getX() {
+        return this.x;
+    }
+
+    // Méthode qui sera surchargée (Test VTable)
+    void quiSuisJe() {
+        println("Je suis A");
+    }
+}
+
+class B extends A {
+    float y = 0.0;
+
+    // Surcharge (Override)
+    void quiSuisJe() {
+        println("Je suis B (extends A)");
+    }
+
+    // Méthode avec calcul arithmétique complexe
+    float calculComplexe(float f) {
+        // Test priorité opérateurs et conversion
+        return f * 2.0 + (float)(this.x) / 2.0;
+    }
+}
+
+{
+    // --- Déclarations ---
+    A a;
+    B b;
+    Math m;
+    int i = 0;
+    float res;
+    boolean condition;
+
+    println("=== DEBUT DE LA DEMO ===");
+
+    // --- 1. Test Instanciation et Héritage ---
+    b = new B();
+    b.setX(10); // Appel méthode héritée de A
+    println("Valeur de x (via B) : ", b.getX(), " (Attendu: 10)");
+
+    // --- 2. Test Polymorphisme (Appel Virtuel) ---
+    a = b; // Upcast implicite
+    a.quiSuisJe(); // Doit afficher "Je suis B..." (Dispatch dynamique)
+
+    // --- 3. Test Instanceof et Cast ---
+    if (a instanceof B) {
+        println("Test Instanceof : OK");
+        // Cast explicite
+        b = (B)(a);
+        println("Test Cast : OK");
+    } else {
+        println("Test Instanceof : ERREUR");
+    }
+
+    // --- 4. Test Structures de Contrôle & Logique ---
+    // Test While
+    print("Boucle While : ");
+    while (i < 3) {
+        print(i, " ");
+        i = i + 1;
+    }
+    println(""); // Retour ligne
+
+    // Test Lazy Evaluation (&&)
+    // Si pas lazy, division par zéro planterait ici
+    condition = (false && (1/0 == 0));
+    if (!condition) {
+        println("Test Lazy Evaluation : OK");
+    }
+
+    // --- 5. Test Arithmétique et Flottants ---
+    res = b.calculComplexe(5.5); // 5.5 * 2.0 + 10.0 / 2.0 = 11.0 + 5.0 = 16.0
+    println("Calcul Arithmétique : ", res, " (Attendu: 1.60000e+01)");
+
+    // --- 6. Test Extension TRIGO (Math) ---
+    println("--- Test Extension TRIGO ---");
+    m = new Math();
+
+    // Test Cos(0)
+    res = m.cos(0.0);
+    println("Cos(0.0) = ", res, " (Attendu: ~1.0)");
+
+    // Test Sin(PI/2) - Valeur approchée
+    // On utilise une valeur proche de PI/2 (1.57079)
+    res = m.sin(1.57079);
+    println("Sin(PI/2) = ", res, " (Attendu: ~1.0)");
+
+    // Test ULP (Précision)
+    println("ULP(1.0) = ", m.ulp(1.0), " (Attendu: 1.19209e-07)");
+
+    println("=== FIN DE LA DEMO - SUCCES ===");
+}

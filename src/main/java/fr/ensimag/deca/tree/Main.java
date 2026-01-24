@@ -18,11 +18,12 @@ import java.io.PrintStream;
  */
 public class Main extends AbstractMain {
     private static final Logger LOG = Logger.getLogger(Main.class);
-    
+
     private ListDeclVar declVariables;
     private ListInst insts;
+
     public Main(ListDeclVar declVariables,
-            ListInst insts) {
+                ListInst insts) {
         Validate.notNull(declVariables);
         Validate.notNull(insts);
         this.declVariables = declVariables;
@@ -36,7 +37,7 @@ public class Main extends AbstractMain {
         // Vous avez le droit de changer le profil fourni pour ces méthodes
         // (mais ce n'est à priori pas nécessaire).
         EnvironmentExp localEnv = new EnvironmentExp(null);
-        this.declVariables.verifyListDeclVariable(compiler,localEnv , null);
+        this.declVariables.verifyListDeclVariable(compiler, localEnv, null);
         this.insts.verifyListInst(compiler, localEnv, null, compiler.environmentType.VOID);
         LOG.debug("verify Main: end");
         //throw new UnsupportedOperationException("not yet implemented");
@@ -44,8 +45,8 @@ public class Main extends AbstractMain {
 
     @Override
     protected void codeGenMain(DecacCompiler compiler) {
-        // nouvelle frame pour main
-        compiler.getMMU().enterNewMethodFrame();
+        // Dans main, LB = GB, donc on utilise enterMainBlock pour éviter les conflits avec la VTable
+        compiler.getMMU().enterMainBlock();
 
         // declarations variables
         compiler.addComment("Beginning of main declarations:");
@@ -74,7 +75,7 @@ public class Main extends AbstractMain {
         compiler.addComment("Beginning of main instructions:");
         insts.codeGenListInst(compiler);
     }
-    
+
     @Override
     public void decompile(IndentPrintStream s) {
         s.println("{");
@@ -90,7 +91,7 @@ public class Main extends AbstractMain {
         declVariables.iter(f);
         insts.iter(f);
     }
- 
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         declVariables.prettyPrint(s, prefix, false);

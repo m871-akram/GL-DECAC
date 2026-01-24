@@ -4,18 +4,20 @@ import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.tree.AbstractExpr;
 import fr.ensimag.deca.tree.Plus;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for the Plus node using mockito, without using advanced features.
- * @see TestPlusAdvanced for more advanced examples.
- * @see TestPlusWithoutMock too see what would need to be written if the test
- * was done without using Mockito.
  *
  * @author Ensimag
  * @date 01/01/2026
+ * @see TestPlusAdvanced for more advanced examples.
+ * @see TestPlusWithoutMock too see what would need to be written if the test
+ * was done without using Mockito.
  */
 public class TestPlusPlain {
     final Type INT = new IntType(null);

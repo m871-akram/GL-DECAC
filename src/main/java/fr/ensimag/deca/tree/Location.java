@@ -9,14 +9,23 @@ import java.io.Serializable;
  * @date 01/01/2026
  */
 public class Location implements Serializable {
+    public static final String NO_SOURCE_NAME = "<no source file>";
+    public static final Location BUILTIN = new Location(-1, -1, NO_SOURCE_NAME);
     /*
      * Location implements Serializable because it appears as a field
      * of LocationException, which is serializable.
      */
     private static final long serialVersionUID = -2906437663480660298L;
+    private final int line;
+    private final int positionInLine;
+    private final String filename;
 
-    public static final String NO_SOURCE_NAME = "<no source file>";
-    public static final Location BUILTIN = new Location(-1, -1, NO_SOURCE_NAME);
+    public Location(int line, int positionInLine, String filename) {
+        super();
+        this.line = line;
+        this.positionInLine = positionInLine;
+        this.filename = filename;
+    }
 
     /**
      * Display the (line, positionInLine) as a String. The file is not
@@ -46,17 +55,6 @@ public class Location implements Serializable {
             // we're probably reading from stdin
             return NO_SOURCE_NAME;
         }
-    }
-
-    private final int line;
-    private final int positionInLine;
-    private final String filename;
-
-    public Location(int line, int positionInLine, String filename) {
-        super();
-        this.line = line;
-        this.positionInLine = positionInLine;
-        this.filename = filename;
     }
 
 }

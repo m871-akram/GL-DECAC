@@ -2,21 +2,11 @@ package fr.ensimag.ima.pseudocode;
 
 /**
  * Register operand (including special registers like SP).
- * 
+ *
  * @author Ensimag
  * @date 01/01/2026
  */
 public class Register extends DVal {
-    private String name;
-    protected Register(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
     /**
      * Global Base register
      */
@@ -35,12 +25,6 @@ public class Register extends DVal {
      */
     private static final GPRegister[] R = initRegisters();
     /**
-     * General Purpose Registers
-     */
-    public static GPRegister getR(int i) {
-        return R[i];
-    }
-    /**
      * Convenience shortcut for R[0]
      */
     public static final GPRegister R0 = R[0];
@@ -48,11 +32,29 @@ public class Register extends DVal {
      * Convenience shortcut for R[1]
      */
     public static final GPRegister R1 = R[1];
+    private String name;
+
+    protected Register(String name) {
+        this.name = name;
+    }
+
+    /**
+     * General Purpose Registers
+     */
+    public static GPRegister getR(int i) {
+        return R[i];
+    }
+
     static private GPRegister[] initRegisters() {
-        GPRegister [] res = new GPRegister[16];
+        GPRegister[] res = new GPRegister[16];
         for (int i = 0; i <= 15; i++) {
             res[i] = new GPRegister("R" + i, i);
         }
         return res;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -6,7 +6,6 @@ import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import fr.ensimag.ima.pseudocode.instructions.MUL;
 import fr.ensimag.ima.pseudocode.instructions.SHL;
-import fr.ensimag.ima.pseudocode.instructions.STORE;
 
 
 /**
@@ -21,18 +20,21 @@ public class Multiply extends AbstractOpArith {
 
     @Override
     protected void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest) {
-        if(getType().isInt()){
+        if (getType().isInt()) {
             int shiftL = getLeftOperand().isPowerOftow();
             int shiftR = getRightOperand().isPowerOftow();
-            if (shiftL != -1){
+            if (shiftL != -1) {
                 compiler.addInstruction(new LOAD(opSource, opDest));
-                for(int i =0;i<shiftL;i++){
+                for (int i = 0; i < shiftL; i++) {
                     compiler.addInstruction(new SHL(opDest));
                 }
-            } else if(shiftR != -1){
-                for(int i =0;i<shiftR;i++){
+            } else if (shiftR != -1) {
+                for (int i = 0; i < shiftR; i++) {
                     compiler.addInstruction(new SHL(opDest));
                 }
+            } else {
+                // Cas général : multiplication normale pour les entiers
+                compiler.addInstruction(new MUL(opSource, opDest));
             }
 
         } else {
@@ -40,7 +42,6 @@ public class Multiply extends AbstractOpArith {
         }
     }
 
-    
 
     @Override
     protected String getOperatorName() {

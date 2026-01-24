@@ -21,6 +21,9 @@ public class NotEquals extends AbstractOpExactCmp {
         return "!=";
     }
 
-    @Override protected Instruction getAsmCode(GPRegister register) { return new SNE(register); }
+    @Override
+    protected Instruction getAsmCode(GPRegister register) {
+        return new SNE(register);
+    }
 
 }

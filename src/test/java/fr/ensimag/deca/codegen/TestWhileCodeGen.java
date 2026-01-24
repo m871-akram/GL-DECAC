@@ -7,7 +7,7 @@
 //import org.junit.jupiter.api.Test;
 //import static org.junit.jupiter.api.Assertions.*;
 //
-///**
+/// **
 // * Test de génération de code pour While via compilation complète
 // *
 // * @author gl51

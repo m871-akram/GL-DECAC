@@ -9,11 +9,11 @@ import java.io.PrintStream;
  */
 public class IndentPrintStream {
     private PrintStream stream;
+    private int indent = 0;
+    private boolean indented = false;
     public IndentPrintStream(PrintStream stream) {
         this.stream = stream;
     }
-    private int indent = 0;
-    private boolean indented = false;
 
     private void printIndent() {
         if (indented) {
@@ -24,6 +24,7 @@ public class IndentPrintStream {
         }
         indented = true;
     }
+
     public void print(String s) {
         printIndent();
         stream.print(s);

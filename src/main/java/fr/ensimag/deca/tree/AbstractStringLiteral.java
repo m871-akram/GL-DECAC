@@ -8,5 +8,5 @@ package fr.ensimag.deca.tree;
 public abstract class AbstractStringLiteral extends AbstractExpr {
 
     public abstract String getValue();
-    
+
 }

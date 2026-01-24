@@ -20,12 +20,20 @@ import java.io.PrintStream;
  */
 public abstract class AbstractBinaryExpr extends AbstractExpr {
 
-    public AbstractExpr getLeftOperand() {
-        return leftOperand;
+    private AbstractExpr leftOperand;
+    private AbstractExpr rightOperand;
+
+    public AbstractBinaryExpr(AbstractExpr leftOperand,
+                              AbstractExpr rightOperand) {
+        Validate.notNull(leftOperand, "left operand cannot be null");
+        Validate.notNull(rightOperand, "right operand cannot be null");
+        Validate.isTrue(leftOperand != rightOperand, "Sharing subtrees is forbidden");
+        this.leftOperand = leftOperand;
+        this.rightOperand = rightOperand;
     }
 
-    public AbstractExpr getRightOperand() {
-        return rightOperand;
+    public AbstractExpr getLeftOperand() {
+        return leftOperand;
     }
 
     protected void setLeftOperand(AbstractExpr leftOperand) {
@@ -33,20 +41,12 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
         this.leftOperand = leftOperand;
     }
 
-    protected void setRightOperand(AbstractExpr rightOperand) {
-        Validate.notNull(rightOperand);
-        this.rightOperand = rightOperand;
+    public AbstractExpr getRightOperand() {
+        return rightOperand;
     }
 
-    private AbstractExpr leftOperand;
-    private AbstractExpr rightOperand;
-
-    public AbstractBinaryExpr(AbstractExpr leftOperand,
-            AbstractExpr rightOperand) {
-        Validate.notNull(leftOperand, "left operand cannot be null");
-        Validate.notNull(rightOperand, "right operand cannot be null");
-        Validate.isTrue(leftOperand != rightOperand, "Sharing subtrees is forbidden");
-        this.leftOperand = leftOperand;
+    protected void setRightOperand(AbstractExpr rightOperand) {
+        Validate.notNull(rightOperand);
         this.rightOperand = rightOperand;
     }
 
@@ -136,8 +136,9 @@ public abstract class AbstractBinaryExpr extends AbstractExpr {
 
     /**
      * À implémenter par les opérateurs (Plus, Minus, Equals, etc.)
+     *
      * @param opSource L'opérande de droite (soit un Registre temporaire, soit R0)
-     * @param opDest L'opérande de gauche (le registre de résultat)
+     * @param opDest   L'opérande de gauche (le registre de résultat)
      */
     protected abstract void codeGenInst(DecacCompiler compiler, DVal opSource, GPRegister opDest);
 

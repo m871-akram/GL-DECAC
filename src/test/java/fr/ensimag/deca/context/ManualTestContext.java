@@ -7,14 +7,15 @@ import fr.ensimag.deca.syntax.DecaLexer;
 import fr.ensimag.deca.syntax.DecaParser;
 import fr.ensimag.deca.tree.AbstractProgram;
 import fr.ensimag.deca.tree.LocationException;
-import java.io.IOException;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+
 /**
  * Driver to test the contextual analysis (together with lexer/parser)
- * 
+ *
  * @author Ensimag
  * @date 01/01/2026
  */

@@ -4,11 +4,20 @@ import fr.ensimag.deca.tree.Location;
 
 /**
  * Definition of an identifier.
- * 
+ *
  * @author gl51
  * @date 01/01/2026
  */
 public abstract class Definition {
+    private Location location;
+    private Type type;
+
+    public Definition(Type type, Location location) {
+        super();
+        this.location = location;
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         String res;
@@ -24,12 +33,6 @@ public abstract class Definition {
 
     public abstract String getNature();
 
-    public Definition(Type type, Location location) {
-        super();
-        this.location = location;
-        this.type = type;
-    }
-
     public Type getType() {
         return type;
     }
@@ -42,16 +45,14 @@ public abstract class Definition {
         this.location = location;
     }
 
-    private Location location;
-    private Type type;
     public boolean isField() {
         return false;
     }
-    
+
     public fr.ensimag.ima.pseudocode.DAddr getOperand() {
         return null; // Par défaut, à override dans les sous-classes qui en ont besoin
     }
-    
+
     public boolean isMethod() {
         return false;
     }
@@ -72,7 +73,7 @@ public abstract class Definition {
             throws ContextualError {
         throw new ContextualError(errorMessage, l);
     }
-    
+
     /**
      * Return the same object, as type FieldDefinition, if possible. Throws
      * ContextualError(errorMessage, l) otherwise.

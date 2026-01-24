@@ -1,20 +1,18 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.LOAD;
-
-import java.io.PrintStream;
-
 import org.apache.commons.lang.Validate;
 
-import fr.ensimag.ima.pseudocode.GPRegister;
+import java.io.PrintStream;
 
 
 /**
@@ -29,16 +27,16 @@ public class This extends AbstractExpr {
 
     public This(boolean value) {
         Validate.notNull(value);
-        this.value=value;
+        this.value = value;
     }
 
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
+                           ClassDefinition currentClass) throws ContextualError {
         if (currentClass == null) {
             throw new ContextualError(
-                "this interdit dans le programme principal",
-                getLocation()
+                    "this interdit dans le programme principal",
+                    getLocation()
             );
         }
 
@@ -56,6 +54,7 @@ public class This extends AbstractExpr {
     boolean isImplicit() {
         return value;
     }
+
     @Override
     String prettyPrintNode() {
         return "This(" + value + ")";
@@ -63,7 +62,7 @@ public class This extends AbstractExpr {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        if(!value){
+        if (!value) {
 
             s.print("this");
         }

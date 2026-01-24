@@ -1,8 +1,6 @@
 package fr.ensimag.deca.tree;
 
 
-
-
 import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Instruction;
 import fr.ensimag.ima.pseudocode.instructions.SGT;
@@ -20,7 +18,9 @@ public class Greater extends AbstractOpIneq {
     }
 
     @Override
-    protected Instruction getAsmCode(GPRegister register) { return new SGT(register); }
+    protected Instruction getAsmCode(GPRegister register) {
+        return new SGT(register);
+    }
 
 
     @Override

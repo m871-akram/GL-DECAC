@@ -1,15 +1,12 @@
 package fr.ensimag.deca;
 
-import static org.mockito.ArgumentMatchers.refEq;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * User-specified options influencing the compilation.
@@ -19,9 +16,17 @@ import org.apache.log4j.Logger;
  */
 public class CompilerOptions {
     public static final int QUIET = 0;
-    public static final int INFO  = 1;
+    public static final int INFO = 1;
     public static final int DEBUG = 2;
     public static final int TRACE = 3;
+    private int debug = 0;
+    private boolean parallel = false;
+    private boolean printBanner = false;
+    private List<File> sourceFiles = new ArrayList<File>();
+    private int actionSpecial = -1;
+    private boolean noCheck = false;
+    private int maxRegisters = 16;
+
     public int getDebug() {
         return debug;
     }
@@ -33,23 +38,15 @@ public class CompilerOptions {
     public boolean getPrintBanner() {
         return printBanner;
     }
-    
+
     public List<File> getSourceFiles() {
         return Collections.unmodifiableList(sourceFiles);
     }
 
-    private int debug = 0;
-    private boolean parallel = false;
-    private boolean printBanner = false;
-    private List<File> sourceFiles = new ArrayList<File>();
-
-    private int actionSpecial = -1;
-    private boolean noCheck = false;
-    private int maxRegisters = 16;
-
     public int getActionSpecial() {
         return actionSpecial;
     }
+
     public boolean getNoCheck() {
         return noCheck;
     }
@@ -65,7 +62,7 @@ public class CompilerOptions {
         // valeur par défaut Deca
         return 16;
     }
-    
+
     public void parseArgs(String[] args) throws CLIException {
         // A FAIRE : parcourir args pour positionner les options correctement.
 
@@ -73,68 +70,68 @@ public class CompilerOptions {
             displayUsage();
             throw new CLIException("Aucun argument fourni");
         }
-    
+
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-    
+
             switch (arg) {
-    
-            case "-b":
-                if (args.length != 1) {
-                    throw new CLIException("-b ne peut pas être combiné avec d'autres options");
-                }
-                printBanner = true;
-                return;
 
-            case "-dddd":
-                debug++;
-            case "-ddd":
-                debug++;
-            case "-dd":
-                debug++;
-            case "-d":
-                debug++;
-                break;
+                case "-b":
+                    if (args.length != 1) {
+                        throw new CLIException("-b ne peut pas être combiné avec d'autres options");
+                    }
+                    printBanner = true;
+                    return;
 
-            case "-p":
-                if(actionSpecial != -1){
-                    throw new CLIException("-v et -p ne sont pas compatible");
-                }
-                actionSpecial = 0;
-                break;
-            
-            case "-v":
-                if(actionSpecial != -1){
-                    throw new CLIException("-v et -p ne sont pas compatible");
-                }
-                actionSpecial = 1;
-                break;
-            
-            case "-n":
-                noCheck = true;
-                break;
-            case "-P":
-                parallel=true;
-                break;
-            case "-r":
-                if (i + 1 >= args.length) {
-                    throw new CLIException("Option -r requiert un argument");
-                }
-                int r = Integer.parseInt(args[++i]);
-                if (r < 4 || r > 16) {
-                    throw new CLIException("X doit être entre 4 et 16");
-                }
-                maxRegisters = r;
-                break;
-    
-            default:
-                if (!arg.endsWith(".deca")) {
-                    throw new CLIException("Fichier source invalide : " + arg);
-                }
-                File f = new File(arg);
-                if (!sourceFiles.contains(f)) {
-                    sourceFiles.add(f);
-                }
+                case "-dddd":
+                    debug++;
+                case "-ddd":
+                    debug++;
+                case "-dd":
+                    debug++;
+                case "-d":
+                    debug++;
+                    break;
+
+                case "-p":
+                    if (actionSpecial != -1) {
+                        throw new CLIException("-v et -p ne sont pas compatible");
+                    }
+                    actionSpecial = 0;
+                    break;
+
+                case "-v":
+                    if (actionSpecial != -1) {
+                        throw new CLIException("-v et -p ne sont pas compatible");
+                    }
+                    actionSpecial = 1;
+                    break;
+
+                case "-n":
+                    noCheck = true;
+                    break;
+                case "-P":
+                    parallel = true;
+                    break;
+                case "-r":
+                    if (i + 1 >= args.length) {
+                        throw new CLIException("Option -r requiert un argument");
+                    }
+                    int r = Integer.parseInt(args[++i]);
+                    if (r < 4 || r > 16) {
+                        throw new CLIException("X doit être entre 4 et 16");
+                    }
+                    maxRegisters = r;
+                    break;
+
+                default:
+                    if (!arg.endsWith(".deca")) {
+                        throw new CLIException("Fichier source invalide : " + arg);
+                    }
+                    File f = new File(arg);
+                    if (!sourceFiles.contains(f)) {
+                        sourceFiles.add(f);
+                    }
             }
         }
         if (!printBanner && sourceFiles.isEmpty()) {
@@ -144,15 +141,20 @@ public class CompilerOptions {
         Logger logger = Logger.getRootLogger();
         // map command-line debug option to log4j's level.
         switch (getDebug()) {
-        case QUIET: break; // keep default
-        case INFO:
-            logger.setLevel(Level.INFO); break;
-        case DEBUG:
-            logger.setLevel(Level.DEBUG); break;
-        case TRACE:
-            logger.setLevel(Level.TRACE); break;
-        default:
-            logger.setLevel(Level.ALL); break;
+            case QUIET:
+                break; // keep default
+            case INFO:
+                logger.setLevel(Level.INFO);
+                break;
+            case DEBUG:
+                logger.setLevel(Level.DEBUG);
+                break;
+            case TRACE:
+                logger.setLevel(Level.TRACE);
+                break;
+            default:
+                logger.setLevel(Level.ALL);
+                break;
         }
         logger.info("Application-wide trace level set to " + logger.getLevel());
 
@@ -177,7 +179,6 @@ public class CompilerOptions {
         System.out.println("  -d        active le mode debug (cumulable)");
         System.out.println("  -P        compilation parallèle");
     }
-
 
 
 }

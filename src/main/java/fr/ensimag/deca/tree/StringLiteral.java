@@ -1,15 +1,16 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import fr.ensimag.ima.pseudocode.instructions.WSTR;
-import java.io.PrintStream;
-import org.apache.commons.lang.Validate;
 import fr.ensimag.ima.pseudocode.GPRegister;
+import fr.ensimag.ima.pseudocode.instructions.WSTR;
+import org.apache.commons.lang.Validate;
+
+import java.io.PrintStream;
 
 /**
  * String literal
@@ -19,19 +20,7 @@ import fr.ensimag.ima.pseudocode.GPRegister;
  */
 public class StringLiteral extends AbstractStringLiteral {
 
-    @Override
-    public String getValue() {
-        return value;
-    }
-
     private String value;
-
-
-
-     @Override
-    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) { throw new UnsupportedOperationException("on evalue pas un stringliteral dans un registre "); }
-
-
 
     public StringLiteral(String value) {
         Validate.notNull(value);
@@ -43,8 +32,18 @@ public class StringLiteral extends AbstractStringLiteral {
     }
 
     @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {
+        throw new UnsupportedOperationException("on evalue pas un stringliteral dans un registre ");
+    }
+
+    @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
+                           ClassDefinition currentClass) throws ContextualError {
         this.setType(compiler.environmentType.STRING);
         return compiler.environmentType.STRING;
     }
@@ -70,7 +69,7 @@ public class StringLiteral extends AbstractStringLiteral {
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         // leaf node => nothing to do
     }
-    
+
     @Override
     String prettyPrintNode() {
         return "StringLiteral (" + value + ")";

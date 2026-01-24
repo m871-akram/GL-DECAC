@@ -24,16 +24,16 @@ public class Modulo extends AbstractOpArith {
 
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
+                           ClassDefinition currentClass) throws ContextualError {
         //throw new UnsupportedOperationException("not yet implemented");
         Type t1 = this.getLeftOperand().verifyExpr(compiler, localEnv, currentClass);
         Type t2 = this.getRightOperand().verifyExpr(compiler, localEnv, currentClass);
 
-       // Le modulo nécessite deux entiers  et return un int
+        // Le modulo nécessite deux entiers  et return un int
         if (!t1.isInt() || !t2.isInt()) {
             throw new ContextualError(
-                "Modulo nécessite deux entiers, pas " + t1 + " et " + t2,
-                this.getLocation());
+                    "Modulo nécessite deux entiers, pas " + t1 + " et " + t2,
+                    this.getLocation());
         }
 
         setType(compiler.environmentType.INT);
@@ -46,10 +46,10 @@ public class Modulo extends AbstractOpArith {
         compiler.addInstruction(new REM(opSource, opDest));
 
         if (!compiler.getCompilerOptions().getNoCheck()) {
-        compiler.getIrqController().triggerInterrupt(compiler,
-                InterruptVector.IRQ_DIV_BY_ZERO);
+            compiler.getIrqController().triggerInterrupt(compiler,
+                    InterruptVector.IRQ_DIV_BY_ZERO);
+        }
     }
-}
 
 
     @Override

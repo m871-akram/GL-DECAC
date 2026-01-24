@@ -11,10 +11,7 @@ import org.apache.commons.lang.Validate;
  */
 public class Label extends Operand {
 
-    @Override
-    public String toString() {
-        return name;
-    }
+    private String name;
 
     public Label(String name) {
         super();
@@ -22,5 +19,9 @@ public class Label extends Operand {
         Validate.isTrue(name.matches("^[a-zA-Z][a-zA-Z0-9_.]*$"), "Invalid label name " + name);
         this.name = name;
     }
-    private String name;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

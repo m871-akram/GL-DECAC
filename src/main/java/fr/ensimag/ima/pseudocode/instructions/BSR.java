@@ -14,7 +14,7 @@ public class BSR extends UnaryInstruction {
     public BSR(DVal operand) {
         super(operand);
     }
-    
+
     public BSR(Label target) {
         super(new LabelOperand(target));
     }

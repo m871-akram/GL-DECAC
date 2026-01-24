@@ -10,7 +10,7 @@ import fr.ensimag.deca.tools.SymbolTable.Symbol;
 public class ManualTestSymbol {
     /**
      * Raises an exception if the condition is false.
-     * 
+     * <p>
      * Same as Java's built-in assert(), except it cannot be disabled (Java's
      * assert() are disabled at runtime and need to be enabled using java
      * -enableassertions ...)

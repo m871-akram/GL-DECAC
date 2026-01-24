@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 /**
  * Example program, just to experiment. Greets the user, in english by default
  * and in French in case a parameter is given.
- *
+ * <p>
  * A FAIRE : Alice et Bob rajoutent leurs noms sur la ligne suivante
  *
  * @author ... and ...

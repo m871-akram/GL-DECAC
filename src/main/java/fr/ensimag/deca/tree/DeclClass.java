@@ -1,6 +1,5 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.ClassType;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
@@ -10,8 +9,8 @@ import fr.ensimag.ima.pseudocode.LabelOperand;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
 import fr.ensimag.ima.pseudocode.instructions.*;
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
 
@@ -38,6 +37,10 @@ public class DeclClass extends AbstractDeclClass {
         this.methodes = methodes;
     }
 
+    public AbstractIdentifier getClassName() {
+        return name;
+    }
+
     @Override
     public void decompile(IndentPrintStream s) {
         s.print("class ");
@@ -57,7 +60,6 @@ public class DeclClass extends AbstractDeclClass {
     }
 
 
-
     @Override
     protected void verifyClass(DecacCompiler compiler) throws ContextualError {
 
@@ -70,15 +72,15 @@ public class DeclClass extends AbstractDeclClass {
         if (superTypeDef == null) {
             // La super classe n'existe pas
             throw new ContextualError(
-                "La super-classe :" + superName.getName() + "n'existe pas",
-                this.getLocation()
+                    "La super-classe :" + superName.getName() + "n'existe pas",
+                    this.getLocation()
             );
         }
 
         //on verifie  que c'est une classe
         if (!superTypeDef.isClass()) {
             throw new ContextualError(
-                superName.getName() + "n'est pas une classe", this.getLocation()
+                    superName.getName() + "n'est pas une classe", this.getLocation()
             );
         }
 
@@ -86,8 +88,8 @@ public class DeclClass extends AbstractDeclClass {
         ClassDefinition superClassDef = (ClassDefinition) superTypeDef;
 
         ClassType classType = new ClassType(
-            name, this.getLocation(),
-            superClassDef
+                name, this.getLocation(),
+                superClassDef
         );
 
 
@@ -99,7 +101,6 @@ public class DeclClass extends AbstractDeclClass {
     }
 
 
-
     @Override
     protected void verifyClassMembers(DecacCompiler compiler)
             throws ContextualError {
@@ -109,7 +110,7 @@ public class DeclClass extends AbstractDeclClass {
         // environnement de la super classe
         Symbol superName = this.superClass.getName();
         ClassDefinition superClassDef = (ClassDefinition)
-            compiler.environmentType.defOfType(superName);
+                compiler.environmentType.defOfType(superName);
 
 //        // On initialise le nombre de champs et méthodes avec ceux de la super-classe
         currentClassDef.setNumberOfFields(superClassDef.getNumberOfFields());
@@ -121,9 +122,9 @@ public class DeclClass extends AbstractDeclClass {
         }
 
         // on vérifier les champs
-        fields.verifyDeclFieldPrototype(compiler, superClassEnv, currentClassDef,currentClassDef.getMembers());
+        fields.verifyDeclFieldPrototype(compiler, superClassEnv, currentClassDef, currentClassDef.getMembers());
         // on Verifier les méthodes
-        methodes.verifyDeclMethodPrototype(compiler, superClassEnv, currentClassDef,currentClassDef.getMembers());
+        methodes.verifyDeclMethodPrototype(compiler, superClassEnv, currentClassDef, currentClassDef.getMembers());
         name.setDefinition(currentClassDef);
         name.setType(currentClassDef.getType());
 
@@ -163,11 +164,11 @@ public class DeclClass extends AbstractDeclClass {
         // gestion pointeur super classe
         RegisterOffset superVTableAddr = null;
 
-        if (superClassDef == null || "Object".equals(superClassDef.getType().getName().getName())) {
-            // pas de super vtable
+        if (superClassDef == null) {
+            // pas de super classe du tout (ne devrait pas arriver)
             compiler.addInstruction(new LOAD(0, Register.R0));
         } else {
-            // recup adresse vtable du pere
+            // recup adresse vtable du pere (Object inclus)
             superVTableAddr = (RegisterOffset) superClassDef.getOperand();
             compiler.addInstruction(new LEA(superVTableAddr, Register.R0));
         }
@@ -175,8 +176,8 @@ public class DeclClass extends AbstractDeclClass {
         compiler.addInstruction(new STORE(Register.R0, vTableAddr));
 
 
-        // copie methodes heritees
-        if (superVTableAddr != null) {
+        // copie methodes heritees (y compris depuis Object)
+        if (superVTableAddr != null && superClassDef != null) {
             int nbSuperMethods = superClassDef.getNumberOfMethods();
             for (int i = 1; i <= nbSuperMethods; i++) {
                 // lit methode du pere

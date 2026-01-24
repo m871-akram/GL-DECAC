@@ -8,7 +8,7 @@ public class Times extends AbstractExpr {
         this.left = left;
         this.right = right;
     }
-    
+
     @Override
     public int value() {
         return left.value() * right.value();

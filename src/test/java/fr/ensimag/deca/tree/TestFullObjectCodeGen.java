@@ -13,7 +13,7 @@
 //
 //import java.io.IOException;
 //
-///**
+/// **
 // * Test d'intégration complet pour la génération de code Objet.
 // * Vérifie l'allocation mémoire (GB, LB, SP, TSTO).
 // */

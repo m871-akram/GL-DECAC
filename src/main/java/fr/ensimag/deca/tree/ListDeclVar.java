@@ -8,7 +8,7 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 
 /**
  * List of declarations (e.g. int x; float y,z).
- * 
+ *
  * @author gl51
  * @date 01/01/2026
  */
@@ -16,7 +16,7 @@ public class ListDeclVar extends TreeList<AbstractDeclVar> {
 
     @Override
     public void decompile(IndentPrintStream s) {
-        for(AbstractDeclVar var : getList()){
+        for (AbstractDeclVar var : getList()) {
             var.decompile(s);
             s.println(";");
         }
@@ -24,23 +24,21 @@ public class ListDeclVar extends TreeList<AbstractDeclVar> {
 
     /**
      * Implements non-terminal "list_decl_var" of [SyntaxeContextuelle] in pass 3
-     * @param compiler contains the "env_types" attribute
-     * @param localEnv 
-     *   its "parentEnvironment" corresponds to "env_exp_sup" attribute
-     *   in precondition, its "current" dictionary corresponds to 
-     *      the "env_exp" attribute
-     *   in postcondition, its "current" dictionary corresponds to 
-     *      the "env_exp_r" attribute
-     * @param currentClass 
-     *          corresponds to "class" attribute (null in the main bloc).
-     */    
+     *
+     * @param compiler     contains the "env_types" attribute
+     * @param localEnv     its "parentEnvironment" corresponds to "env_exp_sup" attribute
+     *                     in precondition, its "current" dictionary corresponds to
+     *                     the "env_exp" attribute
+     *                     in postcondition, its "current" dictionary corresponds to
+     *                     the "env_exp_r" attribute
+     * @param currentClass corresponds to "class" attribute (null in the main bloc).
+     */
     void verifyListDeclVariable(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
-                for(AbstractDeclVar var : getList()){
-                    var.verifyDeclVar(compiler, localEnv, currentClass);
-                }
+                                ClassDefinition currentClass) throws ContextualError {
+        for (AbstractDeclVar var : getList()) {
+            var.verifyDeclVar(compiler, localEnv, currentClass);
+        }
     }
-
 
 
     public void codeGenListDeclVar(DecacCompiler compiler) {

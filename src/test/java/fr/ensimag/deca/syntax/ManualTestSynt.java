@@ -3,9 +3,10 @@ package fr.ensimag.deca.syntax;
 import fr.ensimag.deca.CompilerOptions;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.tree.AbstractProgram;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 import java.io.File;
 import java.io.IOException;
-import org.antlr.v4.runtime.CommonTokenStream;
 
 /**
  * Driver to test the Parser (and lexer).

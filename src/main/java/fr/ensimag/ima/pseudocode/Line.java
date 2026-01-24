@@ -9,6 +9,10 @@ import java.io.PrintStream;
  * @date 01/01/2026
  */
 public class Line extends AbstractLine {
+    private Instruction instruction;
+    private String comment;
+    private Label label;
+
     public Line(Label label, Instruction instruction, String comment) {
         super();
         checkComment(comment);
@@ -27,7 +31,6 @@ public class Line extends AbstractLine {
         checkComment(comment);
         this.comment = comment;
     }
-
     public Line(Label label) {
         super();
         this.label = label;
@@ -44,16 +47,13 @@ public class Line extends AbstractLine {
             throw new IMAInternalError("Comment '" + s + "'contains carriage return character");
         }
     }
-    private Instruction instruction;
-    private String comment;
-    private Label label;
 
     @Override
     void display(PrintStream s) {
         boolean tab = false;
         if (label != null) {
             s.print(label);
-                        s.print(":");
+            s.print(":");
             tab = true;
         }
         if (instruction != null) {
@@ -63,34 +63,34 @@ public class Line extends AbstractLine {
         }
         if (comment != null) {
             if (tab) {
-                            s.print("\t");
-                        }
+                s.print("\t");
+            }
             s.print("; " + comment);
         }
         s.println();
-    }
-
-    public void setInstruction(Instruction instruction) {
-        this.instruction = instruction;
     }
 
     public Instruction getInstruction() {
         return instruction;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setInstruction(Instruction instruction) {
+        this.instruction = instruction;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setLabel(Label label) {
-        this.label = label;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Label getLabel() {
         return label;
+    }
+
+    public void setLabel(Label label) {
+        this.label = label;
     }
 }

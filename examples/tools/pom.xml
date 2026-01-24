@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -48,7 +48,7 @@
             <classifier>runtime</classifier>
             <version>0.8.6</version>
             <scope>test</scope>
-        </dependency> 
+        </dependency>
 
 
     </dependencies>
@@ -63,14 +63,14 @@
                         <id>default-instrument</id>
                         <goals>
                             <goal>instrument</goal>
-                        </goals>             
+                        </goals>
                     </execution>
                     <execution>
                         <id>default-restore-instrumented-classes</id>
                         <goals>
                             <goal>restore-instrumented-classes</goal>
                         </goals>
-                    </execution>                    
+                    </execution>
                     <!-- attached to Maven test phase -->
                     <execution>
                         <id>report</id>
@@ -99,7 +99,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>      
+            </plugin>
             <plugin>
                 <!-- usual plugin to compile Java code -->
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -112,11 +112,11 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-	    <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.7.1</version>
-            </plugin>                
+            </plugin>
         </plugins>
     </build>
 </project>

@@ -1,14 +1,14 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
-import org.apache.commons.lang.Validate;
 
 /**
  * Print statement (print, println, ...).
@@ -20,8 +20,6 @@ public abstract class AbstractPrint extends AbstractInst {
 
     private boolean printHex;
     private ListExpr arguments = new ListExpr();
-    
-    abstract String getSuffix();
 
     public AbstractPrint(boolean printHex, ListExpr arguments) {
         Validate.notNull(arguments);
@@ -29,22 +27,24 @@ public abstract class AbstractPrint extends AbstractInst {
         this.printHex = printHex;
     }
 
+    abstract String getSuffix();
+
     public ListExpr getArguments() {
         return arguments;
     }
 
     @Override
     protected void verifyInst(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass, Type returnType)
+                              ClassDefinition currentClass, Type returnType)
             throws ContextualError {
         for (AbstractExpr arg : getArguments().getList()) {
-            
+
             Type t = arg.verifyExpr(compiler, localEnv, currentClass);
-    
-            if (!(t.isString()||t.isInt()||t.isFloat())) {
+
+            if (!(t.isString() || t.isInt() || t.isFloat())) {
                 throw new ContextualError(
-                    "Type non imprimable dans une instruction print : " + t,
-                    arg.getLocation()
+                        "Type non imprimable dans une instruction print : " + t,
+                        arg.getLocation()
                 );
             }
         }
@@ -78,6 +78,7 @@ public abstract class AbstractPrint extends AbstractInst {
         getArguments().decompile(s);
         s.print(");");
     }
+
     @Override
     protected void iterChildren(TreeFunction f) {
         arguments.iter(f);

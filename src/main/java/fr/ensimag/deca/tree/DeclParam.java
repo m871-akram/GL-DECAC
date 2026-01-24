@@ -6,7 +6,6 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
-import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
 
@@ -20,7 +19,9 @@ public class DeclParam extends AbstractDeclParam {
         this.name = name;
     }
 
-    public AbstractIdentifier getName() { return name; }
+    public AbstractIdentifier getName() {
+        return name;
+    }
 
     @Override
     protected Type verifyDeclParam(DecacCompiler compiler) throws ContextualError {
@@ -31,7 +32,7 @@ public class DeclParam extends AbstractDeclParam {
 
         if (typeDef == null) {
             throw new ContextualError(
-                "Type :" + typeName.getName() + "est inconnu pour le paramètre", getLocation()
+                    "Type :" + typeName.getName() + "est inconnu pour le paramètre", getLocation()
             );
         }
 
@@ -40,13 +41,14 @@ public class DeclParam extends AbstractDeclParam {
         // Un paramètre peut pas etre void
         if (paramType.isVoid()) {
             throw new ContextualError("Un paramètre ne peut pas être de type void",
-                getLocation()
+                    getLocation()
             );
         }
         this.type.setDefinition(typeDef);
         this.type.setType(paramType);
         return paramType;
     }
+
     @Override
     protected void verifyDeclParamEnv(DecacCompiler compiler, EnvironmentExp localEnv) throws ContextualError {
         ParamDefinition paramDef = new ParamDefinition(this.type.getType(), getLocation());
@@ -56,7 +58,7 @@ public class DeclParam extends AbstractDeclParam {
             localEnv.declare(name.getName(), paramDef);
         } catch (EnvironmentExp.DoubleDefException e) {
             throw new ContextualError(
-                e.getMessage(),getLocation()
+                    e.getMessage(), getLocation()
             );
         }
     }
@@ -71,7 +73,6 @@ public class DeclParam extends AbstractDeclParam {
         ParamDefinition paramDef = (ParamDefinition) this.name.getDefinition();
         paramDef.setOperand(new RegisterOffset(offset, Register.LB));
     }
-
 
 
     @Override

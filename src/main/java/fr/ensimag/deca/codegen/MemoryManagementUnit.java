@@ -13,8 +13,14 @@ import java.util.Stack;
  */
 public class MemoryManagementUnit {
 
+    // Snapshot pour sauvegarder l'état des registres temporaires si besoin
+    private final Stack<Integer> contextStack = new Stack<>();
     // --- SECTION GLOBALE (Ex-MemoryBus) ---
     private int globalOffset = 1; // 1(GB) est la première dispo (0=null)
+    // --- SECTION PILE / BLOC (Ex-BlockStructure) ---
+    private int localOffset = 1;      // 1(LB) pour la première var locale
+    private int currentStackUsage = 0;// Empilement courant (PUSH)
+    private int maxStackUsage = 0;    // TSTO (High Water Mark)
 
     /**
      * Alloue un espace dans la mémoire globale (GB)
@@ -29,15 +35,6 @@ public class MemoryManagementUnit {
         return globalOffset;
     }
 
-
-    // --- SECTION PILE / BLOC (Ex-BlockStructure) ---
-    private int localOffset = 1;      // 1(LB) pour la première var locale
-    private int currentStackUsage = 0;// Empilement courant (PUSH)
-    private int maxStackUsage = 0;    // TSTO (High Water Mark)
-
-    // Snapshot pour sauvegarder l'état des registres temporaires si besoin
-    private final Stack<Integer> contextStack = new Stack<>();
-
     /**
      * Entre dans un nouveau bloc de méthode (Reset LB)
      */
@@ -46,6 +43,16 @@ public class MemoryManagementUnit {
         this.currentStackUsage = 0;
         this.maxStackUsage = 0;
         // On ne reset PAS globalOffset (les globales restent)
+    }
+
+    /**
+     * Entre dans le bloc main (où LB = GB, donc les locales doivent être après les globales)
+     */
+    public void enterMainBlock() {
+        // Dans main, LB = GB, donc les variables locales doivent commencer après la VTable
+        this.localOffset = globalOffset;
+        this.currentStackUsage = 0;
+        this.maxStackUsage = 0;
     }
 
     /**

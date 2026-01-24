@@ -11,15 +11,8 @@ import java.util.Stack;
  */
 public class SignalSequencer {
 
-    private long clockCycle = 0; // Compteur unique
     private final Stack<LoopContext> loopStack = new Stack<>();
-
-    // Structure interne pour se souvenir où on est
-    private static class LoopContext {
-        final Label start;
-        final Label exit;
-        LoopContext(Label s, Label e) { start = s; exit = e; }
-    }
+    private long clockCycle = 0; // Compteur unique
 
     /**
      * Génère un signal unique (ex: pour un IF)
@@ -48,5 +41,16 @@ public class SignalSequencer {
 
     public void exitLoopSequence() {
         loopStack.pop();
+    }
+
+    // Structure interne pour se souvenir où on est
+    private static class LoopContext {
+        final Label start;
+        final Label exit;
+
+        LoopContext(Label s, Label e) {
+            start = s;
+            exit = e;
+        }
     }
 }

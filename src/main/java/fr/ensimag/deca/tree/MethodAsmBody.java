@@ -1,17 +1,15 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
-import java.io.PrintStream;
-
-
-import fr.ensimag.deca.context.*;
 import fr.ensimag.ima.pseudocode.InlinePortion;
 import fr.ensimag.ima.pseudocode.instructions.RTS;
+
+import java.io.PrintStream;
 
 
 public class MethodAsmBody extends AbstractMethodBody {
@@ -36,7 +34,7 @@ public class MethodAsmBody extends AbstractMethodBody {
     protected void codeGenMethodBody(DecacCompiler compiler) {
         // Injection directe du code assembleur
         compiler.add(new InlinePortion(asmCode.getValue()));
-        if(getType().isVoid()) compiler.addInstruction(new RTS());
+        if (getType().isVoid()) compiler.addInstruction(new RTS());
     }
 
     @Override

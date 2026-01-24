@@ -16,6 +16,7 @@ import java.io.PrintStream;
 
 /**
  * Selection, i.e. object.field
+ *
  * @author gl51
  * @date 15/01/2026
  */

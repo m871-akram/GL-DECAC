@@ -10,27 +10,8 @@ import fr.ensimag.deca.tree.Location;
  * @date 01/01/2026
  */
 public class ClassType extends Type {
-    
+
     protected ClassDefinition definition;
-    
-    public ClassDefinition getDefinition() {
-        return this.definition;
-    }
-            
-    @Override
-    public ClassType asClassType(String errorMessage, Location l) {
-        return this;
-    }
-
-    @Override
-    public boolean isClass() {
-        return true;
-    }
-
-    @Override
-    public boolean isClassOrNull() {
-        return true;
-    }
 
     /**
      * Standard creation of a type class.
@@ -47,7 +28,25 @@ public class ClassType extends Type {
     protected ClassType(Symbol className) {
         super(className);
     }
-    
+
+    public ClassDefinition getDefinition() {
+        return this.definition;
+    }
+
+    @Override
+    public ClassType asClassType(String errorMessage, Location l) {
+        return this;
+    }
+
+    @Override
+    public boolean isClass() {
+        return true;
+    }
+
+    @Override
+    public boolean isClassOrNull() {
+        return true;
+    }
 
     @Override
     public boolean sameType(Type otherType) {

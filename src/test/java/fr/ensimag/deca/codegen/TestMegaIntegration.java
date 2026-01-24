@@ -13,7 +13,7 @@
 //
 //import java.io.IOException;
 //
-///**
+/// **
 // * Test d'intégration global : Classes, Héritage, Méthodes, If/Else.
 // */
 //public class TestMegaIntegration {

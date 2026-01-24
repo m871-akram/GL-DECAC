@@ -1,6 +1,7 @@
 package calc;
 
 // ANTLR generated code uses the ANTLR runtime
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -17,7 +18,7 @@ public class Main {
 
         // Instantiate lexer and parser, connected together:
         CalcLexer lexer =
-            new CalcLexer(new ANTLRInputStream(System.in));
+                new CalcLexer(new ANTLRInputStream(System.in));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CalcParser parser = new CalcParser(tokens);
         // Launch the parser
@@ -28,7 +29,7 @@ public class Main {
             // Display the result (e.g. Result: 1 + 2 * 3 = 7)
             System.out.println("Result : "
                     + expression.toString() + " = "
-                    + expression.value());            
+                    + expression.value());
         }
     }
 }

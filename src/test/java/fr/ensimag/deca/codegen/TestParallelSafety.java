@@ -15,7 +15,7 @@
 //import java.util.List;
 //import java.util.concurrent.*;
 //
-///**
+/// **
 // * Test de robustesse pour l'option -P (Parallélisme).
 // * Vérifie que le compilateur est Thread-Safe (pas de variables static partagées).
 // */

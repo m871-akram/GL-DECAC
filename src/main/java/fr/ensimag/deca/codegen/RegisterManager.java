@@ -1,5 +1,3 @@
-
-
 package fr.ensimag.deca.codegen;
 
 import fr.ensimag.deca.tools.DecacInternalError;
@@ -7,11 +5,11 @@ import fr.ensimag.ima.pseudocode.GPRegister;
 import fr.ensimag.ima.pseudocode.Register;
 
 
-/** gestion des registres et  la pile pour C pour
- *
+/**
+ * gestion des registres et  la pile pour C pour
+ * <p>
  * l alocation de registres  R2 --> R15 et
  * le calcul du TSTO
-
  */
 
 /**
@@ -24,7 +22,7 @@ public class RegisterManager {
 
     // Registres
     private int registreCourant = 2;  // R0 et R1 sont scratch
-    private  int registreMax; // 15 ,  X-1 si option -r X
+    private int registreMax; // 15 ,  X-1 si option -r X
 
 
     /**
@@ -81,10 +79,6 @@ public class RegisterManager {
     }
 
 
-
-
-
-
     /**
      * Réinitialise les compteurs pour un.  nouvelle méthode
      */
@@ -93,7 +87,6 @@ public class RegisterManager {
 
         registreCourant = 2;
     }
-
 
 
 }

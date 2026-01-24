@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import java.io.PrintStream;
 
 
-
 /**
  * Deca complete program (class definition plus main block)
  *
@@ -20,26 +19,28 @@ import java.io.PrintStream;
  */
 public class Program extends AbstractProgram {
     private static final Logger LOG = Logger.getLogger(Program.class);
-    
+    private ListDeclClass classes;
+    private AbstractMain main;
+
     public Program(ListDeclClass classes, AbstractMain main) {
         Validate.notNull(classes);
         Validate.notNull(main);
         this.classes = classes;
         this.main = main;
     }
+
     public ListDeclClass getClasses() {
         return classes;
     }
+
     public AbstractMain getMain() {
         return main;
     }
-    private ListDeclClass classes;
-    private AbstractMain main;
 
     @Override
     public void verifyProgram(DecacCompiler compiler) throws ContextualError {
         LOG.debug("verify program: start");
-        
+
         classes.verifyListClass(compiler);
         classes.verifyListClassMembers(compiler);
         classes.verifyListClassBody(compiler);
@@ -51,9 +52,12 @@ public class Program extends AbstractProgram {
     public void codeGenProgram(DecacCompiler compiler) {
         // jump pour sauter code classes
         Label mainLabel = new Label("main_start");
-        compiler.addInstruction(new BRA(mainLabel));
+        Label vtableInitLabel = new Label("vtable_init");
 
-        // 1. Générer le code de la méthode Object.equals
+        // Sauter vers l'initialisation des VTables (qui sautera ensuite vers main)
+        compiler.addInstruction(new BRA(vtableInitLabel));
+
+        // 1. Générer le code de la méthode Object.equals (une méthode, pas exécutée au démarrage)
         compiler.addComment("Méthode Object.equals (comparaison référentielle)");
         compiler.addLabel(new Label("equals"));
         // Compare this (-2(LB)) et param (-3(LB))
@@ -62,6 +66,25 @@ public class Program extends AbstractProgram {
         compiler.addInstruction(new CMP(Register.R1, Register.R0));
         compiler.addInstruction(new SEQ(Register.R0));
         compiler.addInstruction(new RTS());
+
+        // Code d'initialisation des VTables (exécuté au démarrage)
+        compiler.addLabel(vtableInitLabel);
+        compiler.addComment("Initialisation des tables de méthodes");
+
+        // Calculer la taille totale pour les VTables :
+        // Object : 2 mots (parent null + equals)
+        // Chaque classe : 1 + numberOfMethods (parent ptr + méthodes)
+        int totalVTableSize = 2; // Object
+        for (AbstractDeclClass declClass : classes.getList()) {
+            DeclClass dc = (DeclClass) declClass;
+            fr.ensimag.deca.context.ClassDefinition classDef =
+                    (fr.ensimag.deca.context.ClassDefinition) compiler.environmentType.defOfType(
+                            dc.getClassName().getName());
+            totalVTableSize += 1 + classDef.getNumberOfMethods();
+        }
+
+        // Allouer l'espace pour toutes les VTables en une seule fois
+        compiler.addInstruction(new ADDSP(totalVTableSize));
 
         compiler.addComment("Table des méthodes de Object");
         // Alloc 2 mots : 1 pour parent (null) + 1 pour equals
@@ -83,12 +106,15 @@ public class Program extends AbstractProgram {
         compiler.addComment("Construction des tables des methodes");
         classes.codeGenListDeclClass(compiler);
 
-        // passe 2a : init objets
+        // Sauter au main après l'initialisation des VTables
+        compiler.addInstruction(new BRA(mainLabel));
+
+        // passe 2a : init objets (code des constructeurs - appelé dynamiquement)
         compiler.addComment("init objets");
         // Générer l'initialisateur vide pour Object (classe prédéfinie)
         compiler.addLabel(new Label("init.Object"));
         compiler.addInstruction(new RTS());
-        
+
         classes.codeGenListInit(compiler);
 
         // passe 2b : code methodes
@@ -109,12 +135,13 @@ public class Program extends AbstractProgram {
         getClasses().decompile(s);
         getMain().decompile(s);
     }
-    
+
     @Override
     protected void iterChildren(TreeFunction f) {
         classes.iter(f);
         main.iter(f);
     }
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         classes.prettyPrint(s, prefix, false);

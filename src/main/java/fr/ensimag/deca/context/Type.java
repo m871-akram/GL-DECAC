@@ -13,17 +13,17 @@ import fr.ensimag.deca.tree.Location;
 public abstract class Type {
 
 
-    /**
-     * True if this and otherType represent the same type (in the case of
-     * classes, this means they represent the same class).
-     */
-    public abstract boolean sameType(Type otherType);
-
     private final Symbol name;
 
     public Type(Symbol name) {
         this.name = name;
     }
+
+    /**
+     * True if this and otherType represent the same type (in the case of
+     * classes, this means they represent the same class).
+     */
+    public abstract boolean sameType(Type otherType);
 
     public Symbol getName() {
         return name;
@@ -69,7 +69,7 @@ public abstract class Type {
     /**
      * Returns the same object, as type ClassType, if possible. Throws
      * ContextualError(errorMessage, l) otherwise.
-     *
+     * <p>
      * Can be seen as a cast, but throws an explicit contextual error when the
      * cast fails.
      */

@@ -1,9 +1,5 @@
 package fr.ensimag.deca.tree;
 
-import java.io.PrintStream;
-
-import org.apache.commons.lang.Validate;
-
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.codegen.InterruptVector;
 import fr.ensimag.deca.context.ClassDefinition;
@@ -15,6 +11,8 @@ import fr.ensimag.ima.pseudocode.*;
 import fr.ensimag.ima.pseudocode.instructions.*;
 import org.apache.commons.lang.Validate;
 
+import java.io.PrintStream;
+
 
 /**
  *
@@ -24,6 +22,7 @@ import org.apache.commons.lang.Validate;
 public class Cast extends AbstractExpr {
     private AbstractExpr expr;
     private AbstractIdentifier cast;
+
     public Cast(AbstractIdentifier ident, AbstractExpr expr) {
         Validate.notNull(expr, "left operand cannot be null");
         Validate.notNull(ident, "right operand cannot be null");
@@ -39,8 +38,8 @@ public class Cast extends AbstractExpr {
 
         if (!compiler.environmentType.castCompatible(exprType, classType)) {
             throw new ContextualError(
-                "cast est incompatible entre :" + classType.getName()+ " et " + exprType.getName(),
-                expr.getLocation());
+                    "cast est incompatible entre :" + classType.getName() + " et " + exprType.getName(),
+                    expr.getLocation());
         }
 
         setType(classType);
@@ -104,10 +103,10 @@ public class Cast extends AbstractExpr {
             compiler.addInstruction(new CMP(new NullOperand(), Register.R0));
             compiler.addInstruction(new BNE(loopLabel));
 
-            // Erreur Cast
+            // Erreur Cast - utiliser BRA car on n'a pas de flag overflow ici
             if (!compiler.getCompilerOptions().getNoCheck()) {
-                compiler.getIrqController().triggerInterrupt(compiler,
-                        InterruptVector.IRQ_CAST_ERROR);
+                compiler.getIrqController().armInterrupt(InterruptVector.IRQ_CAST_ERROR);
+                compiler.addInstruction(new BRA(new Label(InterruptVector.IRQ_CAST_ERROR.getLabelName())));
             }
 
             compiler.addLabel(endLabel);

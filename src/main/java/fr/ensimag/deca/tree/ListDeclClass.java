@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  */
 public class ListDeclClass extends TreeList<AbstractDeclClass> {
     private static final Logger LOG = Logger.getLogger(ListDeclClass.class);
-    
+
     @Override
     public void decompile(IndentPrintStream s) {
         for (AbstractDeclClass c : getList()) {
@@ -26,7 +26,7 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
      */
     public void verifyListClass(DecacCompiler compiler) throws ContextualError {
         LOG.debug("verify listClass: start");
-        for(AbstractDeclClass classe : getList()){
+        for (AbstractDeclClass classe : getList()) {
             classe.verifyClass(compiler);
         }
         LOG.debug("verify listClass: end");
@@ -38,26 +38,28 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
     public void verifyListClassMembers(DecacCompiler compiler) throws ContextualError {
         //throw new UnsupportedOperationException("not yet implemented");
         LOG.debug("verify listClassMembers: start");
-        for(AbstractDeclClass classe : getList()){
+        for (AbstractDeclClass classe : getList()) {
             classe.verifyClassMembers(compiler);
         }
         LOG.debug("verify listClassMembers: end");
-        }
-    
+    }
+
     /**
      * Pass 3 of [SyntaxeContextuelle]
      */
     public void verifyListClassBody(DecacCompiler compiler) throws ContextualError {
         //throw new UnsupportedOperationException("not yet implemented");
         LOG.debug("verify listClassBody: start");
-        for(AbstractDeclClass classe : getList()){
+        for (AbstractDeclClass classe : getList()) {
             classe.verifyClassBody(compiler);
         }
         LOG.debug("verify listClassBody: end");
     }
 
 
-    /** Passe 1 : Construction des Tables des Méthodes */
+    /**
+     * Passe 1 : Construction des Tables des Méthodes
+     */
     public void codeGenListDeclClass(DecacCompiler compiler) {
 
         LOG.debug("generation table des methodes: start");
@@ -67,7 +69,9 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         LOG.debug("generation table des methodes: end");
     }
 
-    /** Passe 2 : Initialisation des champs (et constructeurs) */
+    /**
+     * Passe 2 : Initialisation des champs (et constructeurs)
+     */
     public void codeGenListInit(DecacCompiler compiler) {
         for (AbstractDeclClass classe : getList()) {
             // cast pour appeler init
@@ -77,7 +81,9 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
         }
     }
 
-    /** Passe 3 : Corps des méthodes */
+    /**
+     * Passe 3 : Corps des méthodes
+     */
     public void codeGenListMethods(DecacCompiler compiler) {
         compiler.addComment("Code des méthodes");
         for (AbstractDeclClass classe : getList()) {
@@ -87,8 +93,6 @@ public class ListDeclClass extends TreeList<AbstractDeclClass> {
             }
         }
     }
-
-
 
 
 }

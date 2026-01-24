@@ -1,7 +1,5 @@
 package fr.ensimag.deca.tree;
 
-import java.io.PrintStream;
-
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.context.EnvironmentExp.DoubleDefException;
@@ -9,12 +7,13 @@ import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.deca.tools.SymbolTable.Symbol;
 import fr.ensimag.ima.pseudocode.Register;
 import fr.ensimag.ima.pseudocode.RegisterOffset;
-import fr.ensimag.ima.pseudocode.instructions.LOAD;
-import org.apache.commons.lang.Validate;
+
+import java.io.PrintStream;
 
 
 /**
  * Declaration of a Field
+ *
  * @author G51
  * @date 15/01/2026
  */
@@ -26,7 +25,7 @@ public class DeclField extends AbstractDeclField {
     private final AbstractInitialization initialization;
 
     public DeclField(Visibility visibility, AbstractIdentifier type,
-                    AbstractIdentifier name, AbstractInitialization initialization) {
+                     AbstractIdentifier name, AbstractInitialization initialization) {
         this.visibility = visibility;
         this.type = type;
         this.name = name;
@@ -34,13 +33,11 @@ public class DeclField extends AbstractDeclField {
     }
 
 
-
-
     @Override
     public void verifyDeclField(DecacCompiler compiler,
-                               EnvironmentExp superClassEnv,
-                               EnvironmentExp localEnv,
-                               ClassDefinition currentClassDef) throws ContextualError {
+                                EnvironmentExp superClassEnv,
+                                EnvironmentExp localEnv,
+                                ClassDefinition currentClassDef) throws ContextualError {
 
         // on vérifier le type du champ
         Type fieldType = this.type.verifyType(compiler);
@@ -55,21 +52,20 @@ public class DeclField extends AbstractDeclField {
             ExpDefinition def = superClassEnv.get(fieldName);
             if (!def.isField()) {
                 throw new ContextualError(
-                    fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
-                    getLocation()
+                        fieldName.getName() + ":existe déjà dans la super classe mais n'est pas un champ",
+                        getLocation()
                 );
             }
         }
 
 
-
         // L'offset 0 est réservé pour la VTable, donc les champs commencent à l'index 1
         int fieldIndex = currentClassDef.getNumberOfFields() + 1;
-        
+
         FieldDefinition fieldDef = new FieldDefinition(
-            fieldType,
-            getLocation(),
-            this.visibility, currentClassDef, fieldIndex
+                fieldType,
+                getLocation(),
+                this.visibility, currentClassDef, fieldIndex
         );
 
         try {
@@ -79,7 +75,7 @@ public class DeclField extends AbstractDeclField {
         }
         name.setDefinition(fieldDef);
         name.setType(fieldType);
-        
+
         // Incrémenter le compteur de champs après avoir créé la définition
         currentClassDef.incNumberOfFields();
     }
@@ -140,8 +136,6 @@ public class DeclField extends AbstractDeclField {
         name.iter(f);
         initialization.iter(f);
     }
-
-
 
 
     @Override

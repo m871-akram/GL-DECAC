@@ -25,8 +25,8 @@ public class ListExpr extends TreeList<AbstractExpr> {
         if (sig.size() == 0) {
             if (!getList().isEmpty()) {
                 throw new ContextualError(
-                    "Nombre d'arguments incorrect : aucun attendu",
-                    loc
+                        "Nombre d'arguments incorrect : aucun attendu",
+                        loc
                 );
             }
             return;
@@ -34,8 +34,8 @@ public class ListExpr extends TreeList<AbstractExpr> {
 
         if (getList().size() != sig.size()) {
             throw new ContextualError(
-                "Nombre d'arguments incorrect : attendu "
-                    + sig.size() + ", trouvé " + getList().size(),
+                    "Nombre d'arguments incorrect : attendu "
+                            + sig.size() + ", trouvé " + getList().size(),
                     loc
             );
         }
@@ -44,19 +44,20 @@ public class ListExpr extends TreeList<AbstractExpr> {
             AbstractExpr arg = getList().get(i);
 
             AbstractExpr convArg = arg.verifyRValue(
-                compiler,
-                localEnv,
-                currentClass,
-                sig.paramNumber(i)
+                    compiler,
+                    localEnv,
+                    currentClass,
+                    sig.paramNumber(i)
             );
 
             set(i, convArg);
         }
     }
+
     @Override
     public void decompile(IndentPrintStream s) {
         boolean first = true;
-        for(AbstractExpr exp : getList()){
+        for (AbstractExpr exp : getList()) {
             if (!first) {
                 s.print(", ");
             }

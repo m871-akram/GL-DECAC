@@ -11,9 +11,9 @@ public class WSTR extends UnaryInstruction {
     public WSTR(ImmediateString op) {
         super(op);
     }
-    
+
     public WSTR(String message) {
         super(new ImmediateString(message));
     }
-    
+
 }

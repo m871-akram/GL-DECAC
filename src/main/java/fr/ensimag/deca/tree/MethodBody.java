@@ -1,28 +1,25 @@
 package fr.ensimag.deca.tree;
 
-import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.ClassDefinition;
 import fr.ensimag.deca.context.ContextualError;
 import fr.ensimag.deca.context.EnvironmentExp;
+import fr.ensimag.deca.context.Type;
 import fr.ensimag.deca.tools.IndentPrintStream;
 import fr.ensimag.ima.pseudocode.instructions.RTS;
 
 import java.io.PrintStream;
 
 
-import fr.ensimag.deca.context.*;
-
-
 public class MethodBody extends AbstractMethodBody {
 
     private ListDeclVar locals;
     private ListInst insts;
+
     public MethodBody(ListDeclVar locals, ListInst insts) {
         this.locals = locals;
         this.insts = insts;
     }
-
 
 
     @Override
@@ -30,20 +27,20 @@ public class MethodBody extends AbstractMethodBody {
         // 1. Notifier la MMU du nombre de variables locales
         int nbLocales = locals.size();
         compiler.getMMU().notifyLocalBlockAllocation(nbLocales);
-        
+
         // 2. Génération des variables locales (allocation pile) - sans générer d'instruction
         locals.codeGenListDeclVar(compiler);
 
         // 3. Génération des instructions du corps (ceci va appeler notifyPush/notifyPop)
         insts.codeGenListInst(compiler);
-        if(getType().isVoid()) compiler.addInstruction(new RTS());
+        if (getType().isVoid()) compiler.addInstruction(new RTS());
     }
 
     public void codeGenInit(DecacCompiler compiler) {
         // gen init apres addsp
         locals.codeGenListInit(compiler);
     }
-    
+
     /**
      * Retourne le nombre de variables locales (pour le calcul de ADDSP)
      */
@@ -75,15 +72,11 @@ public class MethodBody extends AbstractMethodBody {
 
     @Override
     protected void verifyMethodBody(DecacCompiler compiler, EnvironmentExp localEnv,
-                                    ClassDefinition currentClass, Type returnType) throws ContextualError{
+                                    ClassDefinition currentClass, Type returnType) throws ContextualError {
         locals.verifyListDeclVariable(compiler, localEnv, currentClass);
         insts.verifyListInst(compiler, localEnv, currentClass, returnType);
         setType(returnType);
     }
-
-
-    
-
 
 
 }

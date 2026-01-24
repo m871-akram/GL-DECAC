@@ -1,42 +1,62 @@
 package fr.ensimag.deca.syntax;
 
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Stack;
-
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonToken;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.IntStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Token;
+import fr.ensimag.deca.DecacCompiler;
+import fr.ensimag.deca.tree.LocationException;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
-import fr.ensimag.deca.DecacCompiler;
-import fr.ensimag.deca.tree.LocationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Stack;
 
 /**
  * This is the super class for the lexer. It is extended by the lexer class
  * generated from DecaLexer.g.
- * 
+ *
  * @author gl51, Based on template by Jim Idle - Temporal Wave LLC
- *         (jimi@idle.ws)
+ * (jimi@idle.ws)
  * @date 01/01/2026
  */
 public abstract class AbstractDecaLexer extends Lexer {
     private static final Logger LOG = Logger.getLogger(AbstractDecaLexer.class);
-
+    private final Stack<IncludeSaveStruct> includes = new Stack<IncludeSaveStruct>();
     private DecacCompiler decacCompiler;
     private File source;
 
-    public void setSource(File source) {
-        this.source = source;
+    /**
+     * Default constructor for the lexer.
+     */
+    public AbstractDecaLexer(CharStream input) {
+        super(input);
+        removeErrorListeners();
+        addErrorListener(new DecacErrorListner(input));
+    }
+
+    /**
+     * Helper for test drivers, that creates a lexer from command-line
+     * arguments.
+     *
+     * @param args Either empty (read from stdin), or 1-element array (the file
+     *             to read from)
+     * @return The lexer built from args
+     * @throws IOException
+     */
+    public static DecaLexer createLexerFromArgs(String[] args)
+            throws IOException {
+        Validate.isTrue(args.length <= 1, "0 or 1 argument expected.");
+        DecaLexer lex;
+        if (args.length == 1) {
+            lex = new DecaLexer(CharStreams.fromFileName(args[0]));
+            lex.setSource(new File(args[0]));
+        } else {
+            System.err.println("Reading from stdin ...");
+            lex = new DecaLexer(CharStreams.fromStream(System.in));
+        }
+        return lex;
     }
 
     protected DecacCompiler getDecacCompiler() {
@@ -63,10 +83,10 @@ public abstract class AbstractDecaLexer extends Lexer {
 
     /**
      * Display the list of tokens for the lexer in semi-human-readable form.
-     * 
+     * <p>
      * This consumes the stream of tokens, hence should never be called if the
      * parser has to read these tokens afterwards.
-     * 
+     *
      * @return true if the lexer raised an error.
      */
     public boolean debugTokenStream() {
@@ -79,7 +99,7 @@ public abstract class AbstractDecaLexer extends Lexer {
             }
         } catch (ParseCancellationException e) {
             if (e.getCause() instanceof LocationException) {
-                ((LocationException)e.getCause()).display(System.err);
+                ((LocationException) e.getCause()).display(System.err);
             }
             return true;
         } catch (DecaRecognitionException e) {
@@ -87,39 +107,6 @@ public abstract class AbstractDecaLexer extends Lexer {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Default constructor for the lexer.
-     */
-    public AbstractDecaLexer(CharStream input) {
-        super(input);
-        removeErrorListeners();
-        addErrorListener(new DecacErrorListner(input));
-    }
-
-    /**
-     * Helper for test drivers, that creates a lexer from command-line
-     * arguments.
-     * 
-     * @param args
-     *            Either empty (read from stdin), or 1-element array (the file
-     *            to read from)
-     * @return The lexer built from args
-     * @throws IOException
-     */
-    public static DecaLexer createLexerFromArgs(String[] args)
-            throws IOException {
-        Validate.isTrue(args.length <= 1, "0 or 1 argument expected.");
-        DecaLexer lex;
-        if (args.length == 1) {
-            lex = new DecaLexer(CharStreams.fromFileName(args[0]));
-            lex.setSource(new File(args[0]));
-        } else {
-            System.err.println("Reading from stdin ...");
-            lex = new DecaLexer(CharStreams.fromStream(System.in));
-        }
-        return lex;
     }
 
     protected File getSource() {
@@ -131,32 +118,17 @@ public abstract class AbstractDecaLexer extends Lexer {
         }
     }
 
-    // Code needed to implement the #include directive.
-    // Adapted from https://theantlrguy.atlassian.net/wiki/pages/viewpage.action?pageId=2686987
-    private static class IncludeSaveStruct {
-        IncludeSaveStruct(CharStream input, int line, int charPositionInline) {
-            this.input = input;
-            this.line = line;
-            this.charPositionInLine = charPositionInline;
-        }
-
-        /** Which stream to read from */
-        public CharStream input;
-        /** Where in the stream was the <code>#include</code> */
-        public int line, charPositionInLine;
+    public void setSource(File source) {
+        this.source = source;
     }
-
-    private final Stack<IncludeSaveStruct> includes = new Stack<IncludeSaveStruct>();
 
     /**
      * Look up the file to include in the current directory, or in the
      * $CLASSPATH (either a file or the content of a .jar file).
-     * 
+     *
      * @return An ANTLR stream to read from
-     * @throws IOException
-     *             when the file was found but could not be opened
-     * @throws IncludeFileNotFound
-     *             when the file was not found.
+     * @throws IOException         when the file was found but could not be opened
+     * @throws IncludeFileNotFound when the file was not found.
      */
     CharStream findFile(String name) throws IOException,
             IncludeFileNotFound {
@@ -186,15 +158,13 @@ public abstract class AbstractDecaLexer extends Lexer {
 
     /**
      * Apply a <code>#include</code> directive.
-     * 
+     * <p>
      * Look up the file "name" using {@link #findFile(String)}, and set the
      * input stream of the lexer to this object. The previous input stream is
      * saved an {@link #includes} and will be restored by {@link #nextToken()}.
-     * 
-     * @throws IncludeFileNotFound
-     *             When the file could not be found or opened.
-     * @throws CircularInclude
-     *             When an attempt to perform a circular inclusion is done
+     *
+     * @throws IncludeFileNotFound When the file could not be found or opened.
+     * @throws CircularInclude     When an attempt to perform a circular inclusion is done
      */
     void doInclude(String includeDirective) throws IncludeFileNotFound, CircularInclude {
         String name = includeDirective.substring(includeDirective.indexOf('"') + 1,
@@ -221,30 +191,10 @@ public abstract class AbstractDecaLexer extends Lexer {
     }
 
     /**
-     * Exception used to skip ANTLR code from doInclude to nextToken().
-     *
-     * The normal call stack looks like:
-     * <code>
-     * nextToken()
-     *  `-> FailOrAccept
-     *      +-> LexerActionExecute
-     *      |   `-> doInclude()
-     *      |        `-> setInputStream() -> reset()
-     *      `-> return return prevAccept.dfaState.prediction
-     * </code>
-     * Unfortunately, reset() sets dfaState to null hence this crashes.
-     *
-     * Instead, use this exception to skip the "return" call, and catch the
-     * control back in nextToken().
-     */
-    private static class SkipANTLRPostAction extends RuntimeException {
-        private static final long serialVersionUID = 6114145992238256449L;
-    }
-
-    /**
      * Override method nextToken for <code>#include</code> management.
+     *
      * @return the next Token which is read in an included files on
-     *    a <code>#include</code>
+     * a <code>#include</code>
      */
     @Override
     @SuppressWarnings("InfiniteRecursion")
@@ -280,5 +230,44 @@ public abstract class AbstractDecaLexer extends Lexer {
         }
 
         return token;
+    }
+
+    // Code needed to implement the #include directive.
+    // Adapted from https://theantlrguy.atlassian.net/wiki/pages/viewpage.action?pageId=2686987
+    private static class IncludeSaveStruct {
+        /**
+         * Which stream to read from
+         */
+        public CharStream input;
+        /**
+         * Where in the stream was the <code>#include</code>
+         */
+        public int line, charPositionInLine;
+        IncludeSaveStruct(CharStream input, int line, int charPositionInline) {
+            this.input = input;
+            this.line = line;
+            this.charPositionInLine = charPositionInline;
+        }
+    }
+
+    /**
+     * Exception used to skip ANTLR code from doInclude to nextToken().
+     * <p>
+     * The normal call stack looks like:
+     * <code>
+     * nextToken()
+     * `-> FailOrAccept
+     * +-> LexerActionExecute
+     * |   `-> doInclude()
+     * |        `-> setInputStream() -> reset()
+     * `-> return return prevAccept.dfaState.prediction
+     * </code>
+     * Unfortunately, reset() sets dfaState to null hence this crashes.
+     * <p>
+     * Instead, use this exception to skip the "return" call, and catch the
+     * control back in nextToken().
+     */
+    private static class SkipANTLRPostAction extends RuntimeException {
+        private static final long serialVersionUID = 6114145992238256449L;
     }
 }

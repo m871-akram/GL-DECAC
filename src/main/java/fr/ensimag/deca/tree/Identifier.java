@@ -12,9 +12,9 @@ import fr.ensimag.ima.pseudocode.instructions.LOAD;
 import fr.ensimag.ima.pseudocode.instructions.STORE;
 import fr.ensimag.ima.pseudocode.instructions.WFLOAT;
 import fr.ensimag.ima.pseudocode.instructions.WINT;
+import org.apache.commons.lang.Validate;
 
 import java.io.PrintStream;
-import org.apache.commons.lang.Validate;
 
 /**
  * Deca Identifier
@@ -23,6 +23,14 @@ import org.apache.commons.lang.Validate;
  * @date 01/01/2026
  */
 public class Identifier extends AbstractIdentifier {
+
+    private Symbol name;
+    private Definition definition;
+
+    public Identifier(Symbol name) {
+        Validate.notNull(name);
+        this.name = name;
+    }
 
     @Override
     protected void checkDecoration() {
@@ -36,15 +44,19 @@ public class Identifier extends AbstractIdentifier {
         return definition;
     }
 
+    @Override
+    public void setDefinition(Definition definition) {
+        this.definition = definition;
+    }
+
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * ClassDefinition.
-     *
+     * <p>
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
      *
-     * @throws DecacInternalError
-     *             if the definition is not a class definition.
+     * @throws DecacInternalError if the definition is not a class definition.
      */
     @Override
     public ClassDefinition getClassDefinition() {
@@ -61,12 +73,11 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * MethodDefinition.
-     *
+     * <p>
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
      *
-     * @throws DecacInternalError
-     *             if the definition is not a method definition.
+     * @throws DecacInternalError if the definition is not a method definition.
      */
     @Override
     public MethodDefinition getMethodDefinition() {
@@ -83,12 +94,11 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * FieldDefinition.
-     *
+     * <p>
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
      *
-     * @throws DecacInternalError
-     *             if the definition is not a field definition.
+     * @throws DecacInternalError if the definition is not a field definition.
      */
     @Override
     public FieldDefinition getFieldDefinition() {
@@ -105,12 +115,11 @@ public class Identifier extends AbstractIdentifier {
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a
      * VariableDefinition.
-     *
+     * <p>
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
      *
-     * @throws DecacInternalError
-     *             if the definition is not a field definition.
+     * @throws DecacInternalError if the definition is not a field definition.
      */
     @Override
     public VariableDefinition getVariableDefinition() {
@@ -126,12 +135,11 @@ public class Identifier extends AbstractIdentifier {
 
     /**
      * Like {@link #getDefinition()}, but works only if the definition is a ExpDefinition.
-     *
+     * <p>
      * This method essentially performs a cast, but throws an explicit exception
      * when the cast fails.
      *
-     * @throws DecacInternalError
-     *             if the definition is not a field definition.
+     * @throws DecacInternalError if the definition is not a field definition.
      */
     @Override
     public ExpDefinition getExpDefinition() {
@@ -146,31 +154,19 @@ public class Identifier extends AbstractIdentifier {
     }
 
     @Override
-    public void setDefinition(Definition definition) {
-        this.definition = definition;
-    }
-
-    @Override
     public Symbol getName() {
         return name;
     }
 
-    private Symbol name;
-
-    public Identifier(Symbol name) {
-        Validate.notNull(name);
-        this.name = name;
-    }
-
     @Override
     public Type verifyExpr(DecacCompiler compiler, EnvironmentExp localEnv,
-            ClassDefinition currentClass) throws ContextualError {
+                           ClassDefinition currentClass) throws ContextualError {
         ExpDefinition def = localEnv.get(this.name);
 
         if (def == null) {
             throw new ContextualError(
-                "Expresion inconnu : " + this.name.getName(),
-                this.getLocation()
+                    "Expresion inconnu : " + this.name.getName(),
+                    this.getLocation()
             );
         }
 
@@ -185,6 +181,7 @@ public class Identifier extends AbstractIdentifier {
 
     /**
      * Implements non-terminal "type" of [SyntaxeContextuelle] in the 3 passes
+     *
      * @param compiler contains "env_types" attribute
      */
     @Override
@@ -193,8 +190,8 @@ public class Identifier extends AbstractIdentifier {
 
         if (def == null) {
             throw new ContextualError(
-                "Type inconnu : " + this.name.getName(),
-                this.getLocation()
+                    "Type inconnu : " + this.name.getName(),
+                    this.getLocation()
             );
         }
 
@@ -204,10 +201,6 @@ public class Identifier extends AbstractIdentifier {
         this.setType(type);
         return type;
     }
-
-
-    private Definition definition;
-
 
     @Override
     protected void codeGenExpr(DecacCompiler compiler, GPRegister register) {

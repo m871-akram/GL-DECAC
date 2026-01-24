@@ -16,7 +16,7 @@ import java.io.PrintStream;
  */
 public class DeclVar extends AbstractDeclVar {
 
-    
+
     final private AbstractIdentifier type;
     final private AbstractIdentifier varName;
     final private AbstractInitialization initialization;
@@ -32,24 +32,24 @@ public class DeclVar extends AbstractDeclVar {
 
     @Override
     protected void verifyDeclVar(DecacCompiler compiler,
-            EnvironmentExp localEnv, ClassDefinition currentClass) 
-        throws ContextualError {
+                                 EnvironmentExp localEnv, ClassDefinition currentClass)
+            throws ContextualError {
         Symbol name = this.varName.getName();
 
         // pour la partie c 
         VariableDefinition varDef = new VariableDefinition(this.type.verifyType(compiler), getLocation());
-        
+
         // pas de doublon
         if (localEnv.get(name) != null) {
-            throw new ContextualError("Variable"+ name +  "déjà déclarée", getLocation());
+            throw new ContextualError("Variable" + name + "déjà déclarée", getLocation());
         }
-        
+
         Type varType = this.type.verifyType(compiler);
         if (varType == compiler.environmentType.VOID) {
             throw new ContextualError("Type void interdit pour les variables", getLocation());
         }
         initialization.verifyInitialization(compiler, varType, localEnv, currentClass);
-        
+
         // Declarer nouveau variable
         try {
             localEnv.declare(name, varDef);
@@ -87,16 +87,15 @@ public class DeclVar extends AbstractDeclVar {
         varName.decompile(s);
         initialization.decompile(s);
     }
-    
+
 
     @Override
-    protected
-    void iterChildren(TreeFunction f) {
+    protected void iterChildren(TreeFunction f) {
         type.iter(f);
         varName.iter(f);
         initialization.iter(f);
     }
-    
+
     @Override
     protected void prettyPrintChildren(PrintStream s, String prefix) {
         type.prettyPrint(s, prefix, false);
