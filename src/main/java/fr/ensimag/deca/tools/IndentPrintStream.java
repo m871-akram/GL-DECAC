@@ -11,6 +11,7 @@ public class IndentPrintStream {
     private PrintStream stream;
     private int indent = 0;
     private boolean indented = false;
+
     public IndentPrintStream(PrintStream stream) {
         this.stream = stream;
     }

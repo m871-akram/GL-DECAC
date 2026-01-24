@@ -31,6 +31,7 @@ public class Line extends AbstractLine {
         checkComment(comment);
         this.comment = comment;
     }
+
     public Line(Label label) {
         super();
         this.label = label;
