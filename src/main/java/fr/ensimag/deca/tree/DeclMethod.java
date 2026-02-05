@@ -3,6 +3,7 @@ package fr.ensimag.deca.tree;
 import fr.ensimag.deca.DecacCompiler;
 import fr.ensimag.deca.context.*;
 import fr.ensimag.deca.tools.IndentPrintStream;
+import fr.ensimag.ima.pseudocode.IMAProgram;
 import fr.ensimag.ima.pseudocode.Label;
 import org.apache.commons.lang.Validate;
 
@@ -104,8 +105,8 @@ public class DeclMethod extends AbstractDeclMethod {
         params.codeGenListDeclParam(compiler);
 
         // programme temp pour le corps
-        fr.ensimag.ima.pseudocode.IMAProgram bodyProgram = new fr.ensimag.ima.pseudocode.IMAProgram();
-        fr.ensimag.ima.pseudocode.IMAProgram originalProgram = compiler.swapProgram(bodyProgram);
+        IMAProgram bodyProgram = new fr.ensimag.ima.pseudocode.IMAProgram();
+        IMAProgram originalProgram = compiler.swapProgram(bodyProgram);
 
         // gen corps
         body.codeGenMethodBody(compiler);
