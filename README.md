@@ -1,4 +1,4 @@
-# Projet Génie Logiciel, Ensimag. Deca Compiler
+# Projet Génie Logiciel, Ensimag, Deca Compiler
 
 gl51, 01/01/2026.
 
