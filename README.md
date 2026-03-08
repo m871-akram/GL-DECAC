@@ -5,14 +5,6 @@ gl51, 01/01/2026.
 
 Decac is a compiler for the Deca language, developed as part of the "Projet Génie Logiciel" at Ensimag. It targets the IMA (Interactive Machine Abstraite) assembly language.
 
-## Table of Contents
-- [Requirements](#requirements)
-- [Setup & Build](#setup--build)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Testing](#testing)
-- [Scripts](#scripts)
-- [License](#license)
 
 ## Requirements
 
