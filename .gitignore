@@ -13,3 +13,6 @@
 out/
 .DS_Store
 *.ass
+
+# Provided IMA tooling/resources (nested repo, binaries, archives).
+global/
