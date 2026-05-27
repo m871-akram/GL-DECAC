@@ -1,5 +1,10 @@
 # Do not version generated files.
 /target
+*.class
+*.ass
+
+# ANTLR generated sources
+src/main/antlr4/**/gen/
 
 # These are IDE-specific files. We version pom.xml, and rely on IDE
 # integration with maven (or with maven's generation of IDE files like
@@ -11,8 +16,9 @@
 .idea/
 *.iml
 out/
+
+# OS metadata
 .DS_Store
-*.ass
 
 # Provided IMA tooling/resources (nested repo, binaries, archives).
 global/
