@@ -4,27 +4,6 @@ A compiler for the **Deca** language targeting the IMA (Interactive Machine Abst
 
 Deca is a statically-typed, object-oriented language with Java-like syntax. This compiler translates `.deca` source files into IMA assembly (`.ass`), which can be executed by the `ima` virtual machine.
 
----
-
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [Requirements](#requirements)
-- [IMA Setup](#ima-setup)
-- [Build](#build)
-- [Usage](#usage)
-- [Deca Language](#deca-language)
-- [Compiler Architecture](#compiler-architecture)
-- [Testing](#testing)
-- [Coverage](#coverage)
-- [Performance](#performance)
-- [Docker](#docker)
-- [License](#license)
-
----
-
-## Quick Start
-
 ```bash
 # 1. Set up IMA (Ensimag machines only)
 ln -s /matieres/3MM1PGL/global global
@@ -52,9 +31,9 @@ ima hello.ass
 
 ## IMA Setup
 
-The `ima` binary is not bundled in this repository. On **Ensimag machines**, it is available on the network filesystem.
+The `ima` binary is not bundled in this repository.
 
-**Option 1 — symlink (recommended):** makes `decac` find `ima` automatically via `global/bin/`
+**Option 1 — symlink :** makes `decac` find `ima` automatically via `global/bin/`
 
 ```bash
 ln -s /matieres/3MM1PGL/global global
@@ -237,15 +216,11 @@ Source (.deca)
 
 ## Testing
 
-### Run all tests
-
 ```bash
 mvn test
 ```
 
 Runs JUnit tests and all integration shell scripts. Requires `ima` on PATH for `common-tests.sh`.
-
-### Individual stage scripts
 
 Make the scripts executable first if needed:
 
@@ -329,30 +304,8 @@ docker create --interactive --tty \
 docker start -a -i projetgl
 ```
 
-### Building the image locally
-
-First copy `ima_sources.tgz` from an Ensimag machine:
-
-```bash
-scp <login>@ensimag-machine:/matieres/4MMPGL/GL/global/ima_sources.tgz docker/
-```
-
-Then build and run:
-
-```bash
-docker build -t projetgl docker/
-docker create --interactive --tty \
-  -v <absolute-path-to-GL-DECAC>:/home/gl/projet_gl \
-  --name projetgl projetgl
-docker start -a -i projetgl
-```
-
-The container uses user `gl` (password: `gl`) with sudo access. Your project directory is mounted, so changes are visible both inside and outside the container.
-
-VS Code users: see the [Dev Containers documentation](https://code.visualstudio.com/docs/devcontainers/containers) to develop directly inside the container.
-
 ---
 
 ## License
 
-Copyright © 2026 Ensimag. Private project — distribution not permitted.
+Copyright © 2026 Ensimag.
