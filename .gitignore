@@ -22,3 +22,6 @@ out/
 
 # Provided IMA tooling/resources (nested repo, binaries, archives).
 global/
+
+# Course material (teachers' slides) — local only, not for the public repo
+Projet GL/
