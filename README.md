@@ -1,311 +1,133 @@
 # Deca Compiler
 
-A compiler for the **Deca** language targeting the IMA (Interactive Machine Abstraite) virtual machine, developed as part of the *Projet Génie Logiciel* at Ensimag (gl51, 2026).
+![CI](https://github.com/m871-akram/GL-DECAC/actions/workflows/ci.yml/badge.svg)
 
-Deca is a statically-typed, object-oriented language with Java-like syntax. This compiler translates `.deca` source files into IMA assembly (`.ass`), which can be executed by the `ima` virtual machine.
+Compiler for **Deca** — a statically-typed, object-oriented subset of Java — targeting the
+IMA abstract machine. Built by team gl51 for the *Projet Génie Logiciel* at Ensimag (2026)
+on the official course skeleton; the three compiler passes, the test suite and the math
+extension are ours.
+
+## Quick start
+
+Needs JDK 21+, Maven 3.6+, and Ensimag's `ima` VM (not redistributable — on a personal
+machine, use the [Docker image](#docker)). On Ensimag machines:
 
 ```bash
-# 1. Set up IMA (Ensimag machines only)
-ln -s /matieres/3MM1PGL/global global
-export PATH="$PWD/global/bin:$PATH"
-
-# 2. Build
+ln -s /matieres/3MM1PGL/global global && export PATH="$PWD/global/bin:$PATH"
 mvn package
-
-# 3. Compile and run a Deca program
 ./src/main/bin/decac hello.deca
 ima hello.ass
 ```
 
----
+### decac flags
 
-## Requirements
+| Flag | Effect |
+|------|--------|
+| `-b` | Print the team banner |
+| `-p` | Stop after parsing, decompile the AST |
+| `-v` | Stop after contextual verification |
+| `-n` | Disable runtime checks (divide-by-zero, null deref, …) |
+| `-r X` | Limit general-purpose registers to X (4–16) |
+| `-d` … `-dddd` | Debug logging, increasing verbosity |
+| `-P` | Compile several files in parallel |
 
-| Tool | Version |
-|------|---------|
-| Java JDK | 21+ |
-| Maven | 3.6.3+ |
-| IMA virtual machine | provided by Ensimag (see below) |
+`decac -r 4 file.deca` is the register-allocation stress test.
 
----
+## The language
 
-## IMA Setup
-
-The `ima` binary is not bundled in this repository.
-
-**Option 1 — symlink :** makes `decac` find `ima` automatically via `global/bin/`
-
-```bash
-ln -s /matieres/3MM1PGL/global global
-```
-
-**Option 2 — add to PATH only:**
-
-```bash
-export PATH="/matieres/3MM1PGL/global/bin:$PATH"
-```
-
-To make the PATH change permanent, add the export line to your `~/.bashrc`.
-
-**On a personal machine:** use the [Docker image](#docker), which bundles `ima` from the Ensimag sources.
-
----
-
-## Build
-
-```bash
-# Compile source only
-mvn compile
-
-# Full build: compile + run tests + produce standalone package
-mvn package
-
-# Skip tests for a faster build
-mvn package -DskipTests
-```
-
-`mvn package` produces:
-- `target/Deca-0.0.1-jar-with-dependencies.jar` — standalone executable jar
-- `target/package/` — directory with the `decac` wrapper script and jar
-
-The classpath used by the `decac` script is written to `target/generated-sources/classpath.txt` automatically during the build.
-
----
-
-## Usage
-
-### Compile a Deca file
-
-```bash
-./src/main/bin/decac <file.deca>
-```
-
-Produces `<file.ass>` in the same directory as the source file.
-
-### Run the generated assembly
-
-```bash
-ima <file.ass>
-```
-
-### Compile multiple files in parallel
-
-```bash
-./src/main/bin/decac -P file1.deca file2.deca file3.deca
-```
-
-### Compiler flags
-
-| Flag | Description |
-|------|-------------|
-| `-b` | Print team banner (must be the only argument) |
-| `-p` | Stop after parsing and decompile the AST to stdout |
-| `-v` | Stop after contextual verification (no code generated) |
-| `-n` | Disable runtime error checks (divide-by-zero, null deref, etc.) |
-| `-r X` | Limit general-purpose registers to X (4 ≤ X ≤ 16, default 16) |
-| `-d` | Enable debug logging (repeat up to 4× for more verbosity: `-d`, `-dd`, `-ddd`, `-dddd`) |
-| `-P` | Compile multiple source files in parallel |
-
-### Examples
-
-```bash
-# Inspect the AST of a program
-./src/main/bin/decac -p src/test/deca/codegen/valid/method.deca
-
-# Compile with minimal registers (stress-tests register allocation)
-./src/main/bin/decac -r 4 src/test/deca/codegen/valid/method.deca
-
-# Compile without runtime checks (faster generated code)
-./src/main/bin/decac -n src/test/deca/codegen/valid/method.deca
-```
-
----
-
-## Deca Language
-
-Deca is a subset of Java with:
-- Primitive types: `int`, `float`, `boolean`
-- Classes with single inheritance, fields, and methods
-- `this`, `new`, `instanceof`, casts
-- Control flow: `if/else`, `while`
-- I/O: `print`, `println`, `readInt`, `readFloat`
-- `#include` for splitting programs across files
-- Inline assembly via `asm("...")`
-
-### Example
+Primitive types (`int`, `float`, `boolean`), classes with single inheritance, `this`,
+`new`, `instanceof`, casts, `if/else`, `while`, console I/O, `#include`, and inline
+`asm("...")`.
 
 ```deca
-class Total {
-    int somme(int a, int b, int c) {
-        return a + b + c;
-    }
-}
-
-{
-    Total t = new Total();
-    println(t.somme(1, 2, 3));   // prints: 6
-}
-```
-
-```deca
-class Shape {
-    protected float area() { return 0.0; }
-}
-
-class Circle extends Shape {
+class Circle {
     protected float radius;
-
-    float area() {
-        return 3.14159 * this.radius * this.radius;
-    }
+    float area() { return 3.14159 * radius * radius; }
 }
 
 {
-    Shape s = new Circle();
-    println(s.area());
+    Circle c = new Circle();
+    println(c.area());
 }
 ```
 
----
-
-## Compiler Architecture
-
-The compiler runs in three sequential passes:
+## Architecture
 
 ```
 Source (.deca)
     │
+    ▼  Pass 1 — lexing & parsing      ANTLR4 grammar → AST          fr.ensimag.deca.syntax
+    ▼  Pass 2 — verification          types, scopes, methods        fr.ensimag.deca.context / .tree
+    ▼  Pass 3 — code generation       IMA emission, registers,      fr.ensimag.deca.codegen /
+    │                                 VTables                        fr.ensimag.ima.pseudocode
     ▼
-┌─────────────────────────────┐
-│  Pass 1 – Lexing & Parsing  │  ANTLR4 grammar → AST
-│  fr.ensimag.deca.syntax     │  DecaLexer, DecaParser
-└─────────────┬───────────────┘
-              │
-              ▼
-┌─────────────────────────────┐
-│  Pass 2 – Verification      │  Type checking, scopes,
-│  fr.ensimag.deca.context    │  method resolution
-│  fr.ensimag.deca.tree       │
-└─────────────┬───────────────┘
-              │
-              ▼
-┌─────────────────────────────┐
-│  Pass 3 – Code Generation   │  IMA instruction emission,
-│  fr.ensimag.deca.tree       │  register allocation,
-│  fr.ensimag.deca.codegen    │  VTable construction
-│  fr.ensimag.ima.pseudocode  │
-└─────────────┬───────────────┘
-              │
-              ▼
-        Assembly (.ass)
+Assembly (.ass)
 ```
-
-### Key packages
 
 | Package | Role |
 |---------|------|
-| `fr.ensimag.deca` | Entry point (`DecacMain`), CLI options, compiler orchestration |
-| `fr.ensimag.deca.syntax` | ANTLR4 lexer/parser, `#include` handling |
-| `fr.ensimag.deca.tree` | AST node classes, verify and codegen visitors |
-| `fr.ensimag.deca.context` | Type system, environment, symbol definitions |
-| `fr.ensimag.deca.codegen` | Register manager, memory unit, interrupt controller |
-| `fr.ensimag.ima.pseudocode` | IMA instruction model and program builder |
-| `fr.ensimag.ima.pseudocode.instructions` | Concrete IMA instructions (LOAD, STORE, ADD, …) |
+| `fr.ensimag.deca` | Entry point, CLI options, orchestration |
+| `fr.ensimag.deca.syntax` | ANTLR4 lexer/parser, `#include` |
+| `fr.ensimag.deca.tree` | AST nodes with verify & codegen visitors |
+| `fr.ensimag.deca.context` | Type system, environments, definitions |
+| `fr.ensimag.deca.codegen` | Register manager, memory unit, runtime errors |
+| `fr.ensimag.ima.pseudocode` | IMA instruction model |
 
----
+## Tests
 
-## Testing
+916 Deca integration tests plus JUnit suites. `mvn test` runs everything (the shell
+suites need `ima`); CI runs the JUnit layer alone (`mvn test -Dexec.skip=true`).
+Stage-by-stage runners live in `src/test/script/` (`basic-lex.sh` → `common-tests.sh`).
 
-```bash
-mvn test
-```
+Coverage (JaCoCo, JUnit layer): **~81% instructions / ~70% branches** —
+`mvn test -Djacoco.skip=false && src/test/script/jacoco-report.sh`.
 
-Runs JUnit tests and all integration shell scripts. Requires `ima` on PATH for `common-tests.sh`.
+## Extension: a math library in pure Deca
 
-Make the scripts executable first if needed:
+`src/main/resources/include/Math.decah` implements `sin`, `cos`, `asin`, `acos`, `atan`
+and `ulp` **entirely in Deca** — no standard library, no bit operations, float32 only:
 
-```bash
-chmod +x src/test/script/*.sh src/test/deca/Trigo/*.sh src/test/score_perf.sh
-```
+- **CORDIC** — rotation mode (24 iterations) for `sin`/`cos`, vectoring mode (30) for
+  `atan`, driven by a pre-generated `atan(2^-i)` table;
+- **128-node table + Taylor-corrected interpolation** (step π/256) for small angles;
+- identity-based range reduction, `asin`/`acos` via `atan(x/√(1−x²))` with a
+  7-iteration Newton square root, and `ulp(f)` reconstructed by exponent search.
 
-| Script | What it tests |
-|--------|--------------|
-| `src/test/script/basic-lex.sh` | Lexer only |
-| `src/test/script/basic-synt.sh` | Parser only |
-| `src/test/script/basic-context.sh` | Contextual analysis |
-| `src/test/script/basic-gencode.sh` | Code generation |
-| `src/test/script/basic-decac.sh` | Full compiler (`-b` banner check) |
-| `src/test/script/common-tests.sh` | End-to-end: compile + run with `ima` |
+Measured accuracy (float32-faithful simulation of the algorithm and its tables,
+20 001-point sweeps; reproduce on ima with `src/test/deca/Trigo/verify_valid.sh`):
 
-### Test layout
-
-```
-src/test/
-├── java/               # JUnit 5 unit and integration tests
-├── deca/
-│   ├── codegen/        # Code generation tests (valid/ and invalid/)
-│   ├── context/        # Contextual analysis tests
-│   ├── syntax/         # Syntax tests
-│   ├── lexical/        # Lexer tests
-│   ├── Trigo/          # Trigonometric extension tests
-│   └── demo/           # End-to-end demo programs
-└── script/             # Shell-based integration test runners
-```
-
----
-
-## Coverage
-
-JaCoCo is integrated but disabled by default. To generate a coverage report:
-
-```bash
-# Run tests with instrumentation
-mvn test -Djacoco.skip=false
-
-# Generate the HTML report
-src/test/script/jacoco-report.sh
-
-# Open in browser
-xdg-open target/site/jacoco/index.html
-```
-
-> **Note:** Only tests running in-process (JUnit via Surefire) contribute to coverage. Shell-based integration tests launch a separate JVM and are not measured.
-
-Current coverage: **~81% instructions / ~70% branches** across the compiler.
-
----
+| Function | Domain | Max abs. error | ≈ ULP (float32, at \|f(x)\| ≈ 1) |
+|---|---|---|---|
+| `sin` | [−2π, 2π] | 6.3 × 10⁻⁷ | ~5 |
+| `cos` | [−2π, 2π] | 7.8 × 10⁻⁷ | ~7 |
+| `atan` | [−10, 10] | 2.0 × 10⁻⁷ | ~2 |
+| `sin` | [−100, 100] | 6.4 × 10⁻⁶ | ~53 (range-reduction limit) |
 
 ## Performance
 
-The `score_perf.sh` script benchmarks the compiler on dedicated performance tests and measures IMA cycle counts:
+`src/test/score_perf.sh` compiles the three provided benchmark programs with `-n` and
+sums their IMA cycle counts (`ima -s`).
 
-```bash
-src/test/score_perf.sh
-```
-
-Requires `ima` with the `-s` flag (cycle counting) to be on PATH.
-
----
+<!-- Fill after running score_perf.sh in an ima environment:
+| Program | IMA cycles (decac -n) |
+|---|---|
+| `ln2.deca` | … |
+| `ln2_fct.deca` | … |
+| `syracuse42.deca` | … |
+| **Total (wiki score)** | **…** |
+-->
 
 ## Docker
 
-For development on a personal machine without a native Ensimag environment:
-
-### Using the pre-built Ensimag image
+For a personal machine (bundles `ima`):
 
 ```bash
 docker login gitlab.ensimag.fr:5050
-
-docker create --interactive --tty \
-  -v <absolute-path-to-GL-DECAC>:/home/gl/projet_gl \
-  --name projetgl \
+docker create -it -v "$PWD":/home/gl/projet_gl --name projetgl \
   gitlab.ensimag.fr:5050/reigniep/dockergl
-
 docker start -a -i projetgl
 ```
 
 ---
 
-## License
-
-Copyright © 2026 Ensimag.
+Course skeleton © Ensimag; compiler passes, tests and extensions by team gl51.
