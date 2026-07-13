@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  junit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      # The ima virtual machine (Ensimag-internal) is not redistributable, so CI
+      # runs the pure-JUnit layer; the shell-based integration suites (lex/synt/
+      # context/gencode/common-tests) run locally or in the Ensimag Docker image.
+      - name: Build and run JUnit tests
+        run: mvn -B test -Dexec.skip=true
