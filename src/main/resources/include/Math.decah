@@ -19,8 +19,10 @@ class Math {
     //en utilisant un produit des cos ..
     
     //des trucs de la table SINCOS
-    protected int CACHE_SIZE = 256;
-    protected float CACHE_STEP = PI_OVER_2/(CACHE_SIZE -1);
+    // TableSinCos.deca contient 128 noeuds generes avec un pas de PI/256
+    // (verifiable : _getSinValue(1) = 0.012271538 = sin(PI/256))
+    protected int CACHE_SIZE = 128;
+    protected float CACHE_STEP = PI/256.0f;
     protected int CORDIC_TABLE_SIZE = 32;
   
     // Seuils pour choix d'algorithme (bon compromis précision/energie)
@@ -52,12 +54,13 @@ class Math {
         // on reduit x_red au premier demi-cercle [0, PI]
         if (x_red > PI) {
             x_red = x_red - PI;
-            negative = true;                 // Dans [PI, TWO_PI], le sinus est  négatif
+            negative = !negative;            // Dans [PI, TWO_PI], le sinus change de signe
+                                             // (bascule, pas ecrasement : sin(-3pi/2) = +1)
         }
 
         // on reduit le au premier quadrant [0, PI/2]
         if (x_red > PI_OVER_2) {
-            x_red = PI_OVER_2 - x_red;           // sin(PI - x) = sin(x), cad le signe ne change pas ici
+            x_red = PI - x_red;           // sin(PI - x) = sin(x), cad le signe ne change pas ici
         }
 
         // Choix de la méthode
